@@ -3,26 +3,29 @@
 #include <iostream>
 
 int main(int argc, char* argv[]) {
-	if (argc != 3) {
-		std::cout << "ERROR: Usage <server> <token>." << std::endl;
+	if (argc != 2) {
+		std::cout << "ERROR: Usage <server> <match token>" << std::endl;
 		return 0;
 	}
-	// Connects to and authenticates with gameserver
-	std::string server = std::string(argv[1]) + ":5557";
-	std::string matchToken (argv[2]);
-	zmq::context_t context(1);
-	zmq::socket_t socket(context, ZMQ_REQ);
-	std::cout << "Connecting to server " << server << std::endl;
-	socket.connect(server.c_str());
-	std::cout << "Sending token " << matchToken << std::endl;
-	zmq::message_t request (matchToken.size()+1);
-	memcpy((void*)request.data(), matchToken.c_str(), matchToken.size());
-	socket.send(request);
 
-	std::cout << "Waiting for reply." << std::endl;
+	zmq::context_t context(1);
+
+	std::string protocol ("tcp://");
+	std::string commandPort (":5557");
+	std::string statePort (":5556");
+	std::string ip (argv[1]);
+	std::string matchToken (argv[2]);
+	std::string commandServer = protocol + ip + commandPort;
+	std::string stateServer = protocol + ip + statePort;
+
+	std::cout << "Connecting to command server " << commandServer << std::endl;
+	zmq::socket_t command (context, ZMQ_REQ);
+	command.connect(commandServer.c_str());
+
 	zmq::message_t reply;
-	socket.recv(&reply);
-	std::cout << reply.data() << std::endl;
+	command.recv(&reply);
+	std::string token ((char*)reply.data());
+	std::cout << "Received token " << token << std::endl;
 
 	return 0;
 }
