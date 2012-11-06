@@ -12,11 +12,14 @@ int main(int argc, char* argv[]) {
 	std::string matchToken (argv[2]);
 	zmq::context_t context(1);
 	zmq::socket_t socket(context, ZMQ_REQ);
+	std::cout << "Connecting to server " << server << std::endl;
 	socket.connect(server.c_str());
+	std::cout << "Sending token " << matchToken << std::endl;
 	zmq::message_t request (matchToken.size()+1);
 	memcpy((void*)request.data(), matchToken.c_str(), matchToken.size());
 	socket.send(request);
 
+	std::cout << "Waiting for reply." << std::endl;
 	zmq::message_t reply;
 	socket.recv(&reply);
 	std::cout << reply.data() << std::endl;
