@@ -2,6 +2,7 @@
 
 #include <zmq.hpp>
 #include <string>
+#include "message_factory.hpp"
 
 class ServerInterface {
 public:
@@ -9,10 +10,13 @@ public:
 					std::string const& commandServer,
 					std::string const& stateServer,
 					std::string const& matchToken);
+    ~ServerInterface();
+    // Performs initial handshake with server
+    void Initialize();
 private:
-	zmq::socket_t& m_command;
-	zmq::socket_t& m_state;
+	zmq::socket_t m_command;
+	zmq::socket_t m_state;
 	std::string const& m_matchToken;
-	std::string m_userToken;
+    MessageFactory m_factory;
 };
 

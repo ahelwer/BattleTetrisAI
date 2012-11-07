@@ -1,7 +1,7 @@
 #include <zmq.hpp>
 #include <string>
 #include <iostream>
-#include <json/json.h>
+#include "server_interface.hpp"
 
 int main(int argc, char* argv[]) {
 	if (argc != 2) {
@@ -9,8 +9,7 @@ int main(int argc, char* argv[]) {
 		return 0;
 	}
 
-	zmq::context_t context(1);
-
+    // Parses command line arguments
 	std::string protocol ("tcp://");
 	std::string commandPort (":5557");
 	std::string statePort (":5556");
@@ -19,14 +18,13 @@ int main(int argc, char* argv[]) {
 	std::string commandServer = protocol + ip + commandPort;
 	std::string stateServer = protocol + ip + statePort;
 
-	std::cout << "Connecting to command server " << commandServer << std::endl;
-	zmq::socket_t command (context, ZMQ_REQ);
-	command.connect(commandServer.c_str());
+    // Creates zmq context
+	zmq::context_t context(1);
 
-	zmq::message_t reply;
-	command.recv(&reply);
-	std::string token ((char*)reply.data());
-	std::cout << "Received token " << token << std::endl;
+    // Creates and initializes server interface
+    ServerInterface si (context, commandServer, stateServer, matchToken);
+    si.Initialize();
+
 
 	return 0;
 }

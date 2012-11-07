@@ -1,6 +1,5 @@
 #include "server_interface.hpp"
-#include <json/json.h>
-
+#include <iostream>
 
 ServerInterface::ServerInterface(zmq::context_t& context, 
 									std::string const& commandServer,
@@ -9,6 +8,29 @@ ServerInterface::ServerInterface(zmq::context_t& context,
 	: m_command(context, ZMQ_REQ), m_state(context, ZMQ_SUB),
 		m_matchToken(matchToken)
 {
+    std::cout << "Connecting to command server " << commandServer << std::endl;
 	m_command.connect(commandServer.c_str());
+    std::cout << "Connecting to state server " << stateServer << std::endl;
 	m_state.connect(stateServer.c_str());
 }
+
+ServerInterface::~ServerInterface() {
+    std::cout << "Closing sockets." << std::endl;
+    m_command.close();
+    m_state.close();
+}
+
+void ServerInterface::Initialize() {
+    std::cout << "Initiating handshake with token " << m_matchToken << std::endl;
+    std::string const& requestS = m_factory.CreateInitMessage(m_matchToken);
+	zmq::message_t request (requestS.size()+1);
+    memcpy(static_cast<void*>(request.data()), requestS.data(), requestS.size());
+    m_command.send(request);
+
+    zmq::message_t reply;
+    m_command.recv(&reply);
+    std::string replyS (static_cast<const char*>(reply.data()));
+    bool success = m_factory.ParseInitReply(replyS);
+    std::cout << "Handshake successful." << std::endl;
+}
+
