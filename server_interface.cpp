@@ -31,6 +31,9 @@ void ServerInterface::Initialize() {
     m_command.recv(&reply);
     std::string replyS (static_cast<const char*>(reply.data()));
     bool success = m_factory.ParseInitReply(replyS);
-    std::cout << "Handshake successful." << std::endl;
+    if (success)
+        std::cout << "Success! Received client token " << m_factory.GetClientToken() << std::endl;
+    else
+        std::cout << "Failure." << std::endl;
 }
 

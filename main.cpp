@@ -25,7 +25,6 @@ int main(int argc, char* argv[]) {
     ServerInterface si (context, commandServer, stateServer, matchToken);
     si.Initialize();
 
-
 	return 0;
 }
 
