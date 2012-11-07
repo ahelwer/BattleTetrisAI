@@ -4,7 +4,7 @@
 #include "server_interface.hpp"
 
 int main(int argc, char* argv[]) {
-	if (argc != 2) {
+	if (argc != 3) {
 		std::cout << "ERROR: Usage <server> <match token>" << std::endl;
 		return 0;
 	}
