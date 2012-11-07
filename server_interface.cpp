@@ -21,7 +21,7 @@ ServerInterface::~ServerInterface() {
 }
 
 void ServerInterface::Initialize() {
-    std::cout << "Initiating handshake with token " << m_matchToken << std::endl;
+    std::cout << "Initiating handshake with match token " << m_matchToken << std::endl;
     std::string const& requestS = m_factory.CreateInitMessage(m_matchToken);
 	zmq::message_t request (requestS.size()+1);
     memcpy(static_cast<void*>(request.data()), requestS.data(), requestS.size());

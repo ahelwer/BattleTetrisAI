@@ -38,6 +38,8 @@ bool MessageFactory::ParseInitReply(std::string const& reply) {
     // Extract comm type (expect "MatchConnectResp")
     std::string commType = root.get("comm_type", "not found").asString();
     success = (commType.compare("MatchConnectResp") == 0);
+    if (commType.compare("ErrorResp") == 0)
+        PrintErrorMessage(reply);
     if (!success)
         return success;
 
@@ -68,5 +70,15 @@ bool MessageFactory::ParseMoveReply(std::string const& reply) const {
 
 std::string const& MessageFactory::GetClientToken() const {
     return m_clientToken;
+}
+
+void MessageFactory::PrintErrorMessage(std::string const& message) {
+    Json::Value root;
+    Json::Reader reader;
+    reader.parse(message, root);
+    std::string error = root.get("error", "not found").asString();
+    std::string desc = root.get("message", "not found").asString();
+    std::cout << error << std::endl;
+    std::cout << desc << std::endl;
 }
 

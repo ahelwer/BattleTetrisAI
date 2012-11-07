@@ -12,6 +12,7 @@ public:
     bool ParseMoveReply(std::string const& reply) const;
     std::string const& GetClientToken() const;
 private:
+    void PrintErrorMessage(std::string const& message);
     std::string m_clientToken;
 };
 
