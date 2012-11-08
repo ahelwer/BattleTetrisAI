@@ -103,6 +103,7 @@ bool MessageFactory::ParseMoveReply(std::string const& reply) const {
 }
 
 bool MessageFactory::ParseStateMessage(std::string const& stateS) const {
+    bool gameOver = false;
     // Parse message
     Json::Value root;
     Json::Reader reader;
@@ -112,23 +113,39 @@ bool MessageFactory::ParseStateMessage(std::string const& stateS) const {
     std::string commType = root.get("comm_type", "not found").asString();
     if (commType.compare("GameBoardState") == 0) {
         std::cout << "Received GameBoardState" << std::endl;
+        std::cout << "Sequence: " << root.get("sequence", -1).asInt() << std::endl;
+        std::cout << "Timestamp: " << root.get("timestamp", 0.0).asDouble() << std::endl;
+        Json::Value states = root.get("states", "not found");
+        Json::Value team = states.get("Team 148", "not found");
+        std::cout << "Piece number: " << team.get("piece_number", -1).asInt() << std::endl;;
+        std::cout << std::endl;
+        gameOver = false;
     }
     else if (commType.compare("GamePieceState") == 0) {
         std::cout << "Received GamePieceState" << std::endl;
+        std::cout << "Sequence: " << root.get("sequence", -1).asInt() << std::endl;
+        std::cout << "Timestamp: " << root.get("timestamp", 0.0).asDouble() << std::endl;
+        Json::Value queue = root.get("queue", "not found");
+        std::cout << "Queue: " << queue.asString() << std::endl;
+        std::cout << std::endl;
+        gameOver = false;
     }
     else if (commType.compare("MatchEnd") == 0) {
         std::cout << "Match ended." << std::endl;
         std::cout << "Match name: " << root.get("match_name", "not found").asString() << std::endl;
+        return true;
     }
     else if (commType.compare("GameEnd") == 0) {
         std::cout << "Game ended." << std::endl;
         std::cout << "Game name: " << root.get("game_name", "not found").asString() << std::endl;
-        std::cout << "Winner: " << root.get("winnter", "not found").asString() << std::endl;
+        std::cout << "Winner: " << root.get("winner", "not found").asString() << std::endl;
         Json::Value scores = root.get("scores", "not found");
         std::cout << "Scores:" << std::endl;
-        std::cout << "  Team 148: " << scores.get("Team 148", "not found").asString() << std::endl;
-        std::cout << "  Test Client: " << scores.get("Test Client", "not found").asString() << std::endl;
+        std::cout << "  Team 148: " << scores.get("Team 148", -1).asInt() << std::endl;
+        std::cout << "  Test Client: " << scores.get("Test Client", -1).asInt() << std::endl;
+        gameOver = false;
     }
+    return gameOver;
 }
 
 std::string const& MessageFactory::GetClientToken() const {
