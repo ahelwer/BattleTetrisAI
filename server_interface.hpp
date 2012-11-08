@@ -13,6 +13,8 @@ public:
     ~ServerInterface();
     // Performs initial handshake with server
     void Initialize();
+    // Polls state
+    void UpdateState();
 private:
 	zmq::socket_t m_command;
 	zmq::socket_t m_state;

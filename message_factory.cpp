@@ -1,4 +1,5 @@
 #include "message_factory.hpp"
+#include <cstdio>
 #include <json/json.h>
 
 MessageFactory::MessageFactory()

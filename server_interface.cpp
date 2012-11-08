@@ -40,7 +40,9 @@ void ServerInterface::Initialize() {
     else
         std::cout << "Failure. See error output." << std::endl;
 
+    zmq::message_t address;
     zmq::message_t state;
+    m_state.recv(&address);
     m_state.recv(&state);
     std::string stateS (static_cast<const char*>(state.data()), state.size());
     std::cout << stateS << std::endl;
