@@ -21,11 +21,15 @@ ServerInterface::~ServerInterface() {
 }
 
 void ServerInterface::Initialize() {
+    // Sends initial message to command server
     std::cout << "Initiating handshake with match token " << m_matchToken << std::endl;
     std::string const& requestS = m_factory.CreateInitMessage(m_matchToken);
 	zmq::message_t request (requestS.size());
     memcpy(static_cast<void*>(request.data()), requestS.data(), requestS.size());
     m_command.send(request);
+
+    // Subscribes to state server
+    m_state.setsockopt(ZMQ_SUBSCRIBE, m_matchToken.c_str(), m_matchToken.size());
 
     zmq::message_t reply;
     m_command.recv(&reply);
@@ -35,5 +39,10 @@ void ServerInterface::Initialize() {
         std::cout << "Success! Received client token " << m_factory.GetClientToken() << std::endl;
     else
         std::cout << "Failure. See error output." << std::endl;
+
+    zmq::message_t state;
+    m_state.recv(&state);
+    std::string stateS (static_cast<const char*>(state.data()), state.size());
+    std::cout << stateS << std::endl;
 }
 
