@@ -8,11 +8,11 @@ public:
     ~MessageFactory();
     std::string const& CreateInitMessage(std::string const& matchToken) const;
     bool ParseInitReply(std::string const& reply);
-    std::string const& CreateMoveMessage(std::string const& move) const;
+    std::string const& CreateMoveMessage(std::string const& moveS) const;
     bool ParseMoveReply(std::string const& reply) const;
     std::string const& GetClientToken() const;
 private:
-    void PrintErrorMessage(std::string const& message);
+    void PrintErrorMessage(std::string const& message) const;
     std::string m_clientToken;
 };
 

@@ -9,7 +9,7 @@ MessageFactory::~MessageFactory()
 
 std::string const& MessageFactory::CreateInitMessage(std::string const& matchToken) const {
     Json::Value root;
-    Json::StyledWriter writer;
+    Json::FastWriter writer;
 
     Json::Value comm_type ("MatchConnect");
     Json::Value match_token (matchToken);
@@ -60,19 +60,52 @@ bool MessageFactory::ParseInitReply(std::string const& reply) {
     return success;
 }
 
-std::string const& MessageFactory::CreateMoveMessage(std::string const& move) const {
+std::string const& MessageFactory::CreateMoveMessage(std::string const& moveS) const {
+    Json::Value root;
+    Json::FastWriter writer;
 
+    Json::Value comm_type ("GameMove");
+    Json::Value client_token (m_clientToken);
+    Json::Value move (moveS);
+
+    root["comm_type"] = comm_type;
+    root["client_token"] = client_token;
+    root["move"] = move;
+
+    std::string const* serialized = new std::string(writer.write(root));
+    return (*serialized);
 }
 
 bool MessageFactory::ParseMoveReply(std::string const& reply) const {
+    bool success = true;
 
+    // Parse message
+    Json::Value root;
+    Json::Reader reader;
+    success = reader.parse(reply, root);
+    if (!success)
+        return success;
+
+    // Extract comm type (expect "GameMoveResp")
+    std::string commType = root.get("comm_type", "not found").asString();
+    success = (commType.compare("GameMoveResp") == 0);
+    if (commType.compare("ErrorResp") == 0)
+        PrintErrorMessage(reply);
+    if (!success)
+        return success;
+    
+    // Extract resp (expect "ok")
+    std::string resp = root.get("resp", "not ok").asString();
+    success = (resp.compare("ok") == 0);
+
+    return success;
 }
 
 std::string const& MessageFactory::GetClientToken() const {
     return m_clientToken;
 }
 
-void MessageFactory::PrintErrorMessage(std::string const& message) {
+void MessageFactory::PrintErrorMessage(std::string const& message) const {
     Json::Value root;
     Json::Reader reader;
     reader.parse(message, root);

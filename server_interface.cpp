@@ -34,6 +34,6 @@ void ServerInterface::Initialize() {
     if (success)
         std::cout << "Success! Received client token " << m_factory.GetClientToken() << std::endl;
     else
-        std::cout << "Failure." << std::endl;
+        std::cout << "Failure. See error output." << std::endl;
 }
 
