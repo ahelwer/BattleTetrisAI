@@ -126,8 +126,12 @@ bool MessageFactory::ParseStateMessage(std::string const& stateS) const {
         std::cout << "Sequence: " << root.get("sequence", -1).asInt() << std::endl;
         std::cout << "Timestamp: " << root.get("timestamp", 0.0).asDouble() << std::endl;
         Json::Value queue = root.get("queue", "not found");
-        std::cout << "Queue: " << queue.asString() << std::endl;
-        std::cout << std::endl;
+        std::cout << "Queue: " ;
+        std::vector<std::string> pieces = queue.getMemberNames();
+        for (unsigned i = 0; i < pieces.size(); ++i) {
+            std::cout << pieces[i] << " ";
+        }
+        std::cout << std::endl << std::endl;
         gameOver = false;
     }
     else if (commType.compare("MatchEnd") == 0) {
