@@ -23,13 +23,13 @@ ServerInterface::~ServerInterface() {
 void ServerInterface::Initialize() {
     std::cout << "Initiating handshake with match token " << m_matchToken << std::endl;
     std::string const& requestS = m_factory.CreateInitMessage(m_matchToken);
-	zmq::message_t request (requestS.size()+1);
+	zmq::message_t request (requestS.size());
     memcpy(static_cast<void*>(request.data()), requestS.data(), requestS.size());
     m_command.send(request);
 
     zmq::message_t reply;
     m_command.recv(&reply);
-    std::string replyS (static_cast<const char*>(reply.data()));
+    std::string replyS (static_cast<const char*>(reply.data()), reply.size());
     bool success = m_factory.ParseInitReply(replyS);
     if (success)
         std::cout << "Success! Received client token " << m_factory.GetClientToken() << std::endl;
