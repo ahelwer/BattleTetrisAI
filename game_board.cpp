@@ -1,6 +1,7 @@
 #include "game_board.hpp"
 #include "main.hpp"
 #include <string>
+#include <cstring>
 
 GameBoard::GameBoard()
     : m_desc(new char[BOARD_DESC_SIZE]), 
