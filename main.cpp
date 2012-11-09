@@ -24,6 +24,7 @@ int main(int argc, char* argv[]) {
     // Creates and initializes server interface
     ServerInterface si (context, commandServer, stateServer, matchToken);
     si.Initialize();
+    si.UpdateState();
 
 	return 0;
 }

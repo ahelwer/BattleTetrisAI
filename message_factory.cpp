@@ -128,7 +128,7 @@ bool MessageFactory::ParseStateMessage(std::string const& stateS) const {
         Json::Value queue = root.get("queue", "not found");
         std::cout << "Queue: " ;
         for (unsigned i = 0; i < queue.size(); ++i) {
-            std::cout << queue[i].asString << " ";
+            std::cout << queue[i].asString() << " ";
         }
         std::cout << std::endl << std::endl;
         gameOver = false;
