@@ -1,4 +1,5 @@
 #include "message_factory.hpp"
+#include "main.hpp"
 #include <cstdio>
 #include <json/json.h>
 
@@ -14,8 +15,8 @@ std::string const& MessageFactory::CreateInitMessage(std::string const& matchTok
 
     Json::Value comm_type ("MatchConnect");
     Json::Value match_token (matchToken);
-    Json::Value team_name ("Team 148");
-    Json::Value password ("agrajabber");
+    Json::Value team_name (USERNAME);
+    Json::Value password (PASSWORD);
 
     root["comm_type"] = comm_type;
     root["match_token"] = match_token;
@@ -102,24 +103,38 @@ bool MessageFactory::ParseMoveReply(std::string const& reply) const {
     return success;
 }
 
-bool MessageFactory::ParseStateMessage(std::string const& stateS) const {
-    bool gameOver = false;
-    // Parse message
+State const& MessageFactory::ParseStateMessage(std::string const& stateS) const { // Parse message
     Json::Value root;
     Json::Reader reader;
     reader.parse(stateS, root); 
 
+	State* newState = NULL;
+
     // Extract comm type
     std::string commType = root.get("comm_type", "not found").asString();
     if (commType.compare("GameBoardState") == 0) {
-        std::cout << "Received GameBoardState" << std::endl;
-        std::cout << "Sequence: " << root.get("sequence", -1).asInt() << std::endl;
-        std::cout << "Timestamp: " << root.get("timestamp", 0.0).asDouble() << std::endl;
+		int sequence = root.get("sequence", -1).asInt();
+		int timestamp = root.get("timestamp", 0.0).asDouble();
         Json::Value states = root.get("states", "not found");
-        Json::Value team = states.get("Team 148", "not found");
-        std::cout << "Piece number: " << team.get("piece_number", -1).asInt() << std::endl;;
-        std::cout << std::endl;
-        gameOver = false;
+
+        Json::Value mine = states.get("Team 148", "not found");
+		int myPiece = mine.get("piece_number", -1).asInt();
+		char const* myBoard = mine.get("board_state", "0").asCString();
+		Json::Value myClearedV = mine.get("cleared_rows", "not found");
+		std::vector<int>* myCleared = new std::vector<int>();
+		for (unsigned i = 0; i < myClearedV.size(); ++i)
+			myCleared->push_back(myClearedV[i].asInt());
+
+        Json::Value theirs = states.get("Test Client", "not found");
+		int theirPiece = theirs.get("piece_number", -1).asInt();
+		char const* theirBoard = theirs.get("board_state", "0").asCString();
+		Json::Value theirClearedV = theirs.get("cleared_rows", "not found");
+		std::vector<int>* theirCleared = new std::vector<int>();
+		for (unsigned i = 0; i < theirClearedV.size(); ++i)
+			theirCleared->push_back(theirClearedV[i].asInt());
+
+		newState = new GameBoardState(sequence, timestamp, myBoard, theirBoard,
+										myPiece, theirPiece, myCleared, theirCleared);
     }
     else if (commType.compare("GamePieceState") == 0) {
         std::cout << "Received GamePieceState" << std::endl;
@@ -131,12 +146,10 @@ bool MessageFactory::ParseStateMessage(std::string const& stateS) const {
             std::cout << queue[i].asString() << " ";
         }
         std::cout << std::endl << std::endl;
-        gameOver = false;
     }
     else if (commType.compare("MatchEnd") == 0) {
         std::cout << "Match ended." << std::endl;
         std::cout << "Match name: " << root.get("match_name", "not found").asString() << std::endl;
-        return true;
     }
     else if (commType.compare("GameEnd") == 0) {
         std::cout << "Game ended." << std::endl;
@@ -146,9 +159,12 @@ bool MessageFactory::ParseStateMessage(std::string const& stateS) const {
         std::cout << "Scores:" << std::endl;
         std::cout << "  Team 148: " << scores.get("Team 148", -1).asInt() << std::endl;
         std::cout << "  Test Client: " << scores.get("Test Client", -1).asInt() << std::endl;
-        gameOver = false;
     }
-    return gameOver;
+
+	if (newState != NULL)
+		return *newState;
+	else
+		return *(new ErrorState("Could not match message state type."));
 }
 
 std::string const& MessageFactory::GetClientToken() const {

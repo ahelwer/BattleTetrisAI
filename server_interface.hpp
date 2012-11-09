@@ -3,6 +3,7 @@
 #include <zmq.hpp>
 #include <string>
 #include "message_factory.hpp"
+#include "state.hpp"
 
 class ServerInterface {
 public:
@@ -14,7 +15,7 @@ public:
     // Performs initial handshake with server
     void Initialize();
     // Polls state
-    void UpdateState();
+    State const& GetState();
 private:
 	zmq::socket_t m_command;
 	zmq::socket_t m_state;

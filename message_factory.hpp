@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "state.hpp"
 
 class MessageFactory {
 public:
@@ -10,7 +11,7 @@ public:
     bool ParseInitReply(std::string const& reply);
     std::string const& CreateMoveMessage(std::string const& moveS) const;
     bool ParseMoveReply(std::string const& reply) const;
-    bool ParseStateMessage(std::string const& stateS) const;
+    State const& ParseStateMessage(std::string const& stateS) const;
     std::string const& GetClientToken() const;
 private:
     void PrintErrorMessage(std::string const& message) const;

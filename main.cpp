@@ -1,7 +1,9 @@
 #include <zmq.hpp>
 #include <string>
 #include <iostream>
+#include "main.hpp"
 #include "server_interface.hpp"
+#include "control.hpp"
 
 int main(int argc, char* argv[]) {
 	if (argc != 3) {
@@ -10,21 +12,20 @@ int main(int argc, char* argv[]) {
 	}
 
     // Parses command line arguments
-	std::string protocol ("tcp://");
-	std::string commandPort (":5557");
-	std::string statePort (":5556");
+	std::string protocol (PROTOCOL);
+	std::string commandPort (COMMAND_PORT);
+	std::string statePort (STATE_PORT);
 	std::string ip (argv[1]);
 	std::string matchToken (argv[2]);
 	std::string commandServer = protocol + ip + commandPort;
 	std::string stateServer = protocol + ip + statePort;
 
-    // Creates zmq context
+    // Create zmq context
 	zmq::context_t context(1);
 
-    // Creates and initializes server interface
+    // Create and initializes server interface
     ServerInterface si (context, commandServer, stateServer, matchToken);
     si.Initialize();
-    si.UpdateState();
 
 	return 0;
 }

@@ -33,7 +33,7 @@ void ServerInterface::Initialize() {
 
     zmq::message_t reply;
     m_command.recv(&reply);
-    std::string replyS (static_cast<const char*>(reply.data()), reply.size());
+    std::string replyS (static_cast<char const*>(reply.data()), reply.size());
     bool success = m_factory.ParseInitReply(replyS);
     if (success)
         std::cout << "Success! Received client token " << m_factory.GetClientToken() << std::endl;
@@ -41,15 +41,12 @@ void ServerInterface::Initialize() {
         std::cout << "Failure. See error output." << std::endl;
 }
 
-void ServerInterface::UpdateState() {
-    bool gameOver = false;
-    while (!gameOver) {
-        zmq::message_t address;
-        zmq::message_t state;
-        m_state.recv(&address);
-        m_state.recv(&state);
-        std::string stateS (static_cast<const char*>(state.data()), state.size());
-        gameOver = m_factory.ParseStateMessage(stateS);
-    }
+State const& ServerInterface::GetState() {
+	zmq::message_t address;
+	zmq::message_t state;
+	m_state.recv(&address);
+	m_state.recv(&state);
+	std::string stateS (static_cast<char const*>(state.data()), state.size());
+	return m_factory.ParseStateMessage(stateS);
 }
 
