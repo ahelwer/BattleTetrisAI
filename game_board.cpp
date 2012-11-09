@@ -11,7 +11,7 @@ GameBoard::~GameBoard() {
     delete[] m_desc;
 }
 
-bool HasChanged(char const* desc) const {
+bool GameBoard::HasChanged(char const* desc) const {
     return (memcmp((void*)desc, (void*)m_desc, BOARD_DESC_SIZE) == 0);
 }
 
