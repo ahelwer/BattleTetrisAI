@@ -2,7 +2,7 @@
 #include <iostream>
 
 State::State()
-    : m_sequence(-1), m_timestamp(-1.0)
+    : m_sequence(-1), m_timestamp(0.0)
 { }
 
 State::State(int sequence, double timestamp)
