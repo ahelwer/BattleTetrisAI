@@ -127,35 +127,25 @@ State const* MessageFactory::ParseGameBoardStateMessage(Json::Value const& root)
     int sequence = root.get("sequence", -1).asInt();
     double timestamp = root.get("timestamp", 0.0).asDouble();
     Json::Value states = root.get("states", "not found");
-    if (states.asString().compare("not found") == 0)
-        return new ErrorState("states not found in GameBoardState");
 
     Json::Value mine = states.get(USERNAME, "not found");
-    if (mine.asString().compare("not found") == 0)
-        return new ErrorState("username not found in GameBoardState/state");
     int myPiece = mine.get("piece_number", -1).asInt();
     Json::Value myBoardV = mine.get("board_state", "0");
     if (myBoardV.asString().size() != BOARD_DESC_SIZE)
         return new ErrorState("Invalid board description in GameBoardState/state/username");
     char const* myBoard = myBoardV.asCString();
     Json::Value myClearedV = mine.get("cleared_rows", "not found");
-    if (myClearedV.asString().compare("not found") == 0)
-        return new ErrorState("cleared_rows not found in GameBoardState/state/username");
     std::vector<int>* myCleared = new std::vector<int>();
     for (unsigned i = 0; i < myClearedV.size(); ++i)
         myCleared->push_back(myClearedV[i].asInt());
 
     Json::Value theirs = states.get("Test Client", "not found");
-    if (theirs.asString().compare("not found") == 0)
-        return new ErrorState("opponent not found in GameBoardState/state");
     int theirPiece = theirs.get("piece_number", -1).asInt();
     Json::Value theirBoardV = theirs.get("board_state", "0");
     if (theirBoardV.asString().size() != BOARD_DESC_SIZE)
         return new ErrorState("Invalid board description in GameBoardState/state/opponent");
     char const* theirBoard = theirBoardV.asCString();
     Json::Value theirClearedV = theirs.get("cleared_rows", "not found");
-    if (theirClearedV.asString().compare("not found") == 0)
-        return new ErrorState("cleared_rows not found in GameBoardState/state/opponent");
     std::vector<int>* theirCleared = new std::vector<int>();
     for (unsigned i = 0; i < theirClearedV.size(); ++i)
         theirCleared->push_back(theirClearedV[i].asInt());
@@ -168,12 +158,8 @@ State const* MessageFactory::ParseGamePieceStateMessage(Json::Value const& root)
     int sequence = root.get("sequence", -1).asInt();
     double timestamp = root.get("timestamp", 0.0).asDouble();
     Json::Value states = root.get("states", "not found");
-    if (states.asString().compare("not found") == 0)
-        return new ErrorState("states not found in GamePieceState");
 
     Json::Value queueV = root.get("queue", "not found");
-    if (queueV.asString().compare("not found") == 0)
-        return new ErrorState("queue not found in GamePieceState");
     std::vector<Tetronimo>* queue = new std::vector<Tetronimo>();
     for (unsigned i = 0; i < queueV.size(); ++i) {
         std::string piece = queueV[i].asString();
@@ -184,8 +170,6 @@ State const* MessageFactory::ParseGamePieceStateMessage(Json::Value const& root)
     }
 
     Json::Value mine = states.get(USERNAME, "not found");
-    if (mine.asString().compare("not found") == 0)
-        return new ErrorState("username not found in GamePieceState/state");
     std::string myPieceS = mine.get("piece", "not found").asString();
     if (myPieceS.size() != 1)
         return new ErrorState("Invalid piece descriptor in GamePieceState/state/username");
@@ -196,8 +180,6 @@ State const* MessageFactory::ParseGamePieceStateMessage(Json::Value const& root)
     Tetronimo* myTet = new Tetronimo(myPiece, myOrient, myCol, myRow);
 
     Json::Value theirs = states.get("Test Client", "not found");
-    if (theirs.asString().compare("not found") == 0)
-        return new ErrorState("opponent not found in GamePieceState/state");
     std::string theirPieceS = theirs.get("piece", "not found").asString();
     if (theirPieceS.size() != 1)
         return new ErrorState("Invalid piece descriptor in GamePieceState/state/opponent");
