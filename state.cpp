@@ -34,6 +34,7 @@ GameBoardState::~GameBoardState() {
 
 void GameBoardState::ExecuteUpdates() const {
 	// Do stuff here
+    std::cout << "Board" << std::endl;
 }
 
 GamePieceState::GamePieceState(int sequence, double timestamp,
@@ -49,6 +50,7 @@ GamePieceState::~GamePieceState() {
 
 void GamePieceState::ExecuteUpdates() const {
 	// Do stuff here
+    std::cout << "Piece" << std::endl;
 }
 
 GameEnd::GameEnd(int sequence, double timestamp, bool won,
@@ -59,10 +61,12 @@ GameEnd::GameEnd(int sequence, double timestamp, bool won,
 
 void GameEnd::ExecuteUpdates() const {
 	// Do stuff here
+    std::cout << "Game end" << std::endl;
 }
 
 void MatchEnd::ExecuteUpdates() const {
 	// Do stuff here
+    std::cout << "Match end" << std::endl;
 }
 
 ErrorState::ErrorState(char const* errorMessage)
