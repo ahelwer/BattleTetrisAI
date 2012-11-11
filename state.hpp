@@ -6,6 +6,7 @@
 
 class State {
 public:
+    State();
 	State(int sequence, double timestamp);
 	virtual ~State() { };
 	int GetSequence() const;
@@ -37,12 +38,13 @@ private:
 class GamePieceState : public State {
 public:
 	GamePieceState(int sequence, double timestamp,
-					Tetronimo* tet, 
+					Tetronimo* myTet, Tetronimo* theirTet,
 					std::vector<Tetronimo>* queue);	
 	~GamePieceState();
 	virtual void ExecuteUpdates() const;
 private:
-	Tetronimo* m_pTet;
+	Tetronimo* m_pMyTet;
+	Tetronimo* m_pTheirTet;
 	std::vector<Tetronimo>* m_pQueue;
 };
 

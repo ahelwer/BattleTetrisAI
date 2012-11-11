@@ -1,6 +1,10 @@
 #include "state.hpp"
 #include <iostream>
 
+State::State()
+    : m_sequence(-1), m_timestamp(-1.0)
+{ }
+
 State::State(int sequence, double timestamp)
 	: m_sequence(sequence), m_timestamp(timestamp)
 { }
@@ -38,13 +42,16 @@ void GameBoardState::ExecuteUpdates() const {
 }
 
 GamePieceState::GamePieceState(int sequence, double timestamp,
-								Tetronimo* tet, 
+								Tetronimo* myTet, 
+								Tetronimo* theirTet, 
 								std::vector<Tetronimo>* queue)
-	: State(sequence, timestamp), m_pTet(tet), m_pQueue(queue)
+	: State(sequence, timestamp), m_pMyTet(myTet), 
+        m_pTheirTet(theirTet), m_pQueue(queue)
 { }
 
 GamePieceState::~GamePieceState() {
-	delete m_pTet;
+	delete m_pMyTet;
+	delete m_pTheirTet;
 	delete m_pQueue;
 }
 

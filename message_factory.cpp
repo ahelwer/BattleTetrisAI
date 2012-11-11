@@ -1,5 +1,6 @@
 #include "message_factory.hpp"
 #include "main.hpp"
+#include "tetronimo.hpp"
 #include <cstdio>
 #include <json/json.h>
 
@@ -114,10 +115,10 @@ State const* MessageFactory::ParseStateMessage(std::string const& stateS) const 
     std::string commType = root.get("comm_type", "not found").asString();
     if (commType.compare("GameBoardState") == 0) {
 		int sequence = root.get("sequence", -1).asInt();
-		int timestamp = root.get("timestamp", 0.0).asDouble();
+		double timestamp = root.get("timestamp", 0.0).asDouble();
         Json::Value states = root.get("states", "not found");
 
-        Json::Value mine = states.get("Team 148", "not found");
+        Json::Value mine = states.get(USERNAME, "not found");
 		int myPiece = mine.get("piece_number", -1).asInt();
 		char const* myBoard = mine.get("board_state", "0").asCString();
 		Json::Value myClearedV = mine.get("cleared_rows", "not found");
@@ -137,28 +138,50 @@ State const* MessageFactory::ParseStateMessage(std::string const& stateS) const 
 										myPiece, theirPiece, myCleared, theirCleared);
     }
     else if (commType.compare("GamePieceState") == 0) {
-        std::cout << "Received GamePieceState" << std::endl;
-        std::cout << "Sequence: " << root.get("sequence", -1).asInt() << std::endl;
-        std::cout << "Timestamp: " << root.get("timestamp", 0.0).asDouble() << std::endl;
-        Json::Value queue = root.get("queue", "not found");
-        std::cout << "Queue: " ;
-        for (unsigned i = 0; i < queue.size(); ++i) {
-            std::cout << queue[i].asString() << " ";
+		int sequence = root.get("sequence", -1).asInt();
+		double timestamp = root.get("timestamp", 0.0).asDouble();
+        Json::Value states = root.get("states", "not found");
+
+        Json::Value queueV = root.get("queue", "not found");
+        std::vector<Tetronimo>* queue = new std::vector<Tetronimo>();
+        for (unsigned i = 0; i < queueV.size(); ++i) {
+            Tetronimo t (queueV[i].asString().at(0));
+            queue->push_back(t);
         }
-        std::cout << std::endl << std::endl;
+
+        Json::Value mine = states.get(USERNAME, "not found");
+        char myPiece = mine.get("piece", "not found").asString().at(0);
+        int myOrient = mine.get("orient", -1).asInt();
+        int myCol = mine.get("col", -1).asInt();
+        int myRow = mine.get("row", -1).asInt();
+        Tetronimo* myTet = new Tetronimo(myPiece, myOrient, myCol, myRow);
+
+        Json::Value theirs = states.get("Test Client", "not found");
+        char theirPiece = theirs.get("piece", "not found").asString().at(0);
+        int theirOrient = theirs.get("orient", -1).asInt();
+        int theirCol = theirs.get("col", -1).asInt();
+        int theirRow = theirs.get("row", -1).asInt();
+        Tetronimo* theirTet = new Tetronimo(theirPiece, theirOrient, theirCol, theirRow);
+
+        newState = new GamePieceState(sequence, timestamp, myTet, theirTet, queue);
     }
     else if (commType.compare("MatchEnd") == 0) {
-        std::cout << "Match ended." << std::endl;
-        std::cout << "Match name: " << root.get("match_name", "not found").asString() << std::endl;
+        newState = new MatchEnd();
     }
     else if (commType.compare("GameEnd") == 0) {
-        std::cout << "Game ended." << std::endl;
-        std::cout << "Game name: " << root.get("game_name", "not found").asString() << std::endl;
-        std::cout << "Winner: " << root.get("winner", "not found").asString() << std::endl;
+		int sequence = root.get("sequence", -1).asInt();
+		double timestamp = root.get("timestamp", 0.0).asDouble();
+
+        std::string winner = root.get("winner", "not found").asString();
+        bool won = false;
+        if (winner.compare(USERNAME) == 0)
+            won = true;
+
         Json::Value scores = root.get("scores", "not found");
-        std::cout << "Scores:" << std::endl;
-        std::cout << "  Team 148: " << scores.get("Team 148", -1).asInt() << std::endl;
-        std::cout << "  Test Client: " << scores.get("Test Client", -1).asInt() << std::endl;
+        int myScore = scores.get(USERNAME, -1).asInt();
+        int theirScore = scores.get("Test Client", -1).asInt();
+
+        newState = new GameEnd(sequence, timestamp, won, myScore, theirScore);
     }
 
 	if (newState != NULL)
