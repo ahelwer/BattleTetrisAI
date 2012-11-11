@@ -9,7 +9,7 @@ MessageFactory::MessageFactory()
 MessageFactory::~MessageFactory()
 { }
 
-std::string const& MessageFactory::CreateInitMessage(std::string const& matchToken) const {
+std::string const* MessageFactory::CreateInitMessage(std::string const& matchToken) const {
     Json::Value root;
     Json::FastWriter writer;
 
@@ -24,7 +24,7 @@ std::string const& MessageFactory::CreateInitMessage(std::string const& matchTok
     root["password"] = password;
 
     std::string const* serialized = new std::string(writer.write(root));
-    return (*serialized);
+    return serialized;
 }
 
 bool MessageFactory::ParseInitReply(std::string const& reply) {
@@ -62,7 +62,7 @@ bool MessageFactory::ParseInitReply(std::string const& reply) {
     return success;
 }
 
-std::string const& MessageFactory::CreateMoveMessage(std::string const& moveS) const {
+std::string const* MessageFactory::CreateMoveMessage(std::string const& moveS) const {
     Json::Value root;
     Json::FastWriter writer;
 
@@ -75,7 +75,7 @@ std::string const& MessageFactory::CreateMoveMessage(std::string const& moveS) c
     root["move"] = move;
 
     std::string const* serialized = new std::string(writer.write(root));
-    return (*serialized);
+    return serialized;
 }
 
 bool MessageFactory::ParseMoveReply(std::string const& reply) const {
@@ -103,7 +103,7 @@ bool MessageFactory::ParseMoveReply(std::string const& reply) const {
     return success;
 }
 
-State const& MessageFactory::ParseStateMessage(std::string const& stateS) const { // Parse message
+State const* MessageFactory::ParseStateMessage(std::string const& stateS) const { // Parse message
     Json::Value root;
     Json::Reader reader;
     reader.parse(stateS, root); 
@@ -162,9 +162,9 @@ State const& MessageFactory::ParseStateMessage(std::string const& stateS) const 
     }
 
 	if (newState != NULL)
-		return *newState;
+		return newState;
 	else
-		return *(new ErrorState("Could not match message state type."));
+		return (new ErrorState("Could not match message state type."));
 }
 
 std::string const& MessageFactory::GetClientToken() const {

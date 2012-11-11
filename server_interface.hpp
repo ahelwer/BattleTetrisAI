@@ -15,7 +15,7 @@ public:
     // Performs initial handshake with server
     void Initialize();
     // Polls state
-    State const& GetState();
+    State const* GetState();
 private:
 	zmq::socket_t m_command;
 	zmq::socket_t m_state;
