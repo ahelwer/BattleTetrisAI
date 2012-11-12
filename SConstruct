@@ -1,7 +1,7 @@
 env = Environment()
 env.Append(LIBS = ['zmq', 'json'])
 env.Append(CPPPATH = ['#'])
-dirs = ['#/control/source/', '#/model/source/', '#/server/source/']
+dirs = ['#/control/source/', '#/model/source/', '#/server/source/', '#/core/source/']
 cpp = []
 for dir in dirs:
 	cpp += env.Glob(dir + '*.cpp')
