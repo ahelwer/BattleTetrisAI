@@ -3,11 +3,28 @@
 #include <algorithm>
 #include <functional>
 #include <utility>
+#include <iostream>
 #include <util/vector.hpp>
 
-typedef std::vector<float> Harmony;
 typedef std::vector< std::pair<float, float> > HarmonyRanges;
 class ObjectiveFunction;
+
+// Wrapper around std::vector which caches function calculations
+class Harmony {
+public:
+	Harmony();
+	float ApplyToSelf(ObjectiveFunction const& f) const;
+	float const& operator[] (unsigned idx) const;
+	float& operator[] (unsigned idx);
+	float const& at(unsigned idx) const;
+	void push_back(float val);	
+	unsigned size() const;
+	friend std::ostream& operator<< (std::ostream& out, Harmony const& h);
+private:
+	mutable bool m_isCached;
+	mutable float m_cached;
+	std::vector<float> m_data;
+};
 
 class HarmonyCompare : public std::binary_function<Harmony*, Harmony*, bool> {
 public:

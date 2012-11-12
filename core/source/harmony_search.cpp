@@ -42,10 +42,11 @@ void HarmonySearch::Iterate() {
         delete m_memory.back();
         m_memory.pop_back();
         m_memory.push_back(newHarmony);
+		std::sort(m_memory.begin(), m_memory.end(), m_hc);
     }
 }
 
-Harmony const& HarmonySearch::GetRanked(unsigned rank) {
+Harmony const& HarmonySearch::GetRanked(unsigned rank) const {
 	Harmony* ranked = m_memory.at(rank);
 	return (*ranked);
 }

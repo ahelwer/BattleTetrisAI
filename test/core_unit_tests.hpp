@@ -39,18 +39,20 @@ private:
 class HarmonySearchUnitTests : public CppUnit::TestFixture {
     CPPUNIT_TEST_SUITE(HarmonySearchUnitTests);
     CPPUNIT_TEST(TestInitialization);
+    CPPUNIT_TEST(TestIteration);
     CPPUNIT_TEST_SUITE_END();
 public:
     void setUp();
     void tearDown();
     void TestInitialization();
+    void TestIteration();
 private:
 	unsigned m_vCount;
 	unsigned m_memory;
 	HarmonyRanges* m_pRanges;
-	PredictableFactory* m_pPf;
-	SumFunction* m_pSf;
-	HarmonyCompare* m_pHc;
+	PredictableFactory* m_pFactory;
+	SumFunction* m_pFunction;
+	HarmonyCompare* m_pCompare;
 	HarmonySearch* m_pSearch;
 };
 

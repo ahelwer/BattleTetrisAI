@@ -9,7 +9,7 @@ public:
                     unsigned memory, float r_accept, float r_pa, float b_range);
     ~HarmonySearch();
     void Iterate();
-	Harmony const& GetRanked(unsigned rank);
+	Harmony const& GetRanked(unsigned rank) const;
 private:
     ObjectiveFunction const& m_f;
     HarmonyFactory const& m_hf;
