@@ -1,4 +1,4 @@
-#include <test/core_unit_tests.hpp>
+#include <test/harmony_search_unit_tests.hpp>
 #include <test/util.hpp>
 
 CPPUNIT_TEST_SUITE_REGISTRATION(HarmonySearchUnitTests);

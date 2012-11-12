@@ -4,7 +4,6 @@
 
 class SumFunction : public ObjectiveFunction {
 public:
-	SumFunction() { }
 	virtual float operator() (Harmony const& h) const {
 		float result = 0.0;
 		for (unsigned i = 0; i < h.size(); ++i)
