@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <functional>
 #include <utility>
 #include <util/vector.hpp>
 
@@ -19,10 +20,11 @@ private:
 class HarmonyFactory {
 public:
     HarmonyFactory(unsigned decisionVarCount, HarmonyRanges const& ranges);
-    Harmony* GenerateRandomHarmony() const;
-    float GenerateRandomVariable(unsigned var) const;
-    float ModifyVariableTone(unsigned var, float old, float bandwidth) const;
-private:
+	~HarmonyFactory();
+    virtual Harmony* GenerateRandomHarmony() const;
+    virtual float GenerateRandomVariable(unsigned var) const;
+    virtual float ModifyVariableTone(unsigned var, float old, float bandwidth) const;
+protected:
     unsigned m_vCount;
     HarmonyRanges const& m_ranges;
 };

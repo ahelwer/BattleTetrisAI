@@ -14,6 +14,9 @@ HarmonyFactory::HarmonyFactory(unsigned decisionVarCount, HarmonyRanges const& r
     : m_vCount(decisionVarCount), m_ranges(ranges)
 { }
 
+HarmonyFactory::~HarmonyFactory()
+{ }
+
 Harmony* HarmonyFactory::GenerateRandomHarmony() const {
     Harmony* randomHarmony = new Harmony();
     for (unsigned i = 0; i < m_vCount; ++i)

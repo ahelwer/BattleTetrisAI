@@ -45,3 +45,8 @@ void HarmonySearch::Iterate() {
     }
 }
 
+Harmony const& HarmonySearch::GetRanked(unsigned rank) {
+	Harmony* ranked = m_memory.at(rank);
+	return (*ranked);
+}
+
