@@ -1,5 +1,4 @@
 #include "state.hpp"
-#include <iostream>
 
 State::State()
     : m_sequence(-1), m_timestamp(0.0)
@@ -15,6 +14,12 @@ int State::GetSequence() const {
 
 double State::GetTimestamp() const {
 	return m_timestamp;
+}
+
+std::ostream& operator<< (std::ostream& out, State const& s) {
+	out << "Sequence: " << s.m_sequence << std::endl;
+	out << "Timestamp: " << s.m_timestamp << std::endl;
+	return out;
 }
 
 GameBoardState::GameBoardState(int sequence, double timestamp,
@@ -41,8 +46,13 @@ GameBoardState::~GameBoardState() {
 }
 
 void GameBoardState::ExecuteUpdates() const {
-	// Do stuff here
-    std::cout << "Board" << std::endl;
+	std::cout << (*this) << std::endl;
+}
+
+std::ostream& operator<< (std::ostream& out, GameBoardState const& s) {
+	out << "My cleared: " << *(s.m_pMyCleared) << std::endl;
+	out << "Their cleared: " << *(s.m_pTheirCleared) << std::endl;
+	return out;
 }
 
 GamePieceState::GamePieceState(int sequence, double timestamp,
@@ -63,8 +73,24 @@ GamePieceState::~GamePieceState() {
 }
 
 void GamePieceState::ExecuteUpdates() const {
-	// Do stuff here
-    std::cout << "Piece" << std::endl;
+	std::cout << (*this) << std::endl;
+}
+
+std::ostream& operator<< (std::ostream& out, GamePieceState const& s) {
+	out << "My tetronimo: ";
+	if (s.m_pMyTet != NULL)
+		out << *(s.m_pMyTet);
+	else
+		out << "NULL";
+	out << ", ";
+	out << "Their tetronimo: ";
+	if (s.m_pTheirTet != NULL)
+		out << *(s.m_pTheirTet);
+	else
+		out << "NULL";
+	out << ", ";
+	out << "Queue: " << *(s.m_pQueue);
+	return out;
 }
 
 GameEnd::GameEnd(int sequence, double timestamp, bool won,
@@ -74,13 +100,26 @@ GameEnd::GameEnd(int sequence, double timestamp, bool won,
 { }
 
 void GameEnd::ExecuteUpdates() const {
-	// Do stuff here
-    std::cout << "Game end" << std::endl;
+    std::cout << (*this) << std::endl;
+}
+
+std::ostream& operator<< (std::ostream& out, GameEnd const& s) {
+	if (s.m_won)
+		out << "We won!";
+	else
+		out << "Opponent won.";
+	out << " ";
+	out << "Score: " << s.m_myScore << "-" << s.m_theirScore;
+	return out;
 }
 
 void MatchEnd::ExecuteUpdates() const {
-	// Do stuff here
-    std::cout << "Match end" << std::endl;
+    std::cout << (*this) << std::endl;
+}
+
+std::ostream& operator<< (std::ostream& out, MatchEnd const& s) {
+	out << "Game is over.";
+	return out;
 }
 
 ErrorState::ErrorState(char const* errorMessage)
@@ -88,6 +127,11 @@ ErrorState::ErrorState(char const* errorMessage)
 { }
 
 void ErrorState::ExecuteUpdates() const {
-	std::cout << "ERROR: " << m_errorMessage << std::endl;
+	std::cout << (*this) << std::endl;
+}
+
+std::ostream& operator<< (std::ostream& out, ErrorState const& s) {
+	out << "ERROR: " << s.m_errorMessage;
+	return out;
 }
 
