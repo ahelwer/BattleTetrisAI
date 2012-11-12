@@ -18,3 +18,11 @@ std::ostream& operator<< (std::ostream& out, std::vector<T> const& v) {
 	}
 }
 
+template <typename T>
+std::ostream& operator<< (std::ostream& out, 
+				std::vector< std::vector<T> > const& v) {
+	for (int i = 0; i < v.size(); ++i)
+		out << v[i] << std::endl;
+	return out;
+}
+

@@ -3,18 +3,35 @@
 #include <cstring>
 
 GameBoard::GameBoard()
-    : m_desc(new char[BOARD_DESC_SIZE]), 
+    : m_pDesc(new char[BOARD_DESC_SIZE]), 
         m_board(COLS, std::vector<bool>(ROWS, false))
 { }
 
-
+GameBoard::GameBoard(char const* desc)
+    : m_pDesc(new char[BOARD_DESC_SIZE]), 
+        m_board(COLS, std::vector<bool>(ROWS, false))
+{
+	Translate(desc);
+}
 
 GameBoard::~GameBoard() {
-    delete[] m_desc;
+	if (m_pDesc != NULL)
+		delete[] m_pDesc;
+}
+
+bool GameBoard::IsOccupied(int x, int y) const {
+	if (x >= 0 && x < COLS && y >= 0 && y < ROWS)
+		return m_board[x][y];
+	else
+		return 0;
+}
+
+void GameBoard::Update(char const* desc) {
+	Translate(desc);	
 }
 
 bool GameBoard::HasChanged(char const* desc) const {
-    return (memcmp((void*)desc, (void*)m_desc, BOARD_DESC_SIZE) == 0);
+    return (memcmp((void*)desc, (void*)m_pDesc, BOARD_DESC_SIZE) == 0);
 }
 
 void GameBoard::Translate(char const* desc) {
@@ -39,5 +56,10 @@ void GameBoard::Translate(char const* desc) {
 		y = (i*4+3) / COLS;
 		m_board[x][y] = (byte & 8);
 	}
+}
+
+std::ostream& operator<< (std::ostream& out, GameBoard const& gb) {
+	out << gb.m_board;
+	return out;
 }
 
