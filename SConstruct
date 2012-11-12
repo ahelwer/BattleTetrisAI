@@ -1,5 +1,10 @@
 env = Environment()
 env.Append(LIBS = ['zmq', 'json'])
-env.MergeFlags(['-g', '-O0'])
-env.Program(target = 'a.out', source = env.Glob('*.cpp'))
+env.Append(CPPPATH = ['#'])
+dirs = ['#/control/source/', '#/model/source/', '#/server/source/']
+cpp = []
+for dir in dirs:
+	cpp += env.Glob(dir + '*.cpp')
+#env.MergeFlags(['-g', '-O0'])
+env.Program(target = 'a.out', source = cpp)
 

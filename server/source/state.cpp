@@ -1,4 +1,4 @@
-#include "state.hpp"
+#include <server/state.hpp>
 
 State::State()
     : m_sequence(-1), m_timestamp(0.0)
@@ -45,8 +45,9 @@ GameBoardState::~GameBoardState() {
 		delete m_pTheirCleared;
 }
 
-void GameBoardState::ExecuteUpdates() const {
+bool GameBoardState::ExecuteUpdates() const {
 	std::cout << (*this) << std::endl;
+	return false;
 }
 
 std::ostream& operator<< (std::ostream& out, GameBoardState const& s) {
@@ -72,8 +73,9 @@ GamePieceState::~GamePieceState() {
 		delete m_pQueue;
 }
 
-void GamePieceState::ExecuteUpdates() const {
+bool GamePieceState::ExecuteUpdates() const {
 	std::cout << (*this) << std::endl;
+	return false;
 }
 
 std::ostream& operator<< (std::ostream& out, GamePieceState const& s) {
@@ -99,8 +101,9 @@ GameEnd::GameEnd(int sequence, double timestamp, bool won,
 		m_theirScore(theirScore)
 { }
 
-void GameEnd::ExecuteUpdates() const {
+bool GameEnd::ExecuteUpdates() const {
     std::cout << (*this) << std::endl;
+	return false;
 }
 
 std::ostream& operator<< (std::ostream& out, GameEnd const& s) {
@@ -113,8 +116,9 @@ std::ostream& operator<< (std::ostream& out, GameEnd const& s) {
 	return out;
 }
 
-void MatchEnd::ExecuteUpdates() const {
+bool MatchEnd::ExecuteUpdates() const {
     std::cout << (*this) << std::endl;
+	return true;
 }
 
 std::ostream& operator<< (std::ostream& out, MatchEnd const& s) {
@@ -126,8 +130,9 @@ ErrorState::ErrorState(char const* errorMessage)
 	: State(0, 0.0), m_errorMessage(errorMessage)
 { }
 
-void ErrorState::ExecuteUpdates() const {
+bool ErrorState::ExecuteUpdates() const {
 	std::cout << (*this) << std::endl;
+	return false;
 }
 
 std::ostream& operator<< (std::ostream& out, ErrorState const& s) {

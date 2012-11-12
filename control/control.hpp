@@ -1,7 +1,7 @@
 #pragma once
 
 #include <zmq.hpp>
-#include "server_interface.hpp"
+#include <server/server_interface.hpp>
 
 class Control {
 public:

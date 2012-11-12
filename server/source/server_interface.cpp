@@ -1,4 +1,4 @@
-#include "server_interface.hpp"
+#include <server/server_interface.hpp>
 #include <iostream>
 
 ServerInterface::ServerInterface(zmq::context_t& context, 
@@ -20,7 +20,7 @@ ServerInterface::~ServerInterface() {
     m_state.close();
 }
 
-void ServerInterface::Initialize() {
+bool ServerInterface::Initialize() {
     // Sends initial message to command server
     std::cout << "Initiating handshake... ";
     std::string const* requestS = m_factory.CreateInitMessage(m_matchToken);
@@ -40,6 +40,7 @@ void ServerInterface::Initialize() {
         std::cout << "Success!" << std::endl;
     else
         std::cout << "Failure." << std::endl;
+	return success;
 }
 
 State const* ServerInterface::GetState() {

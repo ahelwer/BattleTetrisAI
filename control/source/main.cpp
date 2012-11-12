@@ -1,9 +1,10 @@
 #include <zmq.hpp>
 #include <string>
 #include <iostream>
-#include "main.hpp"
-#include "server_interface.hpp"
-#include "control.hpp"
+
+#include <util/constants.hpp>
+#include <server/server_interface.hpp>
+#include <control/control.hpp>
 
 int main(int argc, char* argv[]) {
 	if (argc != 3) {
@@ -25,10 +26,11 @@ int main(int argc, char* argv[]) {
 
     // Create and initializes server interface
     ServerInterface si (context, commandServer, stateServer, matchToken);
-    si.Initialize();
-
-    Control top (context, si);
-    top.Execute();
+    bool success = si.Initialize();
+	if (success) {
+		Control top (context, si);
+		top.Execute();
+	}
 
 	return 0;
 }

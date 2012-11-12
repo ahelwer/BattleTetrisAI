@@ -1,6 +1,6 @@
-#include "message_factory.hpp"
-#include "main.hpp"
-#include "tetronimo.hpp"
+#include <server/message_factory.hpp>
+#include <util/constants.hpp>
+#include <model/tetronimo.hpp>
 #include <cstdio>
 #include <cstring>
 

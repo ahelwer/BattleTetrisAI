@@ -1,14 +1,15 @@
-#include "control.hpp"
-#include "state.hpp"
+#include <control/control.hpp>
+#include <server/state.hpp>
 
 Control::Control(zmq::context_t& context, ServerInterface& si)
 	: m_si(si)
 { }
 
 void Control::Execute() {
-    while (true) {
+	bool gameOver = false;
+    while (!gameOver) {
         State const* s = m_si.GetState();
-        s->ExecuteUpdates();
+        gameOver = s->ExecuteUpdates();
         delete s;
     }
 }

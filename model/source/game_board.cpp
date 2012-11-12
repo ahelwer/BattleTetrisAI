@@ -1,5 +1,5 @@
-#include "game_board.hpp"
-#include "main.hpp"
+#include <model/game_board.hpp>
+#include <util/constants.hpp>
 #include <cstring>
 
 GameBoard::GameBoard()

@@ -2,7 +2,7 @@
 
 #include <string>
 #include <json/json.h>
-#include "state.hpp"
+#include <server/state.hpp>
 
 class MessageFactory {
 public:

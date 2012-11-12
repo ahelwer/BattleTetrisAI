@@ -2,8 +2,8 @@
 
 #include <zmq.hpp>
 #include <string>
-#include "message_factory.hpp"
-#include "state.hpp"
+#include <server/message_factory.hpp>
+#include <server/state.hpp>
 
 class ServerInterface {
 public:
@@ -13,7 +13,7 @@ public:
 					std::string const& matchToken);
     ~ServerInterface();
     // Performs initial handshake with server
-    void Initialize();
+    bool Initialize();
     // Polls state
     State const* GetState();
 private:
