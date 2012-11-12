@@ -1,4 +1,5 @@
 #include <test/core_unit_tests.hpp>
+#include <test/util.hpp>
 
 CPPUNIT_TEST_SUITE_REGISTRATION(HarmonySearchUnitTests);
 
@@ -27,6 +28,7 @@ void HarmonySearchUnitTests::tearDown() {
 
 void HarmonySearchUnitTests::TestInitialization() {
 	HarmonyCompare const& hc = *m_pHc;
+	// Tests that Harmonies are ordered correctly
 	for (unsigned i = 0; i < m_memory-1; ++i) {
 		Harmony const& r1 = m_pSearch->GetRanked(i);
 		Harmony const& r2 = m_pSearch->GetRanked(i+1);
@@ -34,6 +36,17 @@ void HarmonySearchUnitTests::TestInitialization() {
 			bool success = hc(&r1, &r2);
 			CPPUNIT_ASSERT(success);
 		}
+	}
+	// Tests that Harmonies are intact as expected
+	for (unsigned i = 0; i < m_memory; ++i) {
+		Harmony* h1 = m_pPf->GenerateRandomHarmony();
+		Harmony const& h2 = m_pSearch->GetRanked(m_memory-i-1);
+		for (unsigned j = 0; j < m_vCount; ++j) {
+			float v1 = h1->at(j);
+			float v2 = h2.at(j);
+			CPPUNIT_ASSERT(FloatEqual(v1, v2));
+		}
+		delete h1;
 	}
 }
 
