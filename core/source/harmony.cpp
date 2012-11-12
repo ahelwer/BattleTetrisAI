@@ -2,7 +2,7 @@
 #include <cstdlib>
 
 Harmony::Harmony()
-	: m_isCached(false)
+	: std::vector<float>(), m_isCached(false), m_cached(0.0)
 { }
 
 float Harmony::ApplyToSelf(ObjectiveFunction const& f) const {
@@ -14,31 +14,6 @@ float Harmony::ApplyToSelf(ObjectiveFunction const& f) const {
 	return result;
 }
 
-float const& Harmony::operator[] (unsigned idx) const {
-	return m_data[idx];
-}
-
-float& Harmony::operator[] (unsigned idx) {
-	return m_data[idx];
-}
-
-float const& Harmony::at(unsigned idx) const {
-	return m_data.at(idx);
-}
-
-void Harmony::push_back(float val) {
-	return m_data.push_back(val);	
-}
-
-unsigned Harmony::size() const {
-	return m_data.size();
-}
-
-std::ostream& operator<< (std::ostream& out, Harmony const& h) {
-	out << h.m_data;
-	return out;
-}
-
 HarmonyCompare::HarmonyCompare(ObjectiveFunction const& f)
     : m_f(f)
 { }
@@ -46,6 +21,7 @@ HarmonyCompare::HarmonyCompare(ObjectiveFunction const& f)
 bool HarmonyCompare::operator() (Harmony const* a, Harmony const* b) const {
     // Is Harmony a less than Harmony b? 
     //return (m_f(*a) <= m_f(*b));
+	// Applies functions to Harmonies, returns cached values if available
 	return (a->ApplyToSelf(m_f) <= b->ApplyToSelf(m_f));
 }
 

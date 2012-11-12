@@ -2,7 +2,7 @@ env = Environment()
 
 env.Append(LIBS = ['zmq', 'json'])
 env.Append(CPPPATH = ['#'])
-env.MergeFlags(['-g', '-O0'])
+env.MergeFlags(['-g', '-O0', '-Wall', '-Wextra'])
 
 dirs = ['#/control/source/', '#/model/source/', '#/server/source/', '#/core/source/']
 cpp = []

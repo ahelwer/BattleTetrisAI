@@ -1,7 +1,7 @@
 #include <control/control.hpp>
 #include <server/state.hpp>
 
-Control::Control(zmq::context_t& context, ServerInterface& si)
+Control::Control(zmq::context_t&, ServerInterface& si)
 	: m_si(si)
 { }
 

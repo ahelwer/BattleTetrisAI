@@ -8,7 +8,7 @@ public:
     GameBoard();
     GameBoard(char const* desc);
     ~GameBoard();
-	bool IsOccupied(int x, int y) const;
+	bool IsOccupied(unsigned x, unsigned y) const;
 	void Update(char const* desc);
     bool HasChanged(char const* desc) const;
 	friend std::ostream& operator<< (std::ostream& out, GameBoard const& gb);

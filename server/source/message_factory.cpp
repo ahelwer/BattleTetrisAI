@@ -117,7 +117,7 @@ State const* MessageFactory::ParseStateMessage(std::string const& stateS) const 
     else if (commType.compare("GamePieceState") == 0)
         return ParseGamePieceStateMessage(root);
     else if (commType.compare("MatchEnd") == 0)
-        return ParseMatchEndStateMessage(root);
+        return ParseMatchEndStateMessage();
     else if (commType.compare("GameEnd") == 0)
         return ParseGameEndStateMessage(root);
     else
@@ -202,7 +202,7 @@ State const* MessageFactory::ParseGamePieceStateMessage(Json::Value const& root)
     return new GamePieceState(sequence, timestamp, myTet, theirTet, queue);
 }
 
-State const* MessageFactory::ParseMatchEndStateMessage(Json::Value const& root) const {
+State const* MessageFactory::ParseMatchEndStateMessage() const {
     return new MatchEnd();
 }
 

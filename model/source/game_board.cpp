@@ -19,8 +19,8 @@ GameBoard::~GameBoard() {
 		delete[] m_pDesc;
 }
 
-bool GameBoard::IsOccupied(int x, int y) const {
-	if (x >= 0 && x < COLS && y >= 0 && y < ROWS)
+bool GameBoard::IsOccupied(unsigned x, unsigned y) const {
+	if (x < COLS && y < ROWS)
 		return m_board[x][y];
 	else
 		return 0;
@@ -35,7 +35,7 @@ bool GameBoard::HasChanged(char const* desc) const {
 }
 
 void GameBoard::Translate(char const* desc) {
-	for (int i = 0; i < BOARD_DESC_SIZE; ++i) {
+	for (unsigned i = 0; i < BOARD_DESC_SIZE; ++i) {
 		char hex = desc[i];
 		char byte = 0;
 		if (hex & (1 << 5)) // hex > 64, so is letter

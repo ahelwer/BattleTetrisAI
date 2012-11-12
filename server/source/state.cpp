@@ -121,7 +121,7 @@ bool MatchEnd::ExecuteUpdates() const {
 	return true;
 }
 
-std::ostream& operator<< (std::ostream& out, MatchEnd const& s) {
+std::ostream& operator<< (std::ostream& out, MatchEnd const&) {
 	out << "Game is over.";
 	return out;
 }

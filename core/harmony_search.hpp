@@ -11,7 +11,6 @@ public:
     void Iterate();
 	Harmony const& GetRanked(unsigned rank) const;
 private:
-    ObjectiveFunction const& m_f;
     HarmonyFactory const& m_hf;
     HarmonyCompare const& m_hc;
     std::vector<Harmony*> m_memory;

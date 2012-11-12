@@ -5,7 +5,7 @@
 HarmonySearch::HarmonySearch(ObjectiveFunction const& f, HarmonyFactory const& hf,
                                 unsigned vars, unsigned memory, float r_accept, 
                                 float r_pa, float b_range)
-    : m_f(f), m_hf(hf), m_hc(f), m_vars(vars), m_r_accept(r_accept), 
+    : m_hf(hf), m_hc(f), m_vars(vars), m_r_accept(r_accept), 
         m_r_pa(r_pa), m_b_range(b_range)
 {
     for (unsigned i = 0; i < memory; ++i)
@@ -36,18 +36,22 @@ void HarmonySearch::Iterate() {
             newHarmony->push_back(m_hf.GenerateRandomVariable(i));
         }
     }
+	
     // Compares new harmony to worst harmony
-    if (m_hc(newHarmony, m_memory.back())) {
-        // Removes last element
-        delete m_memory.back();
-        m_memory.pop_back();
-        m_memory.push_back(newHarmony);
+	Harmony* worst = m_memory.back();
+    if (m_hc(newHarmony, worst)) {
+		m_memory.pop_back();
+		delete worst;
+		m_memory.push_back(newHarmony);
 		std::sort(m_memory.begin(), m_memory.end(), m_hc);
     }
+	else {
+		delete newHarmony;
+	}
 }
 
 Harmony const& HarmonySearch::GetRanked(unsigned rank) const {
-	Harmony* ranked = m_memory.at(rank);
+	Harmony const* ranked = m_memory.at(rank);
 	return (*ranked);
 }
 

@@ -16,7 +16,7 @@ public:
 private:
     State const* ParseGameBoardStateMessage(Json::Value const& root) const;
     State const* ParseGamePieceStateMessage(Json::Value const& root) const;
-    State const* ParseMatchEndStateMessage(Json::Value const& root) const;
+    State const* ParseMatchEndStateMessage() const;
     State const* ParseGameEndStateMessage(Json::Value const& root) const;
     std::string m_clientToken;
 };

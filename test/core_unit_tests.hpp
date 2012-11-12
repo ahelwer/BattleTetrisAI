@@ -4,6 +4,7 @@
 
 class SumFunction : public ObjectiveFunction {
 public:
+	SumFunction() { }
 	virtual float operator() (Harmony const& h) const {
 		float result = 0.0;
 		for (unsigned i = 0; i < h.size(); ++i)
@@ -23,10 +24,10 @@ public:
 		++m_gen;
 		return newHarmony;
 	}
-	virtual float GenerateRandomVariable(unsigned var) const {
+	virtual float GenerateRandomVariable(unsigned) const {
 		return 1.0;
 	}
-	virtual float ModifyVariableTone(unsigned var, float old, float bandwidth) const {
+	virtual float ModifyVariableTone(unsigned, float old, float) const {
 		return old;
 	}
 	void Reset() const {
