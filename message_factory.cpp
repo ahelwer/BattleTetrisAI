@@ -2,6 +2,7 @@
 #include "main.hpp"
 #include "tetronimo.hpp"
 #include <cstdio>
+#include <cstring>
 
 MessageFactory::MessageFactory()
 { }
@@ -120,7 +121,7 @@ State const* MessageFactory::ParseStateMessage(std::string const& stateS) const 
     else if (commType.compare("GameEnd") == 0)
         return ParseGameEndStateMessage(root);
     else
-        return new ErrorState("Could not match message state type.");
+        return new ErrorState("Could not match state message type.");
 }
 
 State const* MessageFactory::ParseGameBoardStateMessage(Json::Value const& root) const {
@@ -132,8 +133,9 @@ State const* MessageFactory::ParseGameBoardStateMessage(Json::Value const& root)
     int myPiece = mine.get("piece_number", -1).asInt();
     Json::Value myBoardV = mine.get("board_state", "0");
     if (myBoardV.asString().size() != BOARD_DESC_SIZE)
-        return new ErrorState("Invalid board description in GameBoardState/state/username");
-    char const* myBoard = myBoardV.asCString();
+        return new ErrorState("Invalid board description.");
+    char* myBoard = new char[BOARD_DESC_SIZE];
+	memcpy((void*)myBoard, (void*)myBoardV.asCString(), BOARD_DESC_SIZE);
     Json::Value myClearedV = mine.get("cleared_rows", "not found");
     std::vector<int>* myCleared = new std::vector<int>();
     for (unsigned i = 0; i < myClearedV.size(); ++i)
@@ -143,15 +145,17 @@ State const* MessageFactory::ParseGameBoardStateMessage(Json::Value const& root)
     int theirPiece = theirs.get("piece_number", -1).asInt();
     Json::Value theirBoardV = theirs.get("board_state", "0");
     if (theirBoardV.asString().size() != BOARD_DESC_SIZE)
-        return new ErrorState("Invalid board description in GameBoardState/state/opponent");
-    char const* theirBoard = theirBoardV.asCString();
+        return new ErrorState("Invalid board description.");
+    char* theirBoard = new char[BOARD_DESC_SIZE];
+	memcpy((void*)theirBoard, (void*)theirBoardV.asCString(), BOARD_DESC_SIZE);
     Json::Value theirClearedV = theirs.get("cleared_rows", "not found");
     std::vector<int>* theirCleared = new std::vector<int>();
     for (unsigned i = 0; i < theirClearedV.size(); ++i)
         theirCleared->push_back(theirClearedV[i].asInt());
 
-    return new GameBoardState(sequence, timestamp, myBoard, theirBoard,
-                                    myPiece, theirPiece, myCleared, theirCleared);
+    return new GameBoardState(sequence, timestamp, myBoard, 
+								theirBoard, myPiece, theirPiece, 
+								myCleared, theirCleared);
 }
 
 State const* MessageFactory::ParseGamePieceStateMessage(Json::Value const& root) const {
@@ -164,30 +168,36 @@ State const* MessageFactory::ParseGamePieceStateMessage(Json::Value const& root)
     for (unsigned i = 0; i < queueV.size(); ++i) {
         std::string piece = queueV[i].asString();
         if (piece.size() != 1)
-            return new ErrorState("Invalid piece descriptor in GamePieceState/queue");
+            return new ErrorState("Invalid piece descriptor.");
         Tetronimo t (piece.at(0));
         queue->push_back(t);
     }
 
+	Tetronimo* myTet = NULL;
     Json::Value mine = states.get(USERNAME, "not found");
-    std::string myPieceS = mine.get("piece", "not found").asString();
-    if (myPieceS.size() != 1)
-        return new ErrorState("Invalid piece descriptor in GamePieceState/state/username");
-    char myPiece = myPieceS.at(0);
-    int myOrient = mine.get("orient", -1).asInt();
-    int myCol = mine.get("col", -1).asInt();
-    int myRow = mine.get("row", -1).asInt();
-    Tetronimo* myTet = new Tetronimo(myPiece, myOrient, myCol, myRow);
+	if (!mine.isNull() && !mine.isInt()) {
+		std::string myPieceS = mine.get("piece", "not found").asString();
+		if (myPieceS.size() != 1)
+			return new ErrorState("Invalid piece descriptor.");
+		char myPiece = myPieceS.at(0);
+		int myOrient = mine.get("orient", -1).asInt();
+		int myCol = mine.get("col", -1).asInt();
+		int myRow = mine.get("row", -1).asInt();
+		myTet = new Tetronimo(myPiece, myOrient, myCol, myRow);
+	}
 
+	Tetronimo* theirTet = NULL;
     Json::Value theirs = states.get("Test Client", "not found");
-    std::string theirPieceS = theirs.get("piece", "not found").asString();
-    if (theirPieceS.size() != 1)
-        return new ErrorState("Invalid piece descriptor in GamePieceState/state/opponent");
-    char theirPiece = theirPieceS.at(0);
-    int theirOrient = theirs.get("orient", -1).asInt();
-    int theirCol = theirs.get("col", -1).asInt();
-    int theirRow = theirs.get("row", -1).asInt();
-    Tetronimo* theirTet = new Tetronimo(theirPiece, theirOrient, theirCol, theirRow);
+	if (!theirs.isNull() && !theirs.isInt()) {
+		std::string theirPieceS = theirs.get("piece", "not found").asString();
+		if (theirPieceS.size() != 1)
+			return new ErrorState("Invalid piece descriptor.");
+		char theirPiece = theirPieceS.at(0);
+		int theirOrient = theirs.get("orient", -1).asInt();
+		int theirCol = theirs.get("col", -1).asInt();
+		int theirRow = theirs.get("row", -1).asInt();
+		theirTet = new Tetronimo(theirPiece, theirOrient, theirCol, theirRow);
+	}
 
     return new GamePieceState(sequence, timestamp, myTet, theirTet, queue);
 }
