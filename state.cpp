@@ -50,8 +50,8 @@ void GameBoardState::ExecuteUpdates() const {
 }
 
 std::ostream& operator<< (std::ostream& out, GameBoardState const& s) {
-	out << "My cleared: " << *(s.m_pMyCleared) << std::endl;
-	out << "Their cleared: " << *(s.m_pTheirCleared) << std::endl;
+	out << "My cleared: " << *(s.m_pMyCleared) << ", ";
+	out << "Their cleared: " << *(s.m_pTheirCleared);
 	return out;
 }
 
