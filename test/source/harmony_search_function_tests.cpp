@@ -41,6 +41,7 @@ void HarmonySearchFunctionalTests::tearDown() {
 }
 
 void HarmonySearchFunctionalTests::TestRosenbrock() {
+	/*
 	for (unsigned i = 0; i < 156; ++i) {
 		m_pSearch->Iterate();
 	}
@@ -48,5 +49,6 @@ void HarmonySearchFunctionalTests::TestRosenbrock() {
 	std::cout << *best << std::endl;
 	std::cout << best->ApplyToSelf(*m_pFunction) << std::endl;
 	delete best;
+	*/
 }
 

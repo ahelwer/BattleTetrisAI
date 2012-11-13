@@ -4,14 +4,19 @@
 #include <algorithm>
 
 GameBoard::GameBoard()
-    : m_pDesc(new char[BOARD_DESC_SIZE]), 
-        m_board(COLS, std::vector<bool>(ROWS, false))
-{ }
+	: m_board(COLS, std::vector<bool>(ROWS, false)), 
+		m_pDesc(new char[BOARD_DESC_SIZE])
+{ 
+	for (int i = 0; i < BOARD_DESC_SIZE; ++i)
+		m_pDesc[i] = '0';
+}
 
 GameBoard::GameBoard(char const* desc)
-    : m_pDesc(new char[BOARD_DESC_SIZE]), 
-        m_board(COLS, std::vector<bool>(ROWS, false))
+	: m_board(COLS, std::vector<bool>(ROWS, false)), 
+    	m_pDesc(new char[BOARD_DESC_SIZE])
 {
+	for (int i = 0; i < BOARD_DESC_SIZE; ++i)
+		m_pDesc[i] = '0';
 	Translate(desc);
 }
 
@@ -122,7 +127,7 @@ bool GameBoard::PopMove() {
 	return true;;
 }
 
-Board const& GameBoard::GetBoard() const {
+BoardDesc const& GameBoard::GetBoardDesc() const {
 	return m_board;
 }
 
@@ -151,17 +156,21 @@ int GameBoard::WellDepth(int x) const {
 
 void GameBoard::Update(char const* desc) {
 	Translate(desc);
+	if (m_pDesc != desc) // Overlapped memcpy is undefined
+		memcpy((void*)m_pDesc, (void*)desc, BOARD_DESC_SIZE);
 }
 
 bool GameBoard::HasChanged(char const* desc) const {
-    return (memcmp((void*)desc, (void*)m_pDesc, BOARD_DESC_SIZE) == 0);
+	if (m_pDesc == desc)
+		return false;
+    return (memcmp((void*)desc, (void*)m_pDesc, BOARD_DESC_SIZE) != 0);
 }
 
 void GameBoard::Translate(char const* desc) {
 	for (int i = 0; i < BOARD_DESC_SIZE; ++i) {
 		char hex = desc[i];
 		char byte = 0;
-		if (hex & (1 << 5)) // hex > 64, so is letter
+		if (hex > 64) // hex > 64, so is letter
 			byte = (hex - 55); // A is char code 65, add 10
 		else
 			byte = (hex - 48); // 0 is char code 48

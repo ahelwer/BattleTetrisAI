@@ -5,7 +5,7 @@
 #include <iostream>
 
 
-typedef std::vector< std::vector<bool> > Board;
+typedef std::vector< std::vector<bool> > BoardDesc;
 
 class GameBoard {
 public:
@@ -16,7 +16,7 @@ public:
 	bool PushMove(Tetronimo* t);
 	// Reverts last move to board and deletes Tetronimo object
 	bool PopMove();
-	Board const& GetBoard() const;
+	BoardDesc const& GetBoardDesc() const;
 	bool IsOccupied(int x, int y) const;
 	bool InBounds(int x, int y) const;
 	int WellDepth(int x) const;
@@ -25,7 +25,7 @@ public:
 	friend std::ostream& operator<< (std::ostream& out, GameBoard const& gb);
 private:
 	void Translate(char const* desc);
-	Board m_board;
+	BoardDesc m_board;
     char* m_pDesc;
 	std::vector<Tetronimo*> m_moveStack;
 };

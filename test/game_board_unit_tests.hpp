@@ -5,6 +5,7 @@
 
 class GameBoardUnitTests : public CppUnit::TestFixture {
     CPPUNIT_TEST_SUITE(GameBoardUnitTests);
+	CPPUNIT_TEST(TestInit);
 	CPPUNIT_TEST(TestTranslateEmpty);
 	CPPUNIT_TEST(TestTranslateFull);
 	CPPUNIT_TEST(TestTranslateComplex);
@@ -14,6 +15,7 @@ class GameBoardUnitTests : public CppUnit::TestFixture {
 public:
     void setUp();
     void tearDown();
+	void TestInit();
 	void TestTranslateEmpty();
 	void TestTranslateFull();
 	void TestTranslateComplex();
