@@ -6,7 +6,7 @@
 
 class Rosenbrock : public ObjectiveFunction {
 public:
-	virtual float operator() (Harmony const& h) const {
+	float operator() (Harmony const& h) const {
 		float x = h.at(0);
 		float y = h.at(1);
 		float result = (1-x)*(1-x) + 100*(y-x*x)*(y-x*x);

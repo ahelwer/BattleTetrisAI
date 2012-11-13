@@ -21,6 +21,8 @@ private:
 	int LandingHeight() const;	// TODO
 	int Blocks() const;
 	int WeightedBlocks() const;
+	int RowTransitions() const; // TODO
+	int ColTransitions() const; // TODO
 	GameState& m_state;
 };
 

@@ -115,3 +115,13 @@ int GameStateEval::WeightedBlocks() const {
 	return weighted;
 }
 
+int GameStateEval::RowTransitions() const {
+	// Counts row transitions
+	return 0;
+}
+
+int GameStateEval::ColTransitions() const {
+	// Counts col transitions
+	return 0;
+}
+
