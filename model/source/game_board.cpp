@@ -19,6 +19,15 @@ GameBoard::~GameBoard() {
 		delete[] m_pDesc;
 }
 
+bool GameBoard::PushMove(Tetronimo const* t) {
+	bool success = false;
+	return success;
+}
+
+bool GameBoard::PopMove() {
+	return false;
+}
+
 bool GameBoard::IsOccupied(unsigned x, unsigned y) const {
 	if (x < COLS && y < ROWS)
 		return m_board[x][y];
