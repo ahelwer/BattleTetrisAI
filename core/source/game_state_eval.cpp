@@ -71,3 +71,47 @@ int GameStateEval::AltitudeDifference() const {
 	return ((ROWS - minWellDepth) - (ROWS - maxWellDepth));
 }
 
+int GameStateEval::MaxWellDepth() const {
+	GameBoard& board = m_state.GetBoard();
+	int maxWellDepth = 0;
+	for (int i = 0; i < COLS; ++i)
+		maxWellDepth = std::min(maxWellDepth, board.WellDepth(i));
+	return (ROWS - maxWellDepth);
+}
+
+int GameStateEval::SumOfAllWells() const {
+	// Sum of all wells based on adjacent columns
+	return 0;
+}
+
+int GameStateEval::LandingHeight() const {
+	// Height at which last tetronimo was placed
+	return 0;
+}
+
+int GameStateEval::Blocks() const {
+	GameBoard& board = m_state.GetBoard();
+	BoardDesc const& desc = board.GetBoardDesc();
+	int blockCount = 0;	
+	for (int j = 0; j < ROWS; ++j) {
+		for (int i = 0; i < COLS; ++i) {
+			if (desc[i][j])
+				++blockCount;
+		}
+	}
+	return blockCount;
+}
+
+int GameStateEval::WeightedBlocks() const {
+	GameBoard& board = m_state.GetBoard();
+	BoardDesc const& desc = board.GetBoardDesc();
+	int weighted = 0;	
+	for (int j = 0; j < ROWS; ++j) {
+		for (int i = 0; i < COLS; ++i) {
+			if (desc[i][j])
+				weighted += (ROWS-j);	
+		}
+	}
+	return weighted;
+}
+
