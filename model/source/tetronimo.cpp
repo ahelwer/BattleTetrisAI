@@ -123,6 +123,32 @@ void Tetronimo::SetY(int y) {
 	m_row = y;
 }
 
+void Tetronimo::RotateLeft() {
+	if (m_type == 'O') {
+		// Do nothing!
+	}
+ 	else if (m_type == 'I' || m_type == 'S' || m_type == 'Z') {
+		m_orient = (m_orient+1)%2;
+	}
+	else if (m_type == 'L' || m_type == 'J' || m_type == 'T') {
+		m_orient = (m_orient+1)%4;
+	}
+	m_pDesc = SetDesc(m_type, m_orient);
+}
+
+void Tetronimo::RotateRight() {
+	if (m_type == 'O') {
+		// Do nothing!
+	}
+ 	else if (m_type == 'I' || m_type == 'S' || m_type == 'Z') {
+		m_orient = (m_orient+1)%2;
+	}
+	else if (m_type == 'L' || m_type == 'J' || m_type == 'T') {
+		m_orient = (m_orient-1+4)%4;
+	}
+	m_pDesc = SetDesc(m_type, m_orient);
+}
+
 bool const* Tetronimo::SetDesc(char type, int orient) const {
 	bool const* desc = NULL;
 	if (type == 'O') {

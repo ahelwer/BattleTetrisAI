@@ -11,9 +11,9 @@ std::ostream& operator<< (std::ostream& out, std::vector<T> const& v) {
 	}
 	else {
 		out << "[";
-		for (unsigned i = 0; i < (v.size()-1); ++i)
+		for (int i = 0; i < (v.size()-1); ++i)
 			out << v.at(i) << ", ";
-		out << v.at(v.size()-1) << "]";
+		out << v.back() << "]";
 		return out;
 	}
 }
@@ -21,8 +21,26 @@ std::ostream& operator<< (std::ostream& out, std::vector<T> const& v) {
 template <typename T>
 std::ostream& operator<< (std::ostream& out, 
 				std::vector< std::vector<T> > const& v) {
-	for (unsigned i = 0; i < v.size(); ++i)
-		out << v[i] << std::endl;
+
+	if (v.size() == 0) {
+		out << "[]";
+		return out;
+	}
+	if (v.at(0).size() == 0) {
+		out << "[";
+		for (int i = 0; i < v.size()-1; ++i) {
+			out << "[], ";
+		}
+		out << v.back() << "]";
+		return out;
+	}
+	out << "[";
+	for (int j = 0; j < v.at(0).size(); ++j) {
+		for (int i = 0; i < v.size()-1; ++i) {
+			out << v[i][j] << ", "; 
+		}
+		out << v.back()[j] << "]" << std::endl << "[";
+	}
 	return out;
 }
 

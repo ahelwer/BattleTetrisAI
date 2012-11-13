@@ -21,15 +21,16 @@ GameBoard::GameBoard(char const* desc)
 }
 
 GameBoard::~GameBoard() {
-	if (m_pDesc != NULL)
+	if (m_pDesc != NULL) {
 		delete[] m_pDesc;
+		m_pDesc = NULL;
+	}
 }
 
-bool GameBoard::PushMove(Tetronimo* t) {
-	bool success = false;
-
-	bool const* desc = t->GetDesc();
-	int x = t->GetX();
+bool GameBoard::PushMove(Tetronimo const& tet) {
+	Tetronimo t = tet;
+	bool const* desc = t.GetDesc();
+	int x = t.GetX();
 	int pivotX = 2;
 	int pivotY = 1;
 
@@ -47,7 +48,6 @@ bool GameBoard::PushMove(Tetronimo* t) {
 		}
 	}
 	if (!inBounds) {
-		delete t;
 		return false;
 	}
 
@@ -78,7 +78,6 @@ bool GameBoard::PushMove(Tetronimo* t) {
 		}
 	}
 	if (!inBounds) {
-		delete t;
 		return false;
 	}
 
@@ -94,19 +93,19 @@ bool GameBoard::PushMove(Tetronimo* t) {
 		}
 	}
 
-	t->SetY(rest);
+	t.SetY(rest);
 	m_moveStack.push_back(t);
 
-	return success;
+	return true;
 }
 
 bool GameBoard::PopMove() {
 	if (m_moveStack.size() == 0)
 		return false;
-	Tetronimo const* last = m_moveStack.at(m_moveStack.size()-1);
-	bool const* desc = last->GetDesc();
-	int x = last->GetX();
-	int y = last->GetY();
+	Tetronimo last = m_moveStack.back();
+	bool const* desc = last.GetDesc();
+	int x = last.GetX();
+	int y = last.GetY();
 	int pivotX = 2;
 	int pivotY = 1;
 
@@ -123,8 +122,7 @@ bool GameBoard::PopMove() {
 	}
 
 	m_moveStack.pop_back();
-	delete last;
-	return true;;
+	return true;
 }
 
 BoardDesc const& GameBoard::GetBoardDesc() const {

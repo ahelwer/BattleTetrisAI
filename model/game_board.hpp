@@ -12,9 +12,9 @@ public:
     GameBoard();
     GameBoard(char const* desc);
     ~GameBoard();
-	// Applies move to board, takes ownership of Tetronimo object
-	bool PushMove(Tetronimo* t);
-	// Reverts last move to board and deletes Tetronimo object
+	// Applies move to board
+	bool PushMove(Tetronimo const& tet);
+	// Reverts last move to board
 	bool PopMove();
 	BoardDesc const& GetBoardDesc() const;
 	bool IsOccupied(int x, int y) const;
@@ -27,6 +27,6 @@ private:
 	void Translate(char const* desc);
 	BoardDesc m_board;
     char* m_pDesc;
-	std::vector<Tetronimo*> m_moveStack;
+	std::vector<Tetronimo> m_moveStack;
 };
 
