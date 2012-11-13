@@ -96,17 +96,34 @@ bool T3[16] = 	{0, 0, 1, 0,
 				 0, 0, 0, 0};
 
 
-Tetronimo::Tetronimo(char type, int orient, int col, int row)
+Tetronimo::Tetronimo(char type, int orient, 
+						int col, int row)
 	: m_type(type), m_orient(orient), m_col(col), m_row(row) 
 { 
 	m_pDesc = SetDesc(type, orient);
 }
 
-bool const* Tetronimo::GetDesc() {
+bool const* Tetronimo::GetDesc() const {
 	return m_pDesc;
 }
 
-bool const* Tetronimo::SetDesc(char type, int orient) {
+int Tetronimo::GetX() const {
+	return m_col;
+}
+
+int Tetronimo::GetY() const {
+	return m_row;
+}
+
+void Tetronimo::SetX(int x) {
+	m_col = x;
+}
+
+void Tetronimo::SetY(int y) {
+	m_row = y;
+}
+
+bool const* Tetronimo::SetDesc(char type, int orient) const {
 	bool const* desc = NULL;
 	if (type == 'O') {
 		desc = &(O0[0]);
@@ -163,8 +180,8 @@ bool const* Tetronimo::SetDesc(char type, int orient) {
 }
 
 std::ostream& operator<< (std::ostream& out, Tetronimo const& t) {
-	for (unsigned j = 0; j < 4; ++j) {
-		for (unsigned i = 0; i < 4; ++i) {
+	for (int j = 0; j < 4; ++j) {
+		for (int i = 0; i < 4; ++i) {
 			bool set = t.m_pDesc[j*4+i];
 			out << set;
 		}
