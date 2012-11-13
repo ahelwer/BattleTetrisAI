@@ -5,16 +5,17 @@
 
 class HarmonySearch {
 public:
-    HarmonySearch(ObjectiveFunction const& f, HarmonyFactory const& hf, unsigned vars,
-                    unsigned memory, float r_accept, float r_pa, float b_range);
+    HarmonySearch(HarmonyCompare const& compare, HarmonyFactory const& factory,
+					unsigned varCount, unsigned memorySize, 
+					float r_accept, float r_pa, float b_range);
     ~HarmonySearch();
     void Iterate();
-	Harmony const& GetRanked(unsigned rank) const;
+	Harmony const* GetRanked(unsigned rank) const;
 private:
-    HarmonyFactory const& m_hf;
-    HarmonyCompare const& m_hc;
+    HarmonyCompare const& m_compare;
+    HarmonyFactory const& m_factory;
     std::vector<Harmony*> m_memory;
-    unsigned m_vars;
+    unsigned m_varCount;
     float m_r_accept;
     float m_r_pa;
     float m_b_range;

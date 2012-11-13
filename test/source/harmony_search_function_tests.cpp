@@ -12,7 +12,7 @@ void HarmonySearchFunctionalTests::setUp() {
 	m_pFactory = new HarmonyFactory(m_vCount, *m_pRanges);
 	m_pFunction = new Rosenbrock();
 	m_pCompare = new HarmonyCompare(*m_pFunction);
-	m_pSearch = new HarmonySearch(*m_pFunction, *m_pFactory, 
+	m_pSearch = new HarmonySearch(*m_pCompare, *m_pFactory, 
 									m_vCount, m_memory,
 									0.95, 0.7, 1.0);
 }
@@ -44,6 +44,8 @@ void HarmonySearchFunctionalTests::TestRosenbrock() {
 	for (unsigned i = 0; i < 100; ++i) {
 		m_pSearch->Iterate();
 	}
-	std::cout << m_pSearch->GetRanked(0) << std::endl;
+	Harmony const* best = m_pSearch->GetRanked(0);
+	std::cout << *best << std::endl;
+	delete best;
 }
 

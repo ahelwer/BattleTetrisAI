@@ -30,7 +30,7 @@ private:
 class HarmonyFactory {
 public:
     HarmonyFactory(unsigned decisionVarCount, HarmonyRanges const& ranges);
-	~HarmonyFactory();
+	virtual ~HarmonyFactory();
     virtual Harmony* GenerateRandomHarmony() const;
     virtual float GenerateRandomVariable(unsigned var) const;
     virtual float ModifyVariableTone(unsigned var, float old, float bandwidth) const;
