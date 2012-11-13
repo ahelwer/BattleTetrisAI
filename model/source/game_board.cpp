@@ -122,11 +122,15 @@ bool GameBoard::PopMove() {
 	return true;;
 }
 
+Board const& GameBoard::GetBoard() const {
+	return m_board;
+}
+
 bool GameBoard::IsOccupied(int x, int y) const {
 	if (InBounds(x, y))
 		return m_board[x][y];
 	else
-		return 0;
+		return false;
 }
 
 bool GameBoard::InBounds(int x, int y) const {

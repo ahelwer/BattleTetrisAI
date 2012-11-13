@@ -4,6 +4,9 @@
 #include <model/tetronimo.hpp>
 #include <iostream>
 
+
+typedef std::vector< std::vector<bool> > Board;
+
 class GameBoard {
 public:
     GameBoard();
@@ -13,6 +16,7 @@ public:
 	bool PushMove(Tetronimo* t);
 	// Reverts last move to board and deletes Tetronimo object
 	bool PopMove();
+	Board const& GetBoard() const;
 	bool IsOccupied(int x, int y) const;
 	bool InBounds(int x, int y) const;
 	int WellDepth(int x) const;
@@ -21,8 +25,8 @@ public:
 	friend std::ostream& operator<< (std::ostream& out, GameBoard const& gb);
 private:
 	void Translate(char const* desc);
+	Board m_board;
     char* m_pDesc;
-    std::vector< std::vector<bool> > m_board;
 	std::vector<Tetronimo*> m_moveStack;
 };
 
