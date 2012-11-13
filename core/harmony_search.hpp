@@ -2,7 +2,6 @@
 
 #include <util/vector.hpp>
 #include <core/harmony.hpp>
-#include <core/objective_function.hpp>
 
 class HarmonySearch {
 public:

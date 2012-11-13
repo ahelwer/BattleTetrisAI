@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <utility>
 #include <util/vector.hpp>
-#include <core/objective_function.hpp>
 
 typedef std::vector<float> Harmony;
 typedef std::vector< std::pair<float, float> > HarmonyRanges;
