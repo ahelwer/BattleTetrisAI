@@ -8,3 +8,7 @@ GameBoard& GameState::GetBoard() {
 	return m_board;
 }
 
+GameBoard const& GameState::GetBoard() const {
+	return m_board;
+}
+

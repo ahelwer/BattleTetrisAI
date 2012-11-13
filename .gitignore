@@ -1,3 +1,5 @@
 *.o
 .sconsign.dblite
 *.swp
+a.out
+runTests
