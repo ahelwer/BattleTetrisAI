@@ -1,5 +1,6 @@
 #include <core/harmony.hpp>
 #include <cstdlib>
+//#include <random>
 
 Harmony::Harmony()
 	: std::vector<float>(), m_isCached(false), m_cached(0.0)
@@ -27,7 +28,9 @@ bool HarmonyCompare::operator() (Harmony const* a, Harmony const* b) const {
 
 HarmonyFactory::HarmonyFactory(unsigned decisionVarCount, HarmonyRanges const& ranges)
     : m_vCount(decisionVarCount), m_ranges(ranges)
-{ }
+{ 
+	srand(time(NULL));
+}
 
 HarmonyFactory::~HarmonyFactory()
 { }
@@ -42,14 +45,14 @@ Harmony* HarmonyFactory::GenerateRandomHarmony() const {
 float HarmonyFactory::GenerateRandomVariable(unsigned var) const {
     float low = m_ranges.at(var).first;
     float high = m_ranges.at(var).second;
-    float r = low + (float)rand()/(float)RAND_MAX/(high-low);
+    float r = low + ((float)rand()/(float)RAND_MAX)*(high-low);
     return r;
 }
 
 float HarmonyFactory::ModifyVariableTone(unsigned var, float old, float bandwidth) const {
     float low = m_ranges.at(var).first;
     float high = m_ranges.at(var).second;
-    float r = (float)rand()/(float)RAND_MAX/2 - 1;
+    float r = ((float)rand()/(float)RAND_MAX)*2 - 1;
     float modified = old + bandwidth*r;
     modified = std::min(modified, high);
     modified = std::max(modified, low);

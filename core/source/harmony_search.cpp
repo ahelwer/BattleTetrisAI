@@ -36,7 +36,7 @@ void HarmonySearch::Iterate() {
             newHarmony->push_back(m_factory.GenerateRandomVariable(i));
         }
     }
-	
+
     // Compares new harmony to worst harmony
 	Harmony* worst = m_memory.back();
     if (m_compare(newHarmony, worst)) {

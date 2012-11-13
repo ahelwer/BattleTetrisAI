@@ -70,7 +70,7 @@ void HarmonySearchUnitTests::TestInitialization() {
 
 void HarmonySearchUnitTests::TestIteration() {
 	HarmonyCompare const& hc = *m_pCompare;
-	for (unsigned int iter = 0; iter < 100; ++iter) {
+	for (unsigned int iter = 0; iter < 10; ++iter) {
 		m_pSearch->Iterate();
 		for (unsigned i = 0; i < m_memory-1; ++i) {
 			Harmony const* r1 = m_pSearch->GetRanked(i);
@@ -80,14 +80,6 @@ void HarmonySearchUnitTests::TestIteration() {
 			delete r1;
 			delete r2;
 		}
-		/*
-		Harmony const& currBest = m_pSearch->GetRanked(0);
-		for (unsigned i = 0; i < m_vCount; ++i) {
-			float v1 = best.at(i);
-			float v2 = currBest.at(i);
-			CPPUNIT_ASSERT(FloatEqual(v1, v2));
-		}
-		*/
 	}
 }
 
