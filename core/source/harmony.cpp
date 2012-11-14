@@ -21,9 +21,9 @@ HarmonyCompare::HarmonyCompare(ObjectiveFunction const& f)
 
 bool HarmonyCompare::operator() (Harmony const* a, Harmony const* b) const {
     // Is Harmony a less than Harmony b? 
-    //return (m_f(*a) <= m_f(*b));
+    //return (m_f(*a) < m_f(*b));
 	// Applies functions to Harmonies, returns cached values if available
-	return (a->ApplyToSelf(m_f) <= b->ApplyToSelf(m_f));
+	return (a->ApplyToSelf(m_f) < b->ApplyToSelf(m_f));
 }
 
 HarmonyFactory::HarmonyFactory(unsigned decisionVarCount, HarmonyRanges const& ranges)
