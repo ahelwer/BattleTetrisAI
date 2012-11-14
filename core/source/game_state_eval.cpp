@@ -8,12 +8,12 @@ int ConnectedHoles(GameState const& state);
 int RemovedRows(GameState const& state); 
 int AltitudeDifference(GameState const& state);
 int MaxWellDepth(GameState const& state);
-int SumOfAllWells(GameState const& state);  // TODO
-int LandingHeight(GameState const& state);  // TODO
+int SumOfAllWells(GameState const& state); 
+int LandingHeight(GameState const& state);
 int Blocks(GameState const& state);
 int WeightedBlocks(GameState const& state);
-int RowTransitions(GameState const& state); // TODO
-int ColTransitions(GameState const& state); // TODO
+int RowTransitions(GameState const& state);
+int ColTransitions(GameState const& state);
 int HighestHole(GameState const& state);
 int BlocksAboveHighestHole(GameState const& state);
 int PotentialRows(GameState const& state);  // TODO
@@ -199,6 +199,11 @@ int LandingHeight(GameState const& state) {
     return (ROWS-height);
 }
 
+/* *
+ * Function Blocks
+ *
+ * The number of blocks on the board.
+ * */
 int Blocks(GameState const& state) {
     GameBoard const& board = state.GetBoard();
     BoardDesc const& desc = board.GetBoardDesc();
@@ -212,6 +217,11 @@ int Blocks(GameState const& state) {
     return blockCount;
 }
 
+/* *
+ * Function WeightedBlocks
+ *
+ * Blocks on the board, weighted by height.
+ * */
 int WeightedBlocks(GameState const& state) {
     GameBoard const& board = state.GetBoard();
     BoardDesc const& desc = board.GetBoardDesc();
@@ -225,14 +235,80 @@ int WeightedBlocks(GameState const& state) {
     return weighted;
 }
 
+/* *
+ * Function RowTransitions
+ *
+ * The sum of all occupied to unoccupied or vice versa row transitions.
+ * */
 int RowTransitions(GameState const& state) {
-    // Counts row transitions
-    return 0;
+    GameBoard const& board = state.GetBoard();
+    BoardDesc const& desc = board.GetBoardDesc();
+    int transCount = 0;
+    for (int j = 0; j < ROWS; ++j) {
+        bool validRow = false;
+        bool inBlock = true;
+        int rowTransCount = 0;
+        for (int i = 0; i < COLS; ++i) {
+            if (desc[i][j] && !inBlock) {
+                ++rowTransCount;
+                inBlock = true;
+                validRow = true;
+            }
+            if (!desc[i][j] && inBlock) {
+                ++rowTransCount;
+                inBlock = false;
+            }
+        }
+        if (!inBlock)
+            ++rowTransCount;
+        if (validRow)
+            transCount += rowTransCount;
+    }
+    return transCount;
 }
 
+/* *
+ * Function ColTransitions
+ *
+ * The sum of all occupied to unoccupied or vice versa col transitions.
+ * */
 int ColTransitions(GameState const& state) {
-    // Counts col transitions
-    return 0;
+    GameBoard const& board = state.GetBoard();
+    BoardDesc const& desc = board.GetBoardDesc();
+    int transCount = 0;
+    for (int i = 0; i < COLS; ++i) {
+        bool validCol = false;
+        bool inBlock = true;
+        int colTransCount = 0;
+        for (int j = ROWS-1; j >= 0; --j) {
+            if (desc[i][j] && !inBlock) {
+                ++colTransCount;
+                inBlock = true;
+                validCol = true;
+            }
+            if (!desc[i][j] && inBlock) {
+                ++colTransCount;
+                inBlock = false;
+            }
+        }
+        if (validCol)
+            transCount += colTransCount;
+    }
+    // Discount all non-well column tops
+    int wells[COLS];
+    int wellCount = 0;
+    for (int i = 0; i < COLS; ++i)
+        wells[i] = board.WellDepth(i);
+    if (wells[0] < wells[1])
+        ++wellCount;
+    for (int i = 1; i < COLS-1; ++i) {
+        if (wells[i] < wells[i-1] && wells[i] < wells[i+1])
+            ++wellCount;
+    }
+    if (wells[COLS-1] < wells[COLS-2])
+        ++wellCount;
+    transCount -= (COLS-wellCount);
+    return transCount;
 }
 
 int HighestHole(GameState const& state) {
