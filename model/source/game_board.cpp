@@ -29,54 +29,23 @@ GameBoard::~GameBoard() {
     }
 }
 
-bool GameBoard::PushMove(Tetronimo const& tet) {
-    BoardDesc& board = m_boardStack.back();
-    Tetronimo t = tet;
-    bool const* desc = t.GetDesc();
-    int x = t.GetX();
-    int y = t.GetY();
-    int pivotX = 2;
-    int pivotY = 1;
-
-    // Checks that Tetronimo move is valid
-    bool valid = true;
-    for (int j = 0; j < 4; ++j) {
-        for (int i = 0; i < 4; ++i) {
-            bool isSet = desc[j*4+i];
-            if (isSet) {
-                int boardX = (x + i - pivotX);
-                int boardY = (y + j - pivotY);
-                if (!InBounds(boardX, boardY)) {
-                    valid = false;    
-                }
-                else {
-                    if(board[boardX][boardY]) {
-                        valid = false;
-                    }
-                }
-            }
-        }
-    }
-    if (!valid) {
+bool GameBoard::ApplyMove(Tetronimo const& t) {
+    if (!IsValidMove(t))
         return false;
-    }
+    ApplyMoveToBoard(t);
+    return true;
+}
+
+bool GameBoard::PushMove(Tetronimo const& t) {
+    if (!IsValidMove(t))
+        return false;
 
     // Saves current board on stack
+    BoardDesc& board = GetBoardDesc();
     m_boardStack.push_back(board);
-    BoardDesc& newBoard = m_boardStack.back();
 
     // Apply tetronimo to board
-    for (int j = 0; j < 4; ++j) {
-        for (int i = 0; i < 4; ++i) {
-            bool isSet = desc[j*4+i];
-            if (isSet) {
-                int boardX = (x + i - pivotX);
-                int boardY = (y + j - pivotY);
-                newBoard[boardX][boardY] = true;
-            }
-        }
-    }
-
+    ApplyMoveToBoard(t);
     return true;
 }
 
@@ -127,9 +96,57 @@ void GameBoard::Update(char const* desc) {
 }
 
 bool GameBoard::HasChanged(char const* desc) const {
-    if (m_pDesc == desc)
-        return false;
+    if (m_pDesc == desc) return false;
     return (memcmp((void*)desc, (void*)m_pDesc, BOARD_DESC_SIZE) != 0);
+}
+
+bool GameBoard::IsValidMove(Tetronimo const& t) {
+    BoardDesc& board = GetBoardDesc();
+    bool const* desc = t.GetDesc();
+    int x = t.GetX();
+    int y = t.GetY();
+    int pivotX = 2;
+    int pivotY = 1;
+
+    bool valid = true;
+    for (int j = 0; j < 4; ++j) {
+        for (int i = 0; i < 4; ++i) {
+            bool isSet = desc[j*4+i];
+            if (isSet) {
+                int boardX = (x + i - pivotX);
+                int boardY = (y + j - pivotY);
+                if (!InBounds(boardX, boardY)) {
+                    valid = false;    
+                }
+                else {
+                    if(board[boardX][boardY]) {
+                        valid = false;
+                    }
+                }
+            }
+        }
+    }
+    return valid;
+}
+
+void GameBoard::ApplyMoveToBoard(Tetronimo const& t) {
+    BoardDesc& board = GetBoardDesc();
+    bool const* desc = t.GetDesc();
+    int x = t.GetX();
+    int y = t.GetY();
+    int pivotX = 2;
+    int pivotY = 1;
+
+    for (int j = 0; j < 4; ++j) {
+        for (int i = 0; i < 4; ++i) {
+            bool isSet = desc[j*4+i];
+            if (isSet) {
+                int boardX = (x + i - pivotX);
+                int boardY = (y + j - pivotY);
+                board[boardX][boardY] = true;
+            }
+        }
+    }
 }
 
 void GameBoard::Translate(char const* desc) {

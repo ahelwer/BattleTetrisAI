@@ -12,9 +12,8 @@ public:
     GameBoard();
     GameBoard(char const* desc);
     ~GameBoard();
-    // Applies move to board
-    bool PushMove(Tetronimo const& tet);
-    // Reverts last move to board
+    bool ApplyMove(Tetronimo const& t);
+    bool PushMove(Tetronimo const& t);
     bool PopMove();
     BoardDesc& GetBoardDesc();
     BoardDesc const& GetBoardDesc() const;
@@ -25,6 +24,8 @@ public:
     bool HasChanged(char const* desc) const;
     friend std::ostream& operator<< (std::ostream& out, GameBoard const& gb);
 private:
+    bool IsValidMove(Tetronimo const& t);
+    void ApplyMoveToBoard(Tetronimo const& t);
     void Translate(char const* desc);
     std::vector<BoardDesc> m_boardStack;
     char* m_pDesc;
