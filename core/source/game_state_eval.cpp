@@ -181,9 +181,22 @@ int SumOfAllWells(GameState const& state) {
     return totalWellDepth;
 }
 
+/* *
+ * Function LandingHeight
+ *
+ * Height at which the last tetronimo was placed
+ * */
 int LandingHeight(GameState const& state) {
-    // Height at which last tetronimo was placed
-    return 0;
+    Tetromino const& last = state.LastPiecePlayed();
+    int height = last.GetY();
+    bool const* desc = last.GetDesc();
+    for (int i = 0; i < 4; ++i) {
+        if (desc[i]) {
+            --height;
+            break;
+        }
+    }
+    return (ROWS-height);
 }
 
 int Blocks(GameState const& state) {
