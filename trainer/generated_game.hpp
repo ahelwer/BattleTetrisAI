@@ -9,6 +9,7 @@ public:
     ~GeneratedGame();
     void GenerateNewGame();
     Tetronimo const& GetPiece(int idx) const; 
+    std::vector<Tetronimo> const* GetQueue(int idx) const;
     int GameLength() const;
 private:
     int m_gameLength;

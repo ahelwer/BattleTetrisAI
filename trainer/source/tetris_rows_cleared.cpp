@@ -1,4 +1,5 @@
 #include <trainer/tetris_rows_cleared.hpp>
+#include <core/tetris_oracle.hpp>
 #include <model/game_state.hpp>
 
 TetrisRowsCleared::TetrisRowsCleared(GeneratedGame const& generator)
@@ -11,8 +12,13 @@ float TetrisRowsCleared::operator() (Harmony const& h) const {
     int gameLength = m_generator.GameLength();
     for (int i = 0; i < gameLength; ++i ) {
         Tetronimo const& tCurrent = m_generator.GetPiece(i);
-        //Tetronimo const& tNext = m_generator.GetPiece(i+1);
-        // Tetronimo const* best = FindBestMove(state, h);
+        std::vector<Tetronimo> const* queue = m_generator.GetQueue(i);
+        Tetronimo const* best = FindBestMove(state, h);
+        if (best != NULL) {
+            // Apply move to state
+            delete best;
+        }
+        delete queue;
     }
     return rowsCleared;
 }

@@ -1,4 +1,5 @@
 #include <trainer/generated_game.hpp>
+#include <algorithm>
 #include <cstdlib>
 
 GeneratedGame::GeneratedGame(int gameLength)
@@ -37,5 +38,12 @@ int GeneratedGame::GameLength() const {
 Tetronimo const& GeneratedGame::GetPiece(int idx) const {
     Tetronimo* ret = m_sequence.at(idx);
     return (*ret);
+}
+
+std::vector<Tetronimo> const* GeneratedGame::GetQueue(int idx) const {
+    std::vector<Tetronimo>* queue = new std::vector<Tetronimo>();
+    for (int i = idx+1; i < std::min(m_gameLength, i+5); ++i)
+        queue->push_back(*m_sequence.at(i));
+    return queue;
 }
 
