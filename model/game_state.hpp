@@ -10,6 +10,7 @@ public:
     bool PushMove(Tetromino const& t);
     bool PopMove();
     bool PiecesLeftInQueue() const;
+    Tetromino const& GetPieceInPlay();
     Tetromino const& FeedFromQueue();
     GameBoard& GetBoard();
     GameBoard const& GetBoard() const;

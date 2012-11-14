@@ -56,6 +56,39 @@ bool GameBoard::PopMove() {
     return true;
 }
 
+bool GameBoard::IsValidMove(Tetromino const& t) const {
+    BoardDesc const& board = GetBoardDesc();
+    bool const* desc = t.GetDesc();
+    int x = t.GetX();
+    int y = t.GetY();
+    int pivotX = 2;
+    int pivotY = 1;
+
+    bool valid = true;
+    for (int j = 0; j < 4; ++j) {
+        for (int i = 0; i < 4; ++i) {
+            bool isSet = desc[j*4+i];
+            if (isSet) {
+                int boardX = (x + i - pivotX);
+                int boardY = (y + j - pivotY);
+                if (!InBounds(boardX, boardY)) {
+                    valid = false;    
+                }
+                else {
+                    if(board[boardX][boardY]) {
+                        valid = false;
+                    }
+                }
+            }
+        }
+    }
+    return valid;
+}
+
+bool GameBoard::IsAtRest(Tetromino const& t) const {
+    return false;
+}
+
 BoardDesc& GameBoard::GetBoardDesc() {
     return m_boardStack.back();
 }
@@ -98,35 +131,6 @@ void GameBoard::Update(char const* desc) {
 bool GameBoard::HasChanged(char const* desc) const {
     if (m_pDesc == desc) return false;
     return (memcmp((void*)desc, (void*)m_pDesc, BOARD_DESC_SIZE) != 0);
-}
-
-bool GameBoard::IsValidMove(Tetromino const& t) {
-    BoardDesc& board = GetBoardDesc();
-    bool const* desc = t.GetDesc();
-    int x = t.GetX();
-    int y = t.GetY();
-    int pivotX = 2;
-    int pivotY = 1;
-
-    bool valid = true;
-    for (int j = 0; j < 4; ++j) {
-        for (int i = 0; i < 4; ++i) {
-            bool isSet = desc[j*4+i];
-            if (isSet) {
-                int boardX = (x + i - pivotX);
-                int boardY = (y + j - pivotY);
-                if (!InBounds(boardX, boardY)) {
-                    valid = false;    
-                }
-                else {
-                    if(board[boardX][boardY]) {
-                        valid = false;
-                    }
-                }
-            }
-        }
-    }
-    return valid;
 }
 
 void GameBoard::ApplyMoveToBoard(Tetromino const& t) {

@@ -94,7 +94,6 @@ bool T3[16] =     {0, 0, 1, 0,
                  0, 0, 1, 0,
                  0, 0, 0, 0};
 
-
 Tetromino::Tetromino(char type, int orient, 
                         int col, int row)
     : m_type(type), m_orient(orient), m_col(col), m_row(row) 
@@ -108,6 +107,10 @@ bool const* Tetromino::GetDesc() const {
 
 char Tetromino::GetType() const {
     return m_type;
+}
+
+int Tetromino::GetOrient() const {
+    return m_orient;
 }
 
 int Tetromino::GetX() const {
@@ -124,6 +127,18 @@ void Tetromino::SetX(int x) {
 
 void Tetromino::SetY(int y) {
     m_row = y;
+}
+
+void Tetromino::ShiftRight() {
+    ++m_col;
+}
+
+void Tetromino::ShiftLeft() {
+    --m_col;
+}
+
+void Tetromino::ShiftDown() {
+    ++m_row;
 }
 
 void Tetromino::SetOrient(int orient) {

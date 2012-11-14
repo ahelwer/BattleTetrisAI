@@ -19,6 +19,10 @@ bool GameState::PiecesLeftInQueue() const {
     return (m_depthInQueue < m_pieceQueue.size()-1);
 }
 
+Tetromino const& GameState::GetPieceInPlay() {
+    return m_pieceInPlay;
+}
+
 Tetromino const& GameState::FeedFromQueue() {
     m_pieceInPlay = m_pieceQueue[m_depthInQueue+1];
     ++m_depthInQueue;

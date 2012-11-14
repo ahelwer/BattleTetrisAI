@@ -17,6 +17,8 @@ public:
     bool PopMove();
     BoardDesc& GetBoardDesc();
     BoardDesc const& GetBoardDesc() const;
+    bool IsValidMove(Tetromino const& t) const;
+    bool IsAtRest(Tetromino const& t) const;
     bool IsOccupied(int x, int y) const;
     bool InBounds(int x, int y) const;
     int WellDepth(int x) const;
@@ -24,7 +26,6 @@ public:
     bool HasChanged(char const* desc) const;
     friend std::ostream& operator<< (std::ostream& out, GameBoard const& gb);
 private:
-    bool IsValidMove(Tetromino const& t);
     void ApplyMoveToBoard(Tetromino const& t);
     void Translate(char const* desc);
     std::vector<BoardDesc> m_boardStack;
