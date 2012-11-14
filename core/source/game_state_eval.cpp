@@ -5,7 +5,7 @@
 int PileHeight(GameState const& state);
 int Holes(GameState const& state);
 int ConnectedHoles(GameState const& state);
-int RemovedRows(GameState const& state); // TODO
+int RemovedRows(GameState const& state); 
 int AltitudeDifference(GameState const& state);
 int MaxWellDepth(GameState const& state);
 int SumOfAllWells(GameState const& state);  // TODO
@@ -108,6 +108,11 @@ int RemovedRows(GameState const& state) {
     return cleared.size();
 }
 
+/* *
+ * Function AltitudeDifference
+ *
+ * The height difference between the lowest and highest reachable blocks.
+ * */
 int AltitudeDifference(GameState const& state) {
     GameBoard const& board = state.GetBoard();
     int minWellDepth = ROWS;
@@ -120,17 +125,60 @@ int AltitudeDifference(GameState const& state) {
     return ((ROWS - minWellDepth) - (ROWS - maxWellDepth));
 }
 
+/* *
+ * Function MaxWellDepth
+ *
+ * Depth of the deepest well on the board.
+ * */
 int MaxWellDepth(GameState const& state) {
     GameBoard const& board = state.GetBoard();
     int maxWellDepth = 0;
+    int wells[COLS];
     for (int i = 0; i < COLS; ++i)
-        maxWellDepth = std::min(maxWellDepth, board.WellDepth(i));
-    return (ROWS - maxWellDepth);
+        wells[i] = board.WellDepth(i);
+    if (wells[0] < wells[1]) {
+        int depth = wells[1]-wells[0];
+        maxWellDepth = std::max(maxWellDepth, depth);
+    }
+    for (int i = 1; i < COLS-1; ++i) {
+        if (wells[i] < wells[i-1] && wells[i] < wells[i+1]) {
+            int depth = std::min(wells[i-1]-wells[i], wells[i+1]-wells[i]);
+            maxWellDepth = std::max(maxWellDepth, depth);
+        }
+    }
+    if (wells[COLS-1] < wells[COLS-2]) {
+        int depth = wells[COLS-2]-wells[COLS-1];
+        maxWellDepth = std::max(maxWellDepth, depth);
+    }
+    return maxWellDepth;
 }
 
+/* *
+ * Function SumOfAllWells
+ *
+ * Sum of the depths of all wells on the board.
+ * */
 int SumOfAllWells(GameState const& state) {
-    // Sum of all wells based on adjacent columns
-    return 0;
+    GameBoard const& board = state.GetBoard();
+    int totalWellDepth = 0;
+    int wells[COLS];
+    for (int i = 0; i < COLS; ++i)
+        wells[i] = board.WellDepth(i);
+    if (wells[0] < wells[1]) {
+        int depth = wells[1]-wells[0];
+        totalWellDepth += depth;
+    }
+    for (int i = 1; i < COLS-1; ++i) {
+        if (wells[i] < wells[i-1] && wells[i] < wells[i+1]) {
+            int depth = std::min(wells[i-1]-wells[i], wells[i+1]-wells[i]);
+            totalWellDepth += depth;
+        }
+    }
+    if (wells[COLS-1] < wells[COLS-2]) {
+        int depth = wells[COLS-2]-wells[COLS-1];
+        totalWellDepth += depth;
+    }
+    return totalWellDepth;
 }
 
 int LandingHeight(GameState const& state) {
