@@ -1,35 +1,31 @@
 #include <core/game_state_eval.hpp>
 #include <util/constants.hpp>
 
-GameStateEval::GameStateEval(GameState& state) 
-    : m_state(state)
-{ }
-
-int GameStateEval::GetVarCount() {
+int GetVarCount() {
     return 19;
 }
 
-HarmonyRanges const* GameStateEval::GetRanges() {
+HarmonyRanges const* GetRanges() {
     HarmonyRanges* ranges = new HarmonyRanges();
     for (int i = 0; i < GetVarCount(); ++i)
-        ranges->push_back(std::pair<float, float>(0.0, 100.0));
+        ranges->push_back(std::pair<float, float>(-100.0, 100.0));
     return ranges;
 }
 
-float GameStateEval::Evaluate(Harmony const& h) const {
+float EvaluateMove(GameState const& state, Harmony const& h) {
     return 0.0;
 }
 
-int GameStateEval::PileHeight() const {
-    GameBoard& board = m_state.GetBoard();
+int PileHeight(GameState const& state) {
+    GameBoard const& board = state.GetBoard();
     int minWellDepth = ROWS;
     for (int i = 0; i < COLS; ++i)
         minWellDepth = std::min(minWellDepth, board.WellDepth(i));
     return (ROWS - minWellDepth);
 }
 
-int GameStateEval::Holes() const {
-    GameBoard& board = m_state.GetBoard();
+int Holes(GameState const& state) {
+    GameBoard const& board = state.GetBoard();
     BoardDesc const& desc = board.GetBoardDesc();
     int holeCount = 0;
     for (int i = 0; i < COLS; ++i) {
@@ -44,8 +40,8 @@ int GameStateEval::Holes() const {
     return holeCount;
 }
 
-int GameStateEval::ConnectedHoles() const {
-    GameBoard& board = m_state.GetBoard();
+int ConnectedHoles(GameState const& state) {
+    GameBoard const& board = state.GetBoard();
     BoardDesc const& desc = board.GetBoardDesc();
     int holeCount = 0;
     for (int i = 0; i < COLS; ++i) {
@@ -65,13 +61,13 @@ int GameStateEval::ConnectedHoles() const {
     return holeCount;
 }
 
-int GameStateEval::RemovedRows() const {
+int RemovedRows(GameState const& state) {
     // Number of rows removed in last step
     return 0;
 }
 
-int GameStateEval::AltitudeDifference() const {
-    GameBoard& board = m_state.GetBoard();
+int AltitudeDifference(GameState const& state) {
+    GameBoard const& board = state.GetBoard();
     int minWellDepth = ROWS;
     int maxWellDepth = 0;
     for (int i = 0; i < COLS; ++i) {
@@ -82,26 +78,26 @@ int GameStateEval::AltitudeDifference() const {
     return ((ROWS - minWellDepth) - (ROWS - maxWellDepth));
 }
 
-int GameStateEval::MaxWellDepth() const {
-    GameBoard& board = m_state.GetBoard();
+int MaxWellDepth(GameState const& state) {
+    GameBoard const& board = state.GetBoard();
     int maxWellDepth = 0;
     for (int i = 0; i < COLS; ++i)
         maxWellDepth = std::min(maxWellDepth, board.WellDepth(i));
     return (ROWS - maxWellDepth);
 }
 
-int GameStateEval::SumOfAllWells() const {
+int SumOfAllWells(GameState const& state) {
     // Sum of all wells based on adjacent columns
     return 0;
 }
 
-int GameStateEval::LandingHeight() const {
+int LandingHeight(GameState const& state) {
     // Height at which last tetronimo was placed
     return 0;
 }
 
-int GameStateEval::Blocks() const {
-    GameBoard& board = m_state.GetBoard();
+int Blocks(GameState const& state) {
+    GameBoard const& board = state.GetBoard();
     BoardDesc const& desc = board.GetBoardDesc();
     int blockCount = 0;    
     for (int j = 0; j < ROWS; ++j) {
@@ -113,8 +109,8 @@ int GameStateEval::Blocks() const {
     return blockCount;
 }
 
-int GameStateEval::WeightedBlocks() const {
-    GameBoard& board = m_state.GetBoard();
+int WeightedBlocks(GameState const& state) {
+    GameBoard const& board = state.GetBoard();
     BoardDesc const& desc = board.GetBoardDesc();
     int weighted = 0;    
     for (int j = 0; j < ROWS; ++j) {
@@ -126,18 +122,18 @@ int GameStateEval::WeightedBlocks() const {
     return weighted;
 }
 
-int GameStateEval::RowTransitions() const {
+int RowTransitions(GameState const& state) {
     // Counts row transitions
     return 0;
 }
 
-int GameStateEval::ColTransitions() const {
+int ColTransitions(GameState const& state) {
     // Counts col transitions
     return 0;
 }
 
-int GameStateEval::HighestHole() const {
-    GameBoard& board = m_state.GetBoard();
+int HighestHole(GameState const& state) {
+    GameBoard const& board = state.GetBoard();
     BoardDesc const& desc = board.GetBoardDesc();
     int highest = 0;
     for (int i = 0; i < COLS; ++i) {
@@ -154,8 +150,8 @@ int GameStateEval::HighestHole() const {
     return highest;
 }
 
-int GameStateEval::BlocksAboveHighestHole() const {
-    GameBoard& board = m_state.GetBoard();
+int BlocksAboveHighestHole(GameState const& state) {
+    GameBoard const& board = state.GetBoard();
     BoardDesc const& desc = board.GetBoardDesc();
     int highest = 0;
     int blocksAboveCount = 0;
@@ -182,27 +178,27 @@ int GameStateEval::BlocksAboveHighestHole() const {
     return blocksAboveCount;
 }
 
-int GameStateEval::PotentialRows() const {
+int PotentialRows(GameState const& state) {
     return 0;
 }
 
-int GameStateEval::Smoothness() const {
-    GameBoard& board = m_state.GetBoard();
+int Smoothness(GameState const& state) {
+    GameBoard const& board = state.GetBoard();
     int smoothness = 0;
     for (int i = 0; i < COLS-1; ++i)
         smoothness += abs(board.WellDepth(i)-board.WellDepth(i+1));
     return smoothness;
 }
 
-int GameStateEval::ErodedPieces() const {
+int ErodedPieces(GameState const& state) {
     return 0;
 }
 
-int GameStateEval::RowHoles() const {
+int RowHoles(GameState const& state) {
     return 0;
 }
 
-int GameStateEval::HoleDepth() const {
+int HoleDepth(GameState const& state) {
     return 0;
 }
 

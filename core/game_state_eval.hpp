@@ -3,35 +3,29 @@
 #include <core/harmony.hpp>
 #include <model/game_state.hpp>
 
-/* *
- * Evaluates current game state and recommends best move
- * */
-class GameStateEval {
-public:
-    GameStateEval(GameState& state);
-    float Evaluate(Harmony const& h) const;
-    static int GetVarCount();
-    static HarmonyRanges const* GetRanges();
-private:
-    int PileHeight() const;
-    int Holes() const;
-    int ConnectedHoles() const;
-    int RemovedRows() const;    // TODO
-    int AltitudeDifference() const;
-    int MaxWellDepth() const;
-    int SumOfAllWells() const;  // TODO
-    int LandingHeight() const;  // TODO
-    int Blocks() const;
-    int WeightedBlocks() const;
-    int RowTransitions() const; // TODO
-    int ColTransitions() const; // TODO
-    int HighestHole() const;
-    int BlocksAboveHighestHole() const;
-    int PotentialRows() const;  // TODO
-    int Smoothness() const;
-    int ErodedPieces() const;   // TODO
-    int RowHoles() const;   // TODO
-    int HoleDepth() const;  // TODO
-    GameState& m_state;
-};
+
+int GetVarCount();
+HarmonyRanges const* GetRanges();
+
+float EvaluateMove(GameState const& state, Harmony const& h);
+
+int PileHeight(GameState const& state);
+int Holes(GameState const& state);
+int ConnectedHoles(GameState const& state);
+int RemovedRows(GameState const& state); // TODO
+int AltitudeDifference(GameState const& state);
+int MaxWellDepth(GameState const& state);
+int SumOfAllWells(GameState const& state);  // TODO
+int LandingHeight(GameState const& state);  // TODO
+int Blocks(GameState const& state);
+int WeightedBlocks(GameState const& state);
+int RowTransitions(GameState const& state); // TODO
+int ColTransitions(GameState const& state); // TODO
+int HighestHole(GameState const& state);
+int BlocksAboveHighestHole(GameState const& state);
+int PotentialRows(GameState const& state);  // TODO
+int Smoothness(GameState const& state);
+int ErodedPieces(GameState const& state);   // TODO
+int RowHoles(GameState const& state);   // TODO
+int HoleDepth(GameState const& state);  // TODO
 

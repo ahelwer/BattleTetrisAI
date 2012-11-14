@@ -8,13 +8,13 @@ int main() {
     int const gameLength = 100;
     int const iterationCount = 100;
 
-    int const varCount = GameStateEval::GetVarCount();
+    int const varCount = GetVarCount();
     int const memorySize = 5;
     float const r_accept = 0.95;
     float const r_pa = 0.99;
     float const r_range = 0.1;
 
-    HarmonyRanges const* ranges = GameStateEval::GetRanges();
+    HarmonyRanges const* ranges = GetRanges();
     HarmonyFactory factory (varCount, *ranges);
     GeneratedGame generator (gameLength);
     TetrisRowsCleared f (generator);
@@ -26,6 +26,9 @@ int main() {
         search.Iterate();
         generator.GenerateNewGame();
     }
+    Harmony const* best = search.GetRanked(0);
+    std::cout << (*best) << std::endl;
+    delete best;
     delete ranges;
 
     return 0;

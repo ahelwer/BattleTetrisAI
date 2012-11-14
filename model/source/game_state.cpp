@@ -1,7 +1,7 @@
 #include <model/game_state.hpp>
 
-GameState::GameState(GameBoard& board)
-    : m_board(board)
+GameState::GameState()
+    : m_board()
 { }
 
 GameBoard& GameState::GetBoard() {

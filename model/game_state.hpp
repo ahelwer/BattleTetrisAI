@@ -4,10 +4,10 @@
 
 class GameState {
 public:
-    GameState(GameBoard& board);
+    GameState();
     GameBoard& GetBoard();
     GameBoard const& GetBoard() const;
 private:
-    GameBoard& m_board;
+    GameBoard m_board;
 };
 
