@@ -27,7 +27,7 @@ public:
     virtual ~HarmonyFactory();
     virtual Harmony* GenerateRandomHarmony() const;
     virtual float GenerateRandomVariable(unsigned var) const;
-    virtual float ModifyVariableTone(unsigned var, float old, float bandwidth) const;
+    virtual float ModifyVariableTone(unsigned var, float old, float p) const;
 protected:
     unsigned m_vCount;
     HarmonyRanges const& m_ranges;

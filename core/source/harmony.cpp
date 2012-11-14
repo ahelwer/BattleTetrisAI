@@ -38,11 +38,12 @@ float HarmonyFactory::GenerateRandomVariable(unsigned var) const {
     return r;
 }
 
-float HarmonyFactory::ModifyVariableTone(unsigned var, float old, float bandwidth) const {
+float HarmonyFactory::ModifyVariableTone(unsigned var, float old, float p) const {
     float low = m_ranges.at(var).first;
     float high = m_ranges.at(var).second;
-    float r = ((float)rand()/(float)RAND_MAX)*2 - 1;
-    float modified = old + bandwidth*r;
+    float range = (high-low)*p;
+    float r = low*p + ((float)rand()/(float)RAND_MAX)*range;
+    float modified = old + r;
     modified = std::min(modified, high);
     modified = std::max(modified, low);
     return modified;

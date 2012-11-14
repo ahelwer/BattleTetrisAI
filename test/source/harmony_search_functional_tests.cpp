@@ -16,7 +16,7 @@ void HarmonySearchFunctionalTests::setUp() {
     m_pCompareWrapper = new HarmonyCompareWrapper(*m_pCompare);
     m_pSearch = new HarmonySearch(*m_pCompareWrapper, *m_pFactory, 
                                     m_vCount, m_memory,
-                                    0.95, 0.7, 0.8);
+                                    0.95, 0.7, 0.05);
 }
 
 void HarmonySearchFunctionalTests::tearDown() {
@@ -51,8 +51,8 @@ void HarmonySearchFunctionalTests::TestRosenbrock() {
         m_pSearch->Iterate();
     }
     Harmony const* best = m_pSearch->GetRanked(0);
-    CPPUNIT_ASSERT(FloatEqual(1.0, best->at(0)));
-    CPPUNIT_ASSERT(FloatEqual(1.0, best->at(1)));
+    CPPUNIT_ASSERT(FloatEqual(1.0f, best->at(0)));
+    CPPUNIT_ASSERT(FloatEqual(1.0f, best->at(1)));
     delete best;
 }
 
