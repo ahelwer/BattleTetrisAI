@@ -311,6 +311,11 @@ int ColTransitions(GameState const& state) {
     return transCount;
 }
 
+/* *
+ * Function HighestHole
+ *
+ * Height of the topmost hole on the board.
+ * */
 int HighestHole(GameState const& state) {
     GameBoard const& board = state.GetBoard();
     BoardDesc const& desc = board.GetBoardDesc();
@@ -326,9 +331,14 @@ int HighestHole(GameState const& state) {
             }
         }
     }
-    return highest;
+    return (ROWS-highest);
 }
 
+/* *
+ * Function BlocksAboveHighestHole
+ *
+ * The number of blocks on top of the highest hole.
+ * */
 int BlocksAboveHighestHole(GameState const& state) {
     GameBoard const& board = state.GetBoard();
     BoardDesc const& desc = board.GetBoardDesc();
@@ -343,6 +353,7 @@ int BlocksAboveHighestHole(GameState const& state) {
             if (desc[i][j] && !hitTop)
                 hitTop = true;
             if (!desc[i][j] && hitTop) {
+                // Tie-breaker: greatest number of blocks hit
                 if ((ROWS-j) == highest && blocksHit > blocksAboveCount) {
                     blocksAboveCount = blocksHit; 
                 }
@@ -357,10 +368,33 @@ int BlocksAboveHighestHole(GameState const& state) {
     return blocksAboveCount;
 }
 
+/* *
+ * Function PotentialRows
+ *
+ * Number of rows located above highest hole in use by more than 8 cells.
+ * */
 int PotentialRows(GameState const& state) {
-    return 0;
+    GameBoard const& board = state.GetBoard();
+    BoardDesc const& desc = board.GetBoardDesc();
+    int highest = (ROWS-HighestHole(state));
+    int potentialCount = 0;
+    for (int j = 0; j < highest; ++j) {
+        int setCount = 0;
+        for (int i = 0; i < COLS; ++i) {
+            if (desc[i][j])
+                ++setCount;
+        }
+        if (setCount >= 8)
+            ++potentialCount;
+    }
+    return potentialCount;
 }
 
+/* *
+ * Function Smoothness
+ *
+ * Sum of differences in heights between adjacent columns.
+ * */
 int Smoothness(GameState const& state) {
     GameBoard const& board = state.GetBoard();
     int smoothness = 0;
@@ -369,8 +403,28 @@ int Smoothness(GameState const& state) {
     return smoothness;
 }
 
+/* *
+ * Function ErodedPieces
+ *
+ * Number of rows cleared * number of cells of last piece eliminated.
+ * */
 int ErodedPieces(GameState const& state) {
-    return 0;
+    std::vector<int> const& cleared = state.LastClearedRows();
+    Tetromino const& last = state.LastPiecePlayed();
+    bool const* desc = last.GetDesc();
+    int erodedCount = 0;
+    for (int r = 0; r < cleared.size(); ++r) {
+        int tetRow = cleared.at(r) - last.GetY() + 1;
+        if (tetRow >= 0 && tetRow < 4) {
+            int blockCount = 0;
+            for (int i = 0; i < 4; ++i) {
+                if (desc[tetRow*4+i])
+                    ++blockCount;
+            }
+            erodedCount += blockCount;
+        }
+    }
+    return (erodedCount * cleared.size());
 }
 
 int RowHoles(GameState const& state) {
