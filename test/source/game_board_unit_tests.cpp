@@ -117,8 +117,6 @@ void GameBoardUnitTests::TestApplyPiece() {
 }
 
 void GameBoardUnitTests::TestApplyMultiplePieces() {
-    BoardDesc const& desc = m_pBoard->GetBoardDesc();
-
     Tetronimo t1 ('O', 0, 5, 1);
     CPPUNIT_ASSERT(m_pBoard->PushMove(t1));
     Tetronimo t2 ('O', 0, 4, 1);
