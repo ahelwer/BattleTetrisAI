@@ -461,6 +461,25 @@ int RowHoles(GameState const& state) {
  * The number of filled cells on top of each hole.
  * */
 int HoleDepth(GameState const& state) {
-    return 0;
+    GameBoard const& board = state.GetBoard();
+    BoardDesc const& desc = board.GetBoardDesc();
+    int cellCount = 0;
+    for (int i = 0; i < COLS; ++i) {
+        bool hitHole = false;
+        bool inHole = false;
+        for (int j = ROWS-1; j >= 0; --j) {
+            if (desc[i][j] && inHole) {
+                inHole = false;
+            }
+            if (desc[i][j] && hitHole) {
+                ++cellCount;
+            }
+            if (!desc[i][j] && !inHole) {
+                inHole = true;
+                hitHole = true;
+            }
+        }
+    }
+    return cellCount;
 }
 
