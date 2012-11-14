@@ -64,7 +64,6 @@ bool GameBoard::IsValidMove(Tetromino const& t) const {
     int pivotX = 2;
     int pivotY = 1;
 
-    bool valid = true;
     for (int j = 0; j < 4; ++j) {
         for (int i = 0; i < 4; ++i) {
             bool isSet = desc[j*4+i];
@@ -72,20 +71,42 @@ bool GameBoard::IsValidMove(Tetromino const& t) const {
                 int boardX = (x + i - pivotX);
                 int boardY = (y + j - pivotY);
                 if (!InBounds(boardX, boardY)) {
-                    valid = false;    
+                    return false;
                 }
                 else {
                     if(board[boardX][boardY]) {
-                        valid = false;
+                        return false;
                     }
                 }
             }
         }
     }
-    return valid;
+    return true;
 }
 
 bool GameBoard::IsAtRest(Tetromino const& t) const {
+    if (!IsValidMove(t))
+        return false;
+
+    BoardDesc const& board = GetBoardDesc();
+    bool const* desc = t.GetDesc();
+    int x = t.GetX();
+    int y = t.GetY();
+    int pivotX = 2;
+    int pivotY = 1;
+
+    for (int j = 0; j < 4; ++j) {
+        for (int i = 0; i < 4; ++i) {
+            bool isSet = desc[j*4+i];
+            if (isSet) {
+                int boardX = (x + i - pivotX);
+                int boardY = (y + j - pivotY);
+                if ((boardY+1) == ROWS || board[boardX][boardY+1]) {
+                    return true;
+                }
+            }
+        }
+    }
     return false;
 }
 
