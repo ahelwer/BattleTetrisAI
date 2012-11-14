@@ -10,6 +10,8 @@ class GameStateEval {
 public:
     GameStateEval(GameState& state);
     float Evaluate(Harmony const& h) const;
+    static int GetVarCount();
+    static HarmonyRanges const* GetRanges();
 private:
     int PileHeight() const;
     int Holes() const;

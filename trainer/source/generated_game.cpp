@@ -2,7 +2,7 @@
 #include <cstdlib>
 
 GeneratedGame::GeneratedGame(int gameLength)
-    : m_gameLength(gameLength), m_currentIdx(0)
+    : m_gameLength(gameLength)
 { 
     for (int i = 0; i < m_gameLength; ++i)
         m_sequence.push_back(NULL);
@@ -30,22 +30,12 @@ void GeneratedGame::GenerateNewGame() {
     }
 }
 
-Tetronimo const& GeneratedGame::GetNext() {
-    Tetronimo* ret = m_sequence.at(m_currentIdx);
-    ++m_currentIdx;
+int GeneratedGame::GameLength() const {
+    return m_gameLength;
+}
+
+Tetronimo const& GeneratedGame::GetPiece(int idx) const {
+    Tetronimo* ret = m_sequence.at(idx);
     return (*ret);
-}
-
-bool GeneratedGame::HasNext() const {
-    return (m_currentIdx < m_gameLength-1);
-}
-
-Tetronimo const& GeneratedGame::PeekNext() const {
-    Tetronimo* ret = m_sequence.at(m_currentIdx+1);
-    return (*ret);
-}
-
-void GeneratedGame::Reset() {
-    m_currentIdx = 0;
 }
 

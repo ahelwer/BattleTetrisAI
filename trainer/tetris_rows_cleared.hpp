@@ -5,9 +5,9 @@
 
 class TetrisRowsCleared : public ObjectiveFunction {
 public:
-    TetrisRowsCleared(GeneratedGame& generator);
-    float Execute(Harmony const& h);
+    TetrisRowsCleared(GeneratedGame const& generator);
+    float operator() (Harmony const& h) const;
 private:
-    GeneratedGame& m_generator;
+    GeneratedGame const& m_generator;
 };
 

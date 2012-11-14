@@ -63,8 +63,8 @@ public:
  * class HarmonyCompareWrapper
  *
  * Wrapper class which passes calls to operator() on to the 
- * Comparator given to its constructor. Necessary because std::sort
- * does not take abstract type objects as a Comparator.
+ * HarmonyCompare given to its constructor. Necessary because 
+ * std::sort does not take abstract type objects as a Comparator.
  * */
 class HarmonyCompareWrapper : public Comparator {
 public:

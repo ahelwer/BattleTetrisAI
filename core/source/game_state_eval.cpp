@@ -5,6 +5,17 @@ GameStateEval::GameStateEval(GameState& state)
     : m_state(state)
 { }
 
+int GameStateEval::GetVarCount() {
+    return 19;
+}
+
+HarmonyRanges const* GameStateEval::GetRanges() {
+    HarmonyRanges* ranges = new HarmonyRanges();
+    for (int i = 0; i < GetVarCount(); ++i)
+        ranges->push_back(std::pair<float, float>(0.0, 100.0));
+    return ranges;
+}
+
 float GameStateEval::Evaluate(Harmony const& h) const {
     return 0.0;
 }
