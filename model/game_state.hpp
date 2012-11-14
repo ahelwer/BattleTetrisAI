@@ -12,11 +12,13 @@ public:
     bool PiecesLeftInQueue() const;
     Tetromino const& GetPieceInPlay();
     Tetromino const& FeedFromQueue();
+    std::vector<int> const& LastClearedRows() const;
     GameBoard& GetBoard();
     GameBoard const& GetBoard() const;
 private:
     GameBoard m_board;
     std::vector<Tetromino> m_pieceQueue;
+    std::vector< std::vector<int> const* > m_rowClearedStack;
     int m_depthInQueue;
     Tetromino m_pieceInPlay;
 };

@@ -1,6 +1,28 @@
 #include <core/game_state_eval.hpp>
 #include <util/constants.hpp>
 
+// Declarations of all feature functions
+int PileHeight(GameState const& state);
+int Holes(GameState const& state);
+int ConnectedHoles(GameState const& state);
+int RemovedRows(GameState const& state); // TODO
+int AltitudeDifference(GameState const& state);
+int MaxWellDepth(GameState const& state);
+int SumOfAllWells(GameState const& state);  // TODO
+int LandingHeight(GameState const& state);  // TODO
+int Blocks(GameState const& state);
+int WeightedBlocks(GameState const& state);
+int RowTransitions(GameState const& state); // TODO
+int ColTransitions(GameState const& state); // TODO
+int HighestHole(GameState const& state);
+int BlocksAboveHighestHole(GameState const& state);
+int PotentialRows(GameState const& state);  // TODO
+int Smoothness(GameState const& state);
+int ErodedPieces(GameState const& state);   // TODO
+int RowHoles(GameState const& state);   // TODO
+int HoleDepth(GameState const& state);  // TODO
+
+
 int GetVarCount() {
     return 19;
 }
@@ -16,6 +38,11 @@ float EvaluateMove(GameState const& state, Harmony const& h) {
     return 0.0;
 }
 
+/* *
+ * Function PileHeight
+ *
+ * Row of the topmost occupied square on the board.
+ * */
 int PileHeight(GameState const& state) {
     GameBoard const& board = state.GetBoard();
     int minWellDepth = ROWS;
@@ -24,6 +51,11 @@ int PileHeight(GameState const& state) {
     return (ROWS - minWellDepth);
 }
 
+/* *
+ * Function Holes
+ *
+ * The number of gaps with at least one occupied cell above them.
+ * */
 int Holes(GameState const& state) {
     GameBoard const& board = state.GetBoard();
     BoardDesc const& desc = board.GetBoardDesc();
@@ -40,6 +72,11 @@ int Holes(GameState const& state) {
     return holeCount;
 }
 
+/* *
+ * Function ConnectedHoles
+ *
+ * The number of connected gaps with at least one occupied cell above them.
+ * */
 int ConnectedHoles(GameState const& state) {
     GameBoard const& board = state.GetBoard();
     BoardDesc const& desc = board.GetBoardDesc();
@@ -61,9 +98,14 @@ int ConnectedHoles(GameState const& state) {
     return holeCount;
 }
 
+/* *
+ * Function RemovedRows
+ *
+ * The number of rows cleared by the last step.
+ * */
 int RemovedRows(GameState const& state) {
-    // Number of rows removed in last step
-    return 0;
+    std::vector<int> const& cleared = state.LastClearedRows();
+    return cleared.size();
 }
 
 int AltitudeDifference(GameState const& state) {

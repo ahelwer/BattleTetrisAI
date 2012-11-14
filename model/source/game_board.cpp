@@ -56,6 +56,31 @@ bool GameBoard::PopMove() {
     return true;
 }
 
+std::vector<int> const* GameBoard::ClearRows() {
+    std::vector<int>* cleared = new std::vector<int>();
+    BoardDesc& desc = GetBoardDesc();
+    for (int j = 0; j < ROWS; ++j) {
+        bool isCleared = true;
+        for (int i = 0; i < COLS; ++i) {
+            if (!desc[i][j]) {
+                isCleared = false;
+                break;
+            }
+        }
+        if (isCleared)
+            cleared->push_back(j);
+    }
+    for (int r = 0; r < cleared->size(); ++r) {
+        int rowCleared = cleared->at(r);
+        for (int j = rowCleared; j > 0; --j) {
+            for (int i = 0; i < COLS; ++i) {
+                desc[i][j] = desc[i][j-1];
+            }
+        }
+    }
+    return cleared;
+}
+
 bool GameBoard::IsValidMove(Tetromino const& t) const {
     BoardDesc const& board = GetBoardDesc();
     bool const* desc = t.GetDesc();
