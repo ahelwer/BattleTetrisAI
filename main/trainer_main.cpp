@@ -23,7 +23,7 @@ int main() {
     HarmonySearch search (comp, factory, varCount, memorySize,
                             r_accept, r_pa, r_range);
     for (int i = 0; i < iterationCount; ++i) {
-
+        search.Iterate();
         generator.GenerateNewGame();
     }
     delete ranges;
