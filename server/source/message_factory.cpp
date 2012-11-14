@@ -1,6 +1,6 @@
 #include <server/message_factory.hpp>
 #include <util/constants.hpp>
-#include <model/tetronimo.hpp>
+#include <model/tetromino.hpp>
 #include <cstdio>
 #include <cstring>
 
@@ -164,16 +164,16 @@ State const* MessageFactory::ParseGamePieceStateMessage(Json::Value const& root)
     Json::Value states = root.get("states", "not found");
 
     Json::Value queueV = root.get("queue", "not found");
-    std::vector<Tetronimo>* queue = new std::vector<Tetronimo>();
+    std::vector<Tetromino>* queue = new std::vector<Tetromino>();
     for (unsigned i = 0; i < queueV.size(); ++i) {
         std::string piece = queueV[i].asString();
         if (piece.size() != 1)
             return new ErrorState("Invalid piece descriptor.");
-        Tetronimo t (piece.at(0));
+        Tetromino t (piece.at(0));
         queue->push_back(t);
     }
 
-	Tetronimo* myTet = NULL;
+	Tetromino* myTet = NULL;
     Json::Value mine = states.get(USERNAME, "not found");
 	if (!mine.isNull() && !mine.isInt()) {
 		std::string myPieceS = mine.get("piece", "not found").asString();
@@ -183,10 +183,10 @@ State const* MessageFactory::ParseGamePieceStateMessage(Json::Value const& root)
 		int myOrient = mine.get("orient", -1).asInt();
 		int myCol = mine.get("col", -1).asInt();
 		int myRow = mine.get("row", -1).asInt();
-		myTet = new Tetronimo(myPiece, myOrient, myCol, myRow);
+		myTet = new Tetromino(myPiece, myOrient, myCol, myRow);
 	}
 
-	Tetronimo* theirTet = NULL;
+	Tetromino* theirTet = NULL;
     Json::Value theirs = states.get("Test Client", "not found");
 	if (!theirs.isNull() && !theirs.isInt()) {
 		std::string theirPieceS = theirs.get("piece", "not found").asString();
@@ -196,7 +196,7 @@ State const* MessageFactory::ParseGamePieceStateMessage(Json::Value const& root)
 		int theirOrient = theirs.get("orient", -1).asInt();
 		int theirCol = theirs.get("col", -1).asInt();
 		int theirRow = theirs.get("row", -1).asInt();
-		theirTet = new Tetronimo(theirPiece, theirOrient, theirCol, theirRow);
+		theirTet = new Tetromino(theirPiece, theirOrient, theirCol, theirRow);
 	}
 
     return new GamePieceState(sequence, timestamp, myTet, theirTet, queue);

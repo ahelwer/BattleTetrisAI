@@ -57,9 +57,9 @@ std::ostream& operator<< (std::ostream& out, GameBoardState const& s) {
 }
 
 GamePieceState::GamePieceState(int sequence, double timestamp,
-								Tetronimo* myTet, 
-								Tetronimo* theirTet, 
-								std::vector<Tetronimo>* queue)
+								Tetromino* myTet, 
+								Tetromino* theirTet, 
+								std::vector<Tetromino>* queue)
 	: State(sequence, timestamp), m_pMyTet(myTet), 
         m_pTheirTet(theirTet), m_pQueue(queue)
 { }

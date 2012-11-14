@@ -23,7 +23,7 @@ void GeneratedGame::GenerateNewGame() {
     std::string tetTypes ("OISZLJT");
     for (int i = 0; i < m_gameLength; ++i) {
         char type = tetTypes.at(rand() % tetTypes.size());
-        Tetronimo* newTet = new Tetronimo(type);
+        Tetromino* newTet = new Tetromino(type);
         if (m_sequence.at(i) != NULL) {
             delete m_sequence.at(i);
         }
@@ -35,13 +35,13 @@ int GeneratedGame::GameLength() const {
     return m_gameLength;
 }
 
-Tetronimo const& GeneratedGame::GetPiece(int idx) const {
-    Tetronimo* ret = m_sequence.at(idx);
+Tetromino const& GeneratedGame::GetPiece(int idx) const {
+    Tetromino* ret = m_sequence.at(idx);
     return (*ret);
 }
 
-std::vector<Tetronimo> const* GeneratedGame::GetQueue(int idx) const {
-    std::vector<Tetronimo>* queue = new std::vector<Tetronimo>();
+std::vector<Tetromino> const* GeneratedGame::GetQueue(int idx) const {
+    std::vector<Tetromino>* queue = new std::vector<Tetromino>();
     for (int i = idx+1; i < std::min(m_gameLength, i+5); ++i)
         queue->push_back(*m_sequence.at(i));
     return queue;

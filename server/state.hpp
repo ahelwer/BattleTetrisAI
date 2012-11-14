@@ -3,7 +3,7 @@
 #include <string>
 #include <iostream>
 #include <util/vector.hpp>
-#include <model/tetronimo.hpp>
+#include <model/tetromino.hpp>
 
 class State {
 public:
@@ -41,15 +41,15 @@ private:
 class GamePieceState : public State {
 public:
 	GamePieceState(int sequence, double timestamp,
-					Tetronimo* myTet, Tetronimo* theirTet,
-					std::vector<Tetronimo>* queue);	
+					Tetromino* myTet, Tetromino* theirTet,
+					std::vector<Tetromino>* queue);	
 	~GamePieceState();
 	virtual bool ExecuteUpdates() const;
 	friend std::ostream& operator<< (std::ostream& out, GamePieceState const& s);
 private:
-	Tetronimo* m_pMyTet;
-	Tetronimo* m_pTheirTet;
-	std::vector<Tetronimo>* m_pQueue;
+	Tetromino* m_pMyTet;
+	Tetromino* m_pTheirTet;
+	std::vector<Tetromino>* m_pQueue;
 };
 
 class GameEnd : public State {

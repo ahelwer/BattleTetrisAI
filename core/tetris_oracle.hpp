@@ -3,9 +3,9 @@
 #include <util/vector.hpp>
 #include <core/harmony.hpp>
 #include <model/game_state.hpp>
-#include <model/tetronimo.hpp>
+#include <model/tetromino.hpp>
 
-Tetronimo const* FindBestMove(GameState& state, Harmony const& h);
+Tetromino const* FindBestMove(GameState& state, Harmony const& h);
 
-std::vector<Tetronimo> const* FindPossibleMoves(GameState& state);
+std::vector<Tetromino> const* FindPossibleMoves(GameState& state);
 

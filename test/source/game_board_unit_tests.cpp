@@ -1,5 +1,5 @@
 #include <test/game_board_unit_tests.hpp>
-#include <model/tetronimo.hpp>
+#include <model/tetromino.hpp>
 #include <util/constants.hpp>
 
 #include <util/vector.hpp>
@@ -81,7 +81,7 @@ void GameBoardUnitTests::TestTranslateComplex() {
 }
 
 void GameBoardUnitTests::TestApplyPiece() {
-    Tetronimo t1 ('O', 0, 5, ROWS-2);
+    Tetromino t1 ('O', 0, 5, ROWS-2);
     CPPUNIT_ASSERT(m_pBoard->PushMove(t1));
     CPPUNIT_ASSERT_EQUAL(ROWS, m_pBoard->WellDepth(3));
     CPPUNIT_ASSERT_EQUAL(ROWS-2, m_pBoard->WellDepth(4));
@@ -89,27 +89,27 @@ void GameBoardUnitTests::TestApplyPiece() {
     CPPUNIT_ASSERT_EQUAL(ROWS, m_pBoard->WellDepth(6));
     m_pBoard->PopMove();
 
-    Tetronimo t2 ('O', 0, COLS-1, ROWS-2);
+    Tetromino t2 ('O', 0, COLS-1, ROWS-2);
     CPPUNIT_ASSERT(m_pBoard->PushMove(t2));
     CPPUNIT_ASSERT_EQUAL(ROWS, m_pBoard->WellDepth(COLS-3));
     CPPUNIT_ASSERT_EQUAL(ROWS-2, m_pBoard->WellDepth(COLS-2));
     CPPUNIT_ASSERT_EQUAL(ROWS-2, m_pBoard->WellDepth(COLS-1));
     m_pBoard->PopMove();
 
-    Tetronimo t3 ('O', 0, 1, ROWS-2);
+    Tetromino t3 ('O', 0, 1, ROWS-2);
     CPPUNIT_ASSERT(m_pBoard->PushMove(t3));
     CPPUNIT_ASSERT_EQUAL(ROWS-2, m_pBoard->WellDepth(0));
     CPPUNIT_ASSERT_EQUAL(ROWS-2, m_pBoard->WellDepth(1));
     CPPUNIT_ASSERT_EQUAL(ROWS, m_pBoard->WellDepth(2));
     m_pBoard->PopMove();
 
-    Tetronimo t4 ('O', 0, 0, ROWS-2);
+    Tetromino t4 ('O', 0, 0, ROWS-2);
     CPPUNIT_ASSERT(!m_pBoard->PushMove(t4));
     CPPUNIT_ASSERT_EQUAL(ROWS, m_pBoard->WellDepth(0));
     CPPUNIT_ASSERT_EQUAL(ROWS, m_pBoard->WellDepth(1));
     CPPUNIT_ASSERT_EQUAL(ROWS, m_pBoard->WellDepth(2));
 
-    Tetronimo t5 ('O', 0, COLS, ROWS-2);
+    Tetromino t5 ('O', 0, COLS, ROWS-2);
     CPPUNIT_ASSERT(!m_pBoard->PushMove(t5));
     CPPUNIT_ASSERT_EQUAL(ROWS, m_pBoard->WellDepth(COLS-1));
     CPPUNIT_ASSERT_EQUAL(ROWS, m_pBoard->WellDepth(COLS-2));
@@ -117,9 +117,9 @@ void GameBoardUnitTests::TestApplyPiece() {
 }
 
 void GameBoardUnitTests::TestApplyMultiplePieces() {
-    Tetronimo t1 ('O', 0, 5, ROWS-2);
+    Tetromino t1 ('O', 0, 5, ROWS-2);
     CPPUNIT_ASSERT(m_pBoard->PushMove(t1));
-    Tetronimo t2 ('O', 0, 4, ROWS-4);
+    Tetromino t2 ('O', 0, 4, ROWS-4);
     CPPUNIT_ASSERT(m_pBoard->PushMove(t2));
     CPPUNIT_ASSERT_EQUAL(ROWS, m_pBoard->WellDepth(2));
     CPPUNIT_ASSERT_EQUAL(ROWS-4, m_pBoard->WellDepth(3));
@@ -132,7 +132,7 @@ void GameBoardUnitTests::TestApplyMultiplePieces() {
     CPPUNIT_ASSERT_EQUAL(ROWS-2, m_pBoard->WellDepth(5));
     CPPUNIT_ASSERT_EQUAL(ROWS, m_pBoard->WellDepth(6));
 
-    Tetronimo t3 ('J', 1, 3, ROWS-2);
+    Tetromino t3 ('J', 1, 3, ROWS-2);
     CPPUNIT_ASSERT(m_pBoard->PushMove(t3));
     CPPUNIT_ASSERT_EQUAL(ROWS, m_pBoard->WellDepth(2));
     CPPUNIT_ASSERT_EQUAL(ROWS-3, m_pBoard->WellDepth(3));

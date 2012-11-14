@@ -3,9 +3,9 @@
 #include <string>
 #include <iostream>
 
-class Tetronimo {
+class Tetromino {
 public:
-    Tetronimo(char type, int orient = 0, 
+    Tetromino(char type, int orient = 0, 
                 int col = 5, int row = 1);
     bool const* GetDesc() const;
     char GetType() const;
@@ -16,7 +16,7 @@ public:
     void SetOrient(int orient);
     void RotateLeft();
     void RotateRight();
-    friend std::ostream& operator<< (std::ostream& out, Tetronimo const& t);
+    friend std::ostream& operator<< (std::ostream& out, Tetromino const& t);
 private:
     bool const* GetDesc(char type, int orient) const;
     char m_type;

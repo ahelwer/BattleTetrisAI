@@ -1,7 +1,7 @@
 #pragma once
 
 #include <util/vector.hpp>
-#include <model/tetronimo.hpp>
+#include <model/tetromino.hpp>
 #include <iostream>
 
 
@@ -12,8 +12,8 @@ public:
     GameBoard();
     GameBoard(char const* desc);
     ~GameBoard();
-    bool ApplyMove(Tetronimo const& t);
-    bool PushMove(Tetronimo const& t);
+    bool ApplyMove(Tetromino const& t);
+    bool PushMove(Tetromino const& t);
     bool PopMove();
     BoardDesc& GetBoardDesc();
     BoardDesc const& GetBoardDesc() const;
@@ -24,8 +24,8 @@ public:
     bool HasChanged(char const* desc) const;
     friend std::ostream& operator<< (std::ostream& out, GameBoard const& gb);
 private:
-    bool IsValidMove(Tetronimo const& t);
-    void ApplyMoveToBoard(Tetronimo const& t);
+    bool IsValidMove(Tetromino const& t);
+    void ApplyMoveToBoard(Tetromino const& t);
     void Translate(char const* desc);
     std::vector<BoardDesc> m_boardStack;
     char* m_pDesc;

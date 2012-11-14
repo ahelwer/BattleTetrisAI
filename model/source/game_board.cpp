@@ -29,14 +29,14 @@ GameBoard::~GameBoard() {
     }
 }
 
-bool GameBoard::ApplyMove(Tetronimo const& t) {
+bool GameBoard::ApplyMove(Tetromino const& t) {
     if (!IsValidMove(t))
         return false;
     ApplyMoveToBoard(t);
     return true;
 }
 
-bool GameBoard::PushMove(Tetronimo const& t) {
+bool GameBoard::PushMove(Tetromino const& t) {
     if (!IsValidMove(t))
         return false;
 
@@ -100,7 +100,7 @@ bool GameBoard::HasChanged(char const* desc) const {
     return (memcmp((void*)desc, (void*)m_pDesc, BOARD_DESC_SIZE) != 0);
 }
 
-bool GameBoard::IsValidMove(Tetronimo const& t) {
+bool GameBoard::IsValidMove(Tetromino const& t) {
     BoardDesc& board = GetBoardDesc();
     bool const* desc = t.GetDesc();
     int x = t.GetX();
@@ -129,7 +129,7 @@ bool GameBoard::IsValidMove(Tetronimo const& t) {
     return valid;
 }
 
-void GameBoard::ApplyMoveToBoard(Tetronimo const& t) {
+void GameBoard::ApplyMoveToBoard(Tetromino const& t) {
     BoardDesc& board = GetBoardDesc();
     bool const* desc = t.GetDesc();
     int x = t.GetX();

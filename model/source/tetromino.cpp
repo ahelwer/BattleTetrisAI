@@ -1,4 +1,4 @@
-#include <model/tetronimo.hpp>
+#include <model/tetromino.hpp>
 
 bool O0[16] =    {0, 0, 0, 0,
                  0, 1, 1, 0,
@@ -95,43 +95,43 @@ bool T3[16] =     {0, 0, 1, 0,
                  0, 0, 0, 0};
 
 
-Tetronimo::Tetronimo(char type, int orient, 
+Tetromino::Tetromino(char type, int orient, 
                         int col, int row)
     : m_type(type), m_orient(orient), m_col(col), m_row(row) 
 { 
     m_pDesc = GetDesc(type, orient);
 }
 
-bool const* Tetronimo::GetDesc() const {
+bool const* Tetromino::GetDesc() const {
     return m_pDesc;
 }
 
-char Tetronimo::GetType() const {
+char Tetromino::GetType() const {
     return m_type;
 }
 
-int Tetronimo::GetX() const {
+int Tetromino::GetX() const {
     return m_col;
 }
 
-int Tetronimo::GetY() const {
+int Tetromino::GetY() const {
     return m_row;
 }
 
-void Tetronimo::SetX(int x) {
+void Tetromino::SetX(int x) {
     m_col = x;
 }
 
-void Tetronimo::SetY(int y) {
+void Tetromino::SetY(int y) {
     m_row = y;
 }
 
-void Tetronimo::SetOrient(int orient) {
+void Tetromino::SetOrient(int orient) {
     m_orient = orient;
     m_pDesc = GetDesc(m_type, m_orient); 
 }
 
-void Tetronimo::RotateLeft() {
+void Tetromino::RotateLeft() {
     if (m_type == 'O') {
         // Do nothing!
     }
@@ -144,7 +144,7 @@ void Tetronimo::RotateLeft() {
     m_pDesc = GetDesc(m_type, m_orient);
 }
 
-void Tetronimo::RotateRight() {
+void Tetromino::RotateRight() {
     if (m_type == 'O') {
         // Do nothing!
     }
@@ -157,7 +157,7 @@ void Tetronimo::RotateRight() {
     m_pDesc = GetDesc(m_type, m_orient);
 }
 
-bool const* Tetronimo::GetDesc(char type, int orient) const {
+bool const* Tetromino::GetDesc(char type, int orient) const {
     bool const* desc = NULL;
     if (type == 'O') {
         desc = &(O0[0]);
@@ -213,7 +213,7 @@ bool const* Tetronimo::GetDesc(char type, int orient) const {
     return desc;
 }
 
-std::ostream& operator<< (std::ostream& out, Tetronimo const& t) {
+std::ostream& operator<< (std::ostream& out, Tetromino const& t) {
     for (int j = 0; j < 4; ++j) {
         for (int i = 0; i < 4; ++i) {
             bool set = t.m_pDesc[j*4+i];
