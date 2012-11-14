@@ -427,10 +427,39 @@ int ErodedPieces(GameState const& state) {
     return (erodedCount * cleared.size());
 }
 
+/* *
+ * Function RowHoles
+ *
+ * The number of rows with at least one hole.
+ * */
 int RowHoles(GameState const& state) {
-    return 0;
+    GameBoard const& board = state.GetBoard();
+    BoardDesc const& desc = board.GetBoardDesc();
+    int holeCount[ROWS];
+    for (int i = 0; i < ROWS; ++i)
+        holeCount[i] = 0;
+    for (int i = 0; i < COLS; ++i) {
+        bool hitTop = false;
+        for (int j = 0; j < ROWS; ++j) {
+            if (desc[i][j] && !hitTop)
+                hitTop = true;
+            else if (!desc[i][j] && hitTop)
+                holeCount[j] += 1;
+        }
+    }
+    int rowHoleCount = 0;
+    for (int i = 0; i < ROWS; ++i) {
+        if (holeCount[i] > 0)
+            ++rowHoleCount;
+    }
+    return rowHoleCount;
 }
 
+/* *
+ * Function HoleDepth
+ *
+ * The number of filled cells on top of each hole.
+ * */
 int HoleDepth(GameState const& state) {
     return 0;
 }
