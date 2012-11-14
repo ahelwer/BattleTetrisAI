@@ -11,6 +11,7 @@ public:
     Tetronimo const& GetNext(); 
     bool HasNext() const;
     Tetronimo const& PeekNext() const;
+    void Reset();
 private:
     int m_gameLength;
     int m_currentIdx;

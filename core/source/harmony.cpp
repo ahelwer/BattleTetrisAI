@@ -3,33 +3,22 @@
 //#include <random>
 
 Harmony::Harmony()
-	: std::vector<float>(), m_isCached(false), m_cached(0.0)
+    : std::vector<float>(), m_isCached(false), m_cached(0.0)
 { }
 
 float Harmony::ApplyToSelf(ObjectiveFunction const& f) const {
-	if (m_isCached)
-		return m_cached;
-	float result = f(*this);
-	m_cached = result;
-	m_isCached = true;
-	return result;
-}
-
-HarmonyCompare::HarmonyCompare(ObjectiveFunction const& f)
-    : m_f(f)
-{ }
-
-bool HarmonyCompare::operator() (Harmony const* a, Harmony const* b) const {
-    // Is Harmony a less than Harmony b? 
-    //return (m_f(*a) < m_f(*b));
-	// Applies functions to Harmonies, returns cached values if available
-	return (a->ApplyToSelf(m_f) < b->ApplyToSelf(m_f));
+    if (m_isCached)
+        return m_cached;
+    float result = f(*this);
+    m_cached = result;
+    m_isCached = true;
+    return result;
 }
 
 HarmonyFactory::HarmonyFactory(unsigned decisionVarCount, HarmonyRanges const& ranges)
     : m_vCount(decisionVarCount), m_ranges(ranges)
 { 
-	srand(time(NULL));
+    srand(time(NULL));
 }
 
 HarmonyFactory::~HarmonyFactory()
@@ -57,5 +46,40 @@ float HarmonyFactory::ModifyVariableTone(unsigned var, float old, float bandwidt
     modified = std::min(modified, high);
     modified = std::max(modified, low);
     return modified;
+}
+
+HarmonyCompare::HarmonyCompare(ObjectiveFunction const& f)
+    : m_f(f)
+{ }
+
+HarmonyCompare::~HarmonyCompare()
+{ }
+
+HarmonyCompareMin::HarmonyCompareMin(ObjectiveFunction const& f)
+    : HarmonyCompare(f)
+{ }
+
+bool HarmonyCompareMin::operator() (Harmony const* a, Harmony const* b) const {
+    // Is Harmony a less than Harmony b? 
+    return (a->ApplyToSelf(HarmonyCompare::m_f) 
+                < b->ApplyToSelf(HarmonyCompare::m_f));
+}
+
+HarmonyCompareMax::HarmonyCompareMax(ObjectiveFunction const& f)
+    : HarmonyCompare(f)
+{ }
+
+bool HarmonyCompareMax::operator() (Harmony const* a, Harmony const* b) const {
+    // Is Harmony a greater than Harmony b? 
+    return (a->ApplyToSelf(HarmonyCompare::m_f) 
+                > b->ApplyToSelf(HarmonyCompare::m_f));
+}
+
+HarmonyCompareWrapper::HarmonyCompareWrapper(HarmonyCompare const& comp)
+    : m_comp(comp)
+{ }
+
+bool HarmonyCompareWrapper::operator() (Harmony const* a, Harmony const* b) const {
+    return m_comp(a, b);
 }
 

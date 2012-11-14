@@ -12,8 +12,9 @@ void HarmonySearchUnitTests::setUp() {
     }
     m_pFactory = new PredictableFactory(m_vCount, *m_pRanges);
     m_pFunction = new SumFunction();
-    m_pCompare = new HarmonyCompare(*m_pFunction);
-    m_pSearch = new HarmonySearch(*m_pCompare, *m_pFactory, 
+    m_pCompare = new HarmonyCompareMin(*m_pFunction);
+    m_pCompareWrapper = new HarmonyCompareWrapper(*m_pCompare);
+    m_pSearch = new HarmonySearch(*m_pCompareWrapper, *m_pFactory, 
                                     m_vCount, m_memory,
                                     1.0, 0.0, 1.0);
     m_pFactory->Reset();
@@ -31,6 +32,10 @@ void HarmonySearchUnitTests::tearDown() {
     if (m_pRanges != NULL) {
         delete m_pRanges;
         m_pRanges = NULL;
+    }
+    if (m_pCompareWrapper != NULL) {
+        delete m_pCompareWrapper;
+        m_pCompareWrapper = NULL;
     }
     if (m_pCompare != NULL) {
         delete m_pCompare;

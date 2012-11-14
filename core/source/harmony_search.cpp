@@ -2,9 +2,9 @@
 #include <cstdlib>
 #include <algorithm>
 
-HarmonySearch::HarmonySearch(HarmonyCompare const& compare, HarmonyFactory const& factory,
-								unsigned varCount, unsigned memorySize, 
-								float r_accept, float r_pa, float b_range)
+HarmonySearch::HarmonySearch(HarmonyCompareWrapper const& compare, HarmonyFactory const& factory,
+                                unsigned varCount, unsigned memorySize, 
+                                float r_accept, float r_pa, float b_range)
     : m_compare(compare), m_factory(factory), m_varCount(varCount), m_r_accept(r_accept), 
         m_r_pa(r_pa), m_b_range(b_range)
 {
@@ -38,20 +38,20 @@ void HarmonySearch::Iterate() {
     }
 
     // Compares new harmony to worst harmony
-	Harmony* worst = m_memory.back();
+    Harmony* worst = m_memory.back();
     if (m_compare(newHarmony, worst)) {
-		m_memory.pop_back();
-		delete worst;
-		m_memory.push_back(newHarmony);
-		std::sort(m_memory.begin(), m_memory.end(), m_compare);
+        m_memory.pop_back();
+        delete worst;
+        m_memory.push_back(newHarmony);
+        std::sort(m_memory.begin(), m_memory.end(), m_compare);
     }
-	else {
-		delete newHarmony;
-	}
+    else {
+        delete newHarmony;
+    }
 }
 
 Harmony const* HarmonySearch::GetRanked(unsigned rank) const {
-	Harmony const* ranked = new Harmony(*(m_memory.at(rank)));
-	return ranked;
+    Harmony const* ranked = new Harmony(*(m_memory.at(rank)));
+    return ranked;
 }
 

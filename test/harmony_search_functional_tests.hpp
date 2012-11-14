@@ -29,6 +29,7 @@ private:
     HarmonyFactory* m_pFactory;
     Rosenbrock* m_pFunction;
     HarmonyCompare* m_pCompare;
+    HarmonyCompareWrapper* m_pCompareWrapper;
     HarmonySearch* m_pSearch;
 };
 

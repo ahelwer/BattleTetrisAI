@@ -53,6 +53,7 @@ private:
     PredictableFactory* m_pFactory;
     SumFunction* m_pFunction;
     HarmonyCompare* m_pCompare;
+    HarmonyCompareWrapper* m_pCompareWrapper;
     HarmonySearch* m_pSearch;
 };
 

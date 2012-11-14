@@ -6,6 +6,7 @@ GeneratedGame::GeneratedGame(int gameLength)
 { 
     for (int i = 0; i < m_gameLength; ++i)
         m_sequence.push_back(NULL);
+    GenerateNewGame();
 }
 
 GeneratedGame::~GeneratedGame() {
@@ -42,5 +43,9 @@ bool GeneratedGame::HasNext() const {
 Tetronimo const& GeneratedGame::PeekNext() const {
     Tetronimo* ret = m_sequence.at(m_currentIdx+1);
     return (*ret);
+}
+
+void GeneratedGame::Reset() {
+    m_currentIdx = 0;
 }
 
