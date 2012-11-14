@@ -1,23 +1,34 @@
 env = Environment()
 
-env.Append(LIBS = ['zmq', 'json'])
 env.Append(CPPPATH = ['#'])
 env.MergeFlags(['-g', '-O0', '-Wall', '-Wextra'])
 
-dirs = ['#/control/source/', '#/model/source/', '#/server/source/', '#/core/source/']
-cpp = []
-for dir in dirs:
-	cpp += env.Glob(dir + '*.cpp')
-prog_main = ['main.cpp']
-prog_objects = env.Object(source = cpp)
-env.Program(target = 'a.out', source = prog_objects + prog_main)
+prog_main = ['main/main.cpp']
+prog_env = env.Clone();
+prog_env.Append(LIBS = ['zmq', 'json'])
+prog_dirs = ['#/control/source/', '#/model/source/', '#/server/source/', '#/core/source/']
+prog_cpp = []
+for dir in prog_dirs:
+    prog_cpp += prog_env.Glob(dir + '*.cpp')
+prog_objects = prog_env.Object(source = prog_cpp)
+prog_env.Program(target = 'runTetris', source = prog_objects + prog_main)
 
-testEnv = env.Clone()
-testEnv.Append(LIBS = ['cppunit'])
+test_main = ['main/test_main.cpp']
+test_env = env.Clone()
+test_env.Append(LIBS = ['zmq', 'json', 'cppunit'])
 test_dirs = ['#/test/source/']
 test_cpp = []
 for dir in test_dirs:
-    test_cpp += env.Glob(dir + '*.cpp')
-test_objects = env.Object(test_cpp)
-testEnv.Program(target = 'runTests', source = test_objects + prog_objects)
+    test_cpp += test_env.Glob(dir + '*.cpp')
+test_objects = test_env.Object(test_cpp)
+test_env.Program(target = 'runTests', source = prog_objects + test_objects + test_main)
+
+trainer_main = ['main/trainer_main.cpp']
+trainer_env = env.Clone()
+trainer_dirs = ['#/trainer/source/']
+trainer_cpp = []
+for dir in trainer_dirs:
+    trainer_cpp += trainer_env.Glob(dir + '*.cpp')
+trainer_objects = trainer_env.Object(trainer_cpp)
+test_env.Program(target = 'runTrainer', source = prog_objects + trainer_objects + trainer_main)
 

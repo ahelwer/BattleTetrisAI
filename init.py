@@ -6,5 +6,5 @@ with open('init.txt', 'r') as jsf:
     raw = load(jsf)
 server_ip = raw['server_ip']
 match_token = raw['match_token']
-call(['./a.out', server_ip, match_token])
+call(['./runTetris', server_ip, match_token])
 

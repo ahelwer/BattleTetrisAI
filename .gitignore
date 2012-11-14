@@ -2,4 +2,6 @@
 .sconsign.dblite
 *.swp
 a.out
+runTetris
 runTests
+runTrainer
