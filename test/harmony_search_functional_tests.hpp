@@ -6,29 +6,29 @@
 
 class Rosenbrock : public ObjectiveFunction {
 public:
-	float operator() (Harmony const& h) const {
-		float x = h.at(0);
-		float y = h.at(1);
-		float result = (1-x)*(1-x) + 100*(y-x*x)*(y-x*x);
-		return result;
-	}
+    float operator() (Harmony const& h) const {
+        float x = h.at(0);
+        float y = h.at(1);
+        float result = (1-x)*(1-x) + 100*(y-x*x)*(y-x*x);
+        return result;
+    }
 };
 
 class HarmonySearchFunctionalTests : public CppUnit::TestFixture {
     CPPUNIT_TEST_SUITE(HarmonySearchFunctionalTests);
-	CPPUNIT_TEST(TestRosenbrock);
+    CPPUNIT_TEST(TestRosenbrock);
     CPPUNIT_TEST_SUITE_END();
 public:
     void setUp();
     void tearDown();
-	void TestRosenbrock();
+    void TestRosenbrock();
 private:
-	unsigned m_vCount;
-	unsigned m_memory;
-	HarmonyRanges* m_pRanges;
-	HarmonyFactory* m_pFactory;
-	Rosenbrock* m_pFunction;
-	HarmonyCompare* m_pCompare;
-	HarmonySearch* m_pSearch;
+    unsigned m_vCount;
+    unsigned m_memory;
+    HarmonyRanges* m_pRanges;
+    HarmonyFactory* m_pFactory;
+    Rosenbrock* m_pFunction;
+    HarmonyCompare* m_pCompare;
+    HarmonySearch* m_pSearch;
 };
 

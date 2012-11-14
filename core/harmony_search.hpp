@@ -6,11 +6,11 @@
 class HarmonySearch {
 public:
     HarmonySearch(HarmonyCompare const& compare, HarmonyFactory const& factory,
-					unsigned varCount, unsigned memorySize, 
-					float r_accept, float r_pa, float b_range);
+                    unsigned varCount, unsigned memorySize, 
+                    float r_accept, float r_pa, float b_range);
     ~HarmonySearch();
     void Iterate();
-	Harmony const* GetRanked(unsigned rank) const;
+    Harmony const* GetRanked(unsigned rank) const;
 private:
     HarmonyCompare const& m_compare;
     HarmonyFactory const& m_factory;
