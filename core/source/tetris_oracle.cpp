@@ -181,6 +181,17 @@ Tetromino const* BFS(GameState const& state, Tetromino const& s,
         Tetromino c = Q.front();
         Q.pop_front();
 
+        // Checks if can hot drop on target
+        Tetromino dropped = c;
+        while (!board.IsAtRest(dropped) && board.IsValidMove(dropped))
+            dropped.ShiftDown();
+        if (dropped == t) {
+            reached = true;
+            v[t.GetX()][t.GetY()][t.GetOrient()] = true;
+            p[t.GetX()][t.GetY()][t.GetOrient()] = Tetromino::drop;
+            return (new Tetromino(c));
+        }
+
         // Check adjacent
         std::vector<Tetromino> const* adj = Neighbours(c);
         for (int i = 0; i < adj->size(); ++i) {
@@ -189,15 +200,6 @@ Tetromino const* BFS(GameState const& state, Tetromino const& s,
                 v[n.GetX()][n.GetY()][n.GetOrient()] = true;
                 p[n.GetX()][n.GetY()][n.GetOrient()] = GetTransition(c, n);
                 Q.push_back(n);
-            }
-            // Checks if can hot drop on target
-            Tetromino dropped = n;
-            while (!board.IsAtRest(dropped))
-                dropped.ShiftDown();
-            if (dropped == t) {
-                reached = true;
-                delete adj;
-                return (new Tetromino(n));
             }
             // Checks if reached target naturally
             if (n == t) {
@@ -231,6 +233,10 @@ std::vector<enum Tetromino::Move> const* FindPath(GameState const& state,
     // last == NULL if no drop, otherwise set to state dropped from
     Tetromino const* last = BFS(state, source, target, v, p, reached);
     if (!reached) {
+        if (last != NULL) {
+            delete last;
+            last = NULL;
+        }
         std::cout << "ERROR: Could not reach target" << std::endl;
         return (new std::vector<enum Tetromino::Move>());
     }
@@ -242,6 +248,7 @@ std::vector<enum Tetromino::Move> const* FindPath(GameState const& state,
         sequence.push_back(Tetromino::drop);
         c = *last;
         delete last;
+        last = NULL;
     }
     while (c != source && v[c.GetX()][c.GetY()][c.GetOrient()]) {
         enum Tetromino::Move move = p[c.GetX()][c.GetY()][c.GetOrient()];
