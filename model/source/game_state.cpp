@@ -75,6 +75,7 @@ void GameState::SetPieceInPlay(Tetromino* t) {
     }
     if (t == NULL) {
         m_pPieceInPlay = NULL;
+        m_pieceNumber = -1;
     }
     else {
         m_pPieceInPlay = t;

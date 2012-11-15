@@ -81,6 +81,20 @@ std::vector<int> const* GameBoard::ClearRows() {
     return cleared;
 }
 
+void GameBoard::ClearBoard() {
+    BoardDesc& desc = GetBoardDesc();
+    for (int j = 0; j < ROWS; ++j) {
+        for (int i = 0; i < COLS; ++i) {
+            desc[i][j] = false;
+        }
+    }
+    if (m_pDesc != NULL) {
+        for (int i = 0; i < BOARD_DESC_SIZE; ++i) {
+            m_pDesc[i] = '0';
+        }
+    }
+}
+
 bool GameBoard::IsValidMove(Tetromino const& t) const {
     BoardDesc const& board = GetBoardDesc();
     bool const* desc = t.GetDesc();

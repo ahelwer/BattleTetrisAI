@@ -16,6 +16,7 @@ public:
     bool PushMove(Tetromino const& t);
     bool PopMove();
     std::vector<int> const* ClearRows();
+    void ClearBoard();
     BoardDesc& GetBoardDesc();
     BoardDesc const& GetBoardDesc() const;
     bool IsValidMove(Tetromino const& t) const;

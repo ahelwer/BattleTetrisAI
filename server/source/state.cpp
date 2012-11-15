@@ -116,7 +116,10 @@ GameEnd::GameEnd(int sequence, double timestamp, bool won,
 { }
 
 bool GameEnd::ExecuteUpdates(GameState& game) const {
-    std::cout << (*this) << std::endl;
+    GameBoard& board = game.GetBoard();
+    board.ClearBoard();
+    game.SetPieceInPlay(NULL);
+    game.RegisterCurrentPieceNumber(-1);
     return false;
 }
 
