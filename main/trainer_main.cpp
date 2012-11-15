@@ -5,8 +5,8 @@
 #include <core/harmony.hpp>
 
 int main() {
-    int const gameLength = 100;
-    int const iterationCount = 1;
+    int const gameLength = 1000;
+    int const iterationCount = 1000;
 
     int const varCount = GetVarCount();
     int const memorySize = 5;
@@ -26,10 +26,15 @@ int main() {
         search.Iterate();
         generator.GenerateNewGame();
         search.EraseHarmonyCaches();
+        std::cout << "COMPLETED ITERATION " << i << std::endl;
     }
-    Harmony const* best = search.GetRanked(0);
-    std::cout << (*best) << std::endl;
-    delete best;
+    std::vector<Harmony const*> memory;
+    for (int i = 0; i < memorySize; ++i)
+        memory.push_back(search.GetRanked(i));
+    for (int i = 0; i < memorySize; ++i)
+        std::cout << *(memory.at(i)) << std::endl;
+    for (int i = 0; i < memorySize; ++i)
+        delete memory.at(i);
     delete ranges;
 
     return 0;

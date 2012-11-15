@@ -21,6 +21,8 @@ HarmonySearch::~HarmonySearch() {
 }
 
 void HarmonySearch::Iterate() {
+    std::sort(m_memory.begin(), m_memory.end(), m_compare);
+
     Harmony* newHarmony = new Harmony();
     for (unsigned i = 0; i < m_varCount; ++i) {
         float r1 = (float)rand()/(float)RAND_MAX; 

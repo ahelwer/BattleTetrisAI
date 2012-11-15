@@ -26,11 +26,12 @@ float TetrisRowsCleared::operator() (Harmony const& h) const {
             delete best;
         }
         else {
-            std::cout << "ERROR: got NULL best move." << std::endl;
+            break;
         }
         if (i < gameLength-1) {
             state.SetPieceInPlay(m_generator.GetPiece(i+1));
         }
     }
+    std::cout << "Cleared: " << rowsCleared<<  std::endl;
     return rowsCleared;
 }
