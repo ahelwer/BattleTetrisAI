@@ -100,6 +100,10 @@ int GameState::GetCurrentPieceNumber() const {
 }
 
 void GameState::RegisterCurrentPieceNumber(int n) {
+    if (n == -1 && m_pPieceInPlay != NULL) {
+        delete m_pPieceInPlay;
+        m_pPieceInPlay = NULL;
+    }
     m_pieceNumber = n;
 }
 

@@ -32,12 +32,14 @@ void Control::Execute() {
                 sequence = NULL;
             }
             sequence = FindPath(game, *(game.GetPieceInPlay()), *best);
-            // play until hit drop
+            ExecuteSequence(*sequence, game.GetCurrentPieceNumber());
         }
         State const* s = m_si.GetState();
         gameOver = s->ExecuteUpdates(game);
         delete s;
-        // if state->hadrowsdropped, inMoveSequence = false
+        if (game.WasRowClearEvent()) {
+            inMoveSequence = false;
+        }
         if (game.GetPieceInPlay() != NULL && !inMoveSequence) {
             if (best != NULL) {
                 delete best;
@@ -49,6 +51,17 @@ void Control::Execute() {
             }
         }
     }
+}
 
+void Control::ExecuteSequence(std::vector<enum Tetromino::Move> const& sequence,
+                               int pieceId) {
+    for (int i = 0; i < sequence.size(); ++i) {
+        enum Tetromino::Move move = sequence.at(i);
+        if (move == Tetromino::down)
+            return;
+        bool success = m_si.SendMove(move, pieceId);
+        if (!success)
+            return;
+    }
 }
 

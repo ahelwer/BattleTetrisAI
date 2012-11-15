@@ -3,6 +3,7 @@
 #include <model/tetromino.hpp>
 #include <cstdio>
 #include <cstring>
+#include <sstream>
 
 MessageFactory::MessageFactory()
 { }
@@ -63,17 +64,39 @@ bool MessageFactory::ParseInitReply(std::string const& reply) {
     return success;
 }
 
-std::string const* MessageFactory::CreateMoveMessage(std::string const& moveS) const {
+std::string const* MessageFactory::CreateMoveMessage(enum Tetromino::Move move, int pieceId) const {
     Json::Value root;
     Json::FastWriter writer;
 
     Json::Value comm_type ("GameMove");
     Json::Value client_token (m_clientToken);
-    Json::Value move (moveS);
 
     root["comm_type"] = comm_type;
     root["client_token"] = client_token;
-    root["move"] = move;
+    if (move == Tetromino::left) {
+        Json::Value moveV ("left");
+        root["move"] = moveV;
+    }
+    else if (move == Tetromino::right) {
+        Json::Value moveV ("right");
+        root["move"] = moveV;
+    }
+    else if (move == Tetromino::down) {
+        Json::Value moveV ("down");
+        root["move"] = moveV;
+    }
+    else if (move == Tetromino::lrotate) {
+        Json::Value moveV ("lrotate");
+        root["move"] = moveV;
+    }
+    else if (move == Tetromino::rrotate) {
+        Json::Value moveV ("rrotate");
+        root["move"] = moveV;
+    }
+
+    std::stringstream ss;
+    ss << pieceId;
+    root["piece_number"] = ss.str();
 
     std::string const* serialized = new std::string(writer.write(root));
     return serialized;

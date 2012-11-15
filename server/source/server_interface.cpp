@@ -2,16 +2,16 @@
 #include <iostream>
 
 ServerInterface::ServerInterface(zmq::context_t& context, 
-									std::string const& commandServer,
-									std::string const& stateServer,
-									std::string const& matchToken)
-	: m_command(context, ZMQ_REQ), m_state(context, ZMQ_SUB),
-		m_matchToken(matchToken)
+                                    std::string const& commandServer,
+                                    std::string const& stateServer,
+                                    std::string const& matchToken)
+    : m_command(context, ZMQ_REQ), m_state(context, ZMQ_SUB),
+        m_matchToken(matchToken)
 {
     std::cout << "Connecting to command server " << commandServer << std::endl;
-	m_command.connect(commandServer.c_str());
+    m_command.connect(commandServer.c_str());
     std::cout << "Connecting to state server " << stateServer << std::endl;
-	m_state.connect(stateServer.c_str());
+    m_state.connect(stateServer.c_str());
 }
 
 ServerInterface::~ServerInterface() {
@@ -24,7 +24,7 @@ bool ServerInterface::Initialize() {
     // Sends initial message to command server
     std::cout << "Initiating handshake... ";
     std::string const* requestS = m_factory.CreateInitMessage(m_matchToken);
-	zmq::message_t request (requestS->size());
+    zmq::message_t request (requestS->size());
     memcpy(static_cast<void*>(request.data()), requestS->data(), requestS->size());
     delete requestS;
     m_command.send(request);
@@ -40,15 +40,29 @@ bool ServerInterface::Initialize() {
         std::cout << "Success!" << std::endl;
     else
         std::cout << "Failure." << std::endl;
-	return success;
+    return success;
 }
 
 State const* ServerInterface::GetState() {
-	zmq::message_t address;
-	zmq::message_t state;
-	m_state.recv(&address);
-	m_state.recv(&state);
-	std::string stateS (static_cast<char const*>(state.data()), state.size());
-	return m_factory.ParseStateMessage(stateS);
+    zmq::message_t address;
+    zmq::message_t state;
+    m_state.recv(&address);
+    m_state.recv(&state);
+    std::string stateS (static_cast<char const*>(state.data()), state.size());
+    return m_factory.ParseStateMessage(stateS);
+}
+
+bool ServerInterface::SendMove(enum Tetromino::Move move, int pieceId) {
+    std::string const* moveCommandS = m_factory.CreateMoveMessage(move, pieceId);
+    zmq::message_t moveCommand (moveCommandS->size());
+    memcpy(static_cast<void*>(moveCommand.data()), moveCommandS->data(), 
+                                moveCommandS->size());
+    delete moveCommandS;
+    m_command.send(moveCommand);
+
+    zmq::message_t reply;
+    m_command.recv(&reply);
+    std::string replyS (static_cast<char const*>(reply.data()), reply.size());
+    return m_factory.ParseMoveReply(replyS);
 }
 
