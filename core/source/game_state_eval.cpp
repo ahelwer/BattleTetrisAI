@@ -30,7 +30,7 @@ int GetVarCount() {
 HarmonyRanges const* GetRanges() {
     HarmonyRanges* ranges = new HarmonyRanges();
     for (int i = 0; i < GetVarCount(); ++i)
-        ranges->push_back(std::pair<float, float>(-100.0, 100.0));
+        ranges->push_back(std::pair<float, float>(-1.0, 1.0));
     return ranges;
 }
 
