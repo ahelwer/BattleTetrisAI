@@ -95,6 +95,10 @@ std::string const* MessageFactory::CreateMoveMessage(enum Tetromino::Move move, 
         Json::Value moveV ("rrotate");
         root["move"] = moveV;
     }
+    else if (move == Tetromino::drop) {
+        Json::Value moveV ("drop");
+        root["move"] = moveV;
+    }
 
     Json::Value number (pieceId);
     root["piece_number"] = number;

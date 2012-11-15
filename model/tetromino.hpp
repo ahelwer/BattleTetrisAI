@@ -30,6 +30,7 @@ public:
         down,
         lrotate,
         rrotate,
+        drop,
         nmoves
     };
 private:

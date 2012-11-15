@@ -168,22 +168,13 @@ Tetromino GetPrevious(Tetromino const& current, enum Tetromino::Move move) {
     return current;
 }
 
-std::vector<enum Tetromino::Move> const* FindPath(GameState const& state, Tetromino const& source, Tetromino const& target) {
+Tetromino const* BFS(GameState const& state, Tetromino const& s, 
+                        Tetromino const& t, bool v[10][20][4], 
+                        Tetromino::Move p[10][20][4], bool& reached) {
     GameBoard const& board = state.GetBoard();
-
-    // Initializes breadth-first search
-    // visited [Column][Row][Rotation]
-    bool v[10][20][4];
-    Tetromino::Move p[10][20][4];
-    bool* vRaw = &(v[0][0][0]);
-    Tetromino::Move* pRaw = &(p[0][0][0]);
-    for (int i = 0; i < 10*20*4; ++i) {
-        vRaw[i] = false;
-        pRaw[i] = Tetromino::nmoves;
-    }
     std::deque<Tetromino> Q;
-    Q.push_back(source);
-    v[source.GetX()][source.GetY()][source.GetOrient()] = true;
+    Q.push_back(s);
+    v[s.GetX()][s.GetY()][s.GetOrient()] = true;
 
     // Begins breadth-first search
     while (!Q.empty()) {
@@ -199,12 +190,55 @@ std::vector<enum Tetromino::Move> const* FindPath(GameState const& state, Tetrom
                 p[n.GetX()][n.GetY()][n.GetOrient()] = GetTransition(c, n);
                 Q.push_back(n);
             }
+            // Checks if can hot drop on target
+            Tetromino dropped = n;
+            while (!board.IsAtRest(dropped))
+                dropped.ShiftDown();
+            if (dropped == t) {
+                reached = true;
+                delete adj;
+                return (new Tetromino(n));
+            }
+            // Checks if reached target naturally
+            if (n == t) {
+                reached = true;
+                delete adj;
+                return NULL;
+            }
         }
         delete adj;
+    }
+    reached = false;
+    return NULL;
+}
+
+std::vector<enum Tetromino::Move> const* FindPath(GameState const& state, Tetromino const& source, Tetromino const& target) {
+    GameBoard const& board = state.GetBoard();
+
+    // Initializes breadth-first search
+    // visited [Column][Row][Rotation]
+    bool v[10][20][4];
+    Tetromino::Move p[10][20][4];
+    bool* vRaw = &(v[0][0][0]);
+    Tetromino::Move* pRaw = &(p[0][0][0]);
+    for (int i = 0; i < 10*20*4; ++i) {
+        vRaw[i] = false;
+        pRaw[i] = Tetromino::nmoves;
+    }
+
+    bool reached = false;
+    Tetromino const* last = BFS(state, source, target, v, p, reached);
+    if (!reached) {
+        return (new std::vector<enum Tetromino::Move>());
     }
 
     std::vector<enum Tetromino::Move> sequence;
     Tetromino c = target;
+    if (last != NULL) {
+        sequence.push_back(Tetromino::drop);
+        c = *last;
+        delete last;
+    }
     while (c != source && v[c.GetX()][c.GetY()][c.GetOrient()]) {
         enum Tetromino::Move move = p[c.GetX()][c.GetY()][c.GetOrient()];
         sequence.push_back(move); 
