@@ -11,7 +11,7 @@ Tetromino const* FindBestMove(GameState& state, Harmony const& h) {
     for (int i = 0; i < possible->size(); ++i) {
         state.PushMove(possible->at(i));
         float result = EvaluateMove(state, h);
-        std::cout << result << " " << maxScore << std::endl;
+        //std::cout << result << " " << maxScore << std::endl;
         state.PopMove();
         if (result > maxScore) {
             maxIdx = i;
