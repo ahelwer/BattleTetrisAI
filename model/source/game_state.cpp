@@ -91,9 +91,7 @@ std::vector<int> const& GameState::LastClearedRows() const {
 }
 
 void GameState::RegisterLastClearedRows(std::vector<int> const& cleared) {
-    std::vector<int> const* top = m_rowClearedStack.back();
-    m_rowClearedStack[m_rowClearedStack.size()-1] = new std::vector<int>(cleared);
-    delete top;
+    m_rowClearedStack.push_back(new std::vector<int>(cleared));
 }
 
 int GameState::GetCurrentPieceNumber() const {
