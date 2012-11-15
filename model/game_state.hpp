@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <util/vector.hpp>
 #include <model/game_board.hpp>
 #include <model/tetromino.hpp>
@@ -19,6 +20,7 @@ public:
     Tetromino const& LastPiecePlayed() const;
     GameBoard& GetBoard();
     GameBoard const& GetBoard() const;
+    friend std::ostream& operator<< (std::ostream& out, GameState const& state);
 private:
     GameBoard m_board;
     std::vector<Tetromino> m_pieceQueue;

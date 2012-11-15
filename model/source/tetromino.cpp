@@ -229,6 +229,7 @@ bool const* Tetromino::GetDesc(char type, int orient) const {
 }
 
 std::ostream& operator<< (std::ostream& out, Tetromino const& t) {
+    out << "(" << t.GetX() << ", " << t.GetY() << ")" << std::endl;
     for (int j = 0; j < 4; ++j) {
         for (int i = 0; i < 4; ++i) {
             bool set = t.m_pDesc[j*4+i];

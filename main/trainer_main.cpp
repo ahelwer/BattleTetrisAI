@@ -6,7 +6,7 @@
 
 int main() {
     int const gameLength = 100;
-    int const iterationCount = 100;
+    int const iterationCount = 1;
 
     int const varCount = GetVarCount();
     int const memorySize = 5;

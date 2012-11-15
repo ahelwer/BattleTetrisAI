@@ -83,3 +83,8 @@ GameBoard const& GameState::GetBoard() const {
     return m_board;
 }
 
+std::ostream& operator<< (std::ostream& out, GameState const& state) {
+    out << state.GetBoard();
+    return out;
+}
+

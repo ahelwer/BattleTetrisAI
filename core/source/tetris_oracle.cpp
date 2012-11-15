@@ -7,10 +7,11 @@
 Tetromino const* FindBestMove(GameState& state, Harmony const& h) {
     std::vector<Tetromino> const* possible = FindPossibleMoves(state);
     int maxIdx = -1;
-    float maxScore = FLT_MIN;
+    float maxScore = -1.0*FLT_MAX;
     for (int i = 0; i < possible->size(); ++i) {
         state.PushMove(possible->at(i));
         float result = EvaluateMove(state, h);
+        std::cout << result << " " << maxScore << std::endl;
         state.PopMove();
         if (result > maxScore) {
             maxIdx = i;
