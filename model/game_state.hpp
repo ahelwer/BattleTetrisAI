@@ -17,6 +17,11 @@ public:
     void SetPieceInPlay(Tetromino* t);
     Tetromino const* GetPieceInPlay() const;
     std::vector<int> const& LastClearedRows() const;
+    int GetCurrentPieceNumber() const;
+    void RegisterLastClearedRows(std::vector<int> const& cleared);
+    void RegisterCurrentPieceNumber(int n);
+    void RegisterRowClearEvent();
+    bool WasRowClearEvent();
     Tetromino const& LastPiecePlayed() const;
     GameBoard& GetBoard();
     GameBoard const& GetBoard() const;
@@ -28,5 +33,7 @@ private:
     std::vector<Tetromino> m_playedStack;
     int m_depthInQueue;
     Tetromino* m_pPieceInPlay;
+    int m_pieceNumber;
+    bool m_rowsCleared;
 };
 
