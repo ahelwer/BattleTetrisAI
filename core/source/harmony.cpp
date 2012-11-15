@@ -1,6 +1,5 @@
 #include <core/harmony.hpp>
 #include <cstdlib>
-//#include <random>
 
 Harmony::Harmony()
     : std::vector<float>(), m_isCached(false), m_cached(0.0)
@@ -24,9 +23,7 @@ float Harmony::EraseCache() const {
 
 HarmonyFactory::HarmonyFactory(unsigned decisionVarCount, HarmonyRanges const& ranges)
     : m_vCount(decisionVarCount), m_ranges(ranges)
-{ 
-    srand(time(NULL));
-}
+{ }
 
 HarmonyFactory::~HarmonyFactory()
 { }

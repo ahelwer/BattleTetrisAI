@@ -141,6 +141,10 @@ void Tetromino::ShiftDown() {
     ++m_row;
 }
 
+void Tetromino::ShiftUp() {
+    --m_row;
+}
+
 void Tetromino::SetOrient(int orient) {
     m_orient = orient;
     m_pDesc = GetDesc(m_type, m_orient); 
@@ -170,6 +174,16 @@ void Tetromino::RotateRight() {
         m_orient = (m_orient-1+4)%4;
     }
     m_pDesc = GetDesc(m_type, m_orient);
+}
+
+bool Tetromino::operator== (Tetromino const& o) {
+    return (m_orient == o.m_orient &&
+            m_row == o.m_row &&
+            m_col == o.m_col);
+}
+
+bool Tetromino::operator!= (Tetromino const& o) {
+    return !(*this == o);
 }
 
 bool const* Tetromino::GetDesc(char type, int orient) const {

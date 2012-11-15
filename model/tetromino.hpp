@@ -18,9 +18,20 @@ public:
     void ShiftRight();
     void ShiftLeft();
     void ShiftDown();
+    void ShiftUp();
     void RotateLeft();
     void RotateRight();
     friend std::ostream& operator<< (std::ostream& out, Tetromino const& t);
+    bool operator== (Tetromino const& o);
+    bool operator!= (Tetromino const& o);
+    enum Move {
+        left,
+        right,
+        down,
+        lrotate,
+        rrotate,
+        nmoves
+    };
 private:
     bool const* GetDesc(char type, int orient) const;
     char m_type;

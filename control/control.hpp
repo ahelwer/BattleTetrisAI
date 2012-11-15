@@ -5,9 +5,9 @@
 
 class Control {
 public:
-	Control(zmq::context_t& context, ServerInterface& si);
-	void Execute();
+    Control(zmq::context_t& context, ServerInterface& si);
+    void Execute();
 private:
-	ServerInterface& m_si;
+    ServerInterface& m_si;
 };
 

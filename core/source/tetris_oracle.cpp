@@ -30,29 +30,30 @@ Tetromino const* FindBestMove(GameState& state, Harmony const& h) {
 std::vector<Tetromino> const* Neighbours(Tetromino const& current) {
     std::vector<Tetromino>* adj = new std::vector<Tetromino>();
 
-    // right
+    // shift right
     Tetromino n = current;
     n.ShiftRight();
-    for (int i = 0; i < 4; ++i) {
-        n.RotateRight();
-        adj->push_back(n);
-    }
+    adj->push_back(n);
 
-    // down
-    n = current;
-    n.ShiftDown();
-    for (int i = 0; i < 4; ++i) {
-        n.RotateRight();
-        adj->push_back(n);
-    }
-
-    // left
+    // shift left
     n = current;
     n.ShiftLeft();
-    for (int i = 0; i < 4; ++i) {
-        n.RotateRight();
-        adj->push_back(n);
-    }
+    adj->push_back(n);
+
+    // shift down
+    n = current;
+    n.ShiftDown();
+    adj->push_back(n);
+
+    // rotate left
+    n = current;
+    n.RotateLeft();
+    adj->push_back(n);
+    
+    // rotate right
+    n = current;
+    n.RotateRight();
+    adj->push_back(n);
     
     return adj;
 }
@@ -68,7 +69,7 @@ std::vector<Tetromino> const* FindPossibleMoves(GameState& state) {
     for (int i = 0; i < 10*20*4; ++i)
         vRaw[i] = false;
     std::deque<Tetromino> Q;
-    Tetromino s (state.GetPieceInPlay());
+    Tetromino s (*(state.GetPieceInPlay()));
     Q.push_back(s);
     v[s.GetX()][s.GetY()][s.GetOrient()] = true;
 
@@ -90,6 +91,129 @@ std::vector<Tetromino> const* FindPossibleMoves(GameState& state) {
         }
         delete adj;
     }
+
+    return moves;
+}
+
+enum Tetromino::Move GetTransition(Tetromino const& source, Tetromino const& target) {
+    // shift right?
+    Tetromino n = source;
+    n.ShiftRight();
+    if (n == target)
+        return Tetromino::right;
+
+    // shift left?
+    n = source;
+    n.ShiftLeft();
+    if (n == target)
+        return Tetromino::left;
+    
+    // shift down?
+    n = source;
+    n.ShiftDown();
+    if (n == target)
+        return Tetromino::down;
+    
+    // rotate left?
+    n = source;
+    n.RotateLeft();
+    if (n == target)
+        return Tetromino::lrotate;
+
+    // rotate right?
+    n = source;
+    n.RotateRight();
+    if (n == target)
+        return Tetromino::rrotate;
+
+    return Tetromino::nmoves;
+}
+
+Tetromino GetPrevious(Tetromino const& current, enum Tetromino::Move move) {
+    // Was shifted right?
+    if (move == Tetromino::right) {
+        Tetromino n = current;
+        n.ShiftLeft();
+        return n;
+    }
+
+    // Was shifted left?
+    if (move == Tetromino::left) {
+        Tetromino n = current;
+        n.ShiftRight();
+        return n;
+    }
+    
+    // Was shifted down?
+    if (move == Tetromino::down) {
+        Tetromino n = current;
+        n.ShiftUp();
+        return n;
+    }
+
+    // Was rotated left?
+    if (move == Tetromino::lrotate) {
+        Tetromino n = current;
+        n.RotateRight();
+        return n;
+    }
+
+    // Was rotated right?
+    if (move == Tetromino::rrotate) {
+        Tetromino n = current;
+        n.RotateLeft();
+        return n;
+    }
+
+    return current;
+}
+
+std::vector<enum Tetromino::Move> const* FindPath(GameState const& state, Tetromino const& source, Tetromino const& target) {
+    GameBoard const& board = state.GetBoard();
+
+    // Initializes breadth-first search
+    // visited [Column][Row][Rotation]
+    bool v[10][20][4];
+    Tetromino::Move p[10][20][4];
+    bool* vRaw = &(v[0][0][0]);
+    Tetromino::Move* pRaw = &(p[0][0][0]);
+    for (int i = 0; i < 10*20*4; ++i) {
+        vRaw[i] = false;
+        pRaw[i] = Tetromino::nmoves;
+    }
+    std::deque<Tetromino> Q;
+    Q.push_back(source);
+    v[source.GetX()][source.GetY()][source.GetOrient()] = true;
+
+    // Begins breadth-first search
+    while (!Q.empty()) {
+        Tetromino c = Q.front();
+        Q.pop_front();
+
+        // Check adjacent
+        std::vector<Tetromino> const* adj = Neighbours(c);
+        for (int i = 0; i < adj->size(); ++i) {
+            Tetromino n = adj->at(i);
+            if (board.IsValidMove(n) && !v[n.GetX()][n.GetY()][n.GetOrient()]) {
+                v[n.GetX()][n.GetY()][n.GetOrient()] = true;
+                p[n.GetX()][n.GetY()][n.GetOrient()] = GetTransition(c, n);
+                Q.push_back(n);
+            }
+        }
+        delete adj;
+    }
+
+    std::vector<enum Tetromino::Move> sequence;
+    Tetromino c = target;
+    while (c != source && v[c.GetX()][c.GetY()][c.GetOrient()]) {
+        enum Tetromino::Move move = p[c.GetX()][c.GetY()][c.GetOrient()];
+        sequence.push_back(move); 
+        c = GetPrevious(c, move);
+    }
+
+    std::vector<enum Tetromino::Move>* moves = new std::vector<enum Tetromino::Move>();
+    for (int i = sequence.size()-1; i >= 0; --i)
+        moves->push_back(sequence.at(i));
 
     return moves;
 }

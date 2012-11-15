@@ -1,8 +1,12 @@
 #include <model/game_state.hpp>
 
+GameState::GameState()
+    : m_depthInQueue(-1), m_pPieceInPlay(NULL)
+{ }
+
 GameState::GameState(std::vector<Tetromino> const& queue, Tetromino const& inPlay)
     : m_pieceQueue(queue), m_depthInQueue(-1), 
-        m_pieceInPlay(inPlay)
+        m_pPieceInPlay(new Tetromino(inPlay))
 { 
     m_rowClearedStack.push_back(new std::vector<int>());
 }
@@ -14,10 +18,14 @@ GameState::~GameState() {
             m_rowClearedStack[i] = NULL;
         }
     }
+    if (m_pPieceInPlay != NULL) {
+        delete m_pPieceInPlay;
+        m_pPieceInPlay = NULL;
+    }
 }
 
 int GameState::ApplyMove(Tetromino const& t) {
-    if (t.GetType() != m_pieceInPlay.GetType())
+    if (t.GetType() != m_pPieceInPlay->GetType())
         return -1;
     bool success = m_board.ApplyMove(t);
     std::vector<int> const* cleared = m_board.ClearRows();
@@ -27,7 +35,7 @@ int GameState::ApplyMove(Tetromino const& t) {
 }
 
 bool GameState::PushMove(Tetromino const& t) {
-    if (t.GetType() != m_pieceInPlay.GetType())
+    if (t.GetType() != m_pPieceInPlay->GetType())
         return false;
     bool success = m_board.PushMove(t);
     if (success) {
@@ -53,22 +61,25 @@ bool GameState::PiecesLeftInQueue() const {
     return (m_depthInQueue < m_pieceQueue.size()-1);
 }
 
-void GameState::SetPieceInPlay(Tetromino const& t) {
-    m_pieceInPlay = t;
+void GameState::SetPieceInPlay(Tetromino* t) {
+    if (m_pPieceInPlay != NULL) {
+        delete m_pPieceInPlay;
+        m_pPieceInPlay = NULL;
+    }
+    if (t == NULL) {
+        m_pPieceInPlay = NULL;
+    }
+    else {
+        m_pPieceInPlay = t;
+    }
 }
 
-Tetromino const& GameState::GetPieceInPlay() const {
-    return m_pieceInPlay;
-}
-
-Tetromino const& GameState::FeedFromQueue() {
-    m_pieceInPlay = m_pieceQueue[m_depthInQueue+1];
-    ++m_depthInQueue;
-    return m_pieceInPlay;
+Tetromino const* GameState::GetPieceInPlay() const {
+    return m_pPieceInPlay;
 }
 
 std::vector<int> const& GameState::LastClearedRows() const {
-    return *m_rowClearedStack.back(); 
+    return *(m_rowClearedStack.back());
 }
 
 Tetromino const& GameState::LastPiecePlayed() const {

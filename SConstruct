@@ -16,12 +16,12 @@ trainer_main = ['main/trainer_main.cpp']
 
 prog_env = env.Clone();
 prog_env.Append(LIBS = ['zmq', 'json'])
-prog_env.Program(target = 'runTetris', source = control_cpp+model_cpp+server_cpp+prog_main)
+prog_env.Program(target = 'runTetris', source = control_cpp+model_cpp+server_cpp+core_cpp+prog_main)
 
 test_env = env.Clone()
 test_env.Append(LIBS = ['zmq', 'json', 'cppunit'])
 test_env.Program(target = 'runTests', source = control_cpp+model_cpp+server_cpp+test_cpp+core_cpp+trainer_cpp+test_main)
 
 trainer_env = env.Clone()
-test_env.Program(target = 'runTrainer', source = core_cpp+trainer_cpp+model_cpp+trainer_main)
+trainer_env.Program(target = 'runTrainer', source = core_cpp+trainer_cpp+model_cpp+trainer_main)
 
