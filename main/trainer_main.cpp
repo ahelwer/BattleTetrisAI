@@ -25,6 +25,7 @@ int main() {
     for (int i = 0; i < iterationCount; ++i) {
         search.Iterate();
         generator.GenerateNewGame();
+        search.EraseHarmonyCaches();
     }
     Harmony const* best = search.GetRanked(0);
     std::cout << (*best) << std::endl;

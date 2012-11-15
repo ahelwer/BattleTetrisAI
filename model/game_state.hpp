@@ -8,10 +8,12 @@ class GameState {
 public:
     GameState(std::vector<Tetromino> const& queue, Tetromino const& inPlay);
     ~GameState();
+    int ApplyMove(Tetromino const& t);
     bool PushMove(Tetromino const& t);
     bool PopMove();
     bool PiecesLeftInQueue() const;
-    Tetromino const& GetPieceInPlay();
+    void SetPieceInPlay(Tetromino const& t);
+    Tetromino const& GetPieceInPlay() const;
     Tetromino const& FeedFromQueue();
     std::vector<int> const& LastClearedRows() const;
     Tetromino const& LastPiecePlayed() const;

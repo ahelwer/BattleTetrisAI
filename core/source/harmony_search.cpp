@@ -50,6 +50,13 @@ void HarmonySearch::Iterate() {
     }
 }
 
+void HarmonySearch::EraseHarmonyCaches() const {
+    for (int i = 0; i < m_memory.size(); ++i) {
+        Harmony const* h = m_memory.at(i);
+        h->EraseCache();
+    }
+}
+
 Harmony const* HarmonySearch::GetRanked(unsigned rank) const {
     Harmony const* ranked = new Harmony(*(m_memory.at(rank)));
     return ranked;

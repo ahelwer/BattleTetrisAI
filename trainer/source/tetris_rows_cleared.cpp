@@ -16,8 +16,20 @@ float TetrisRowsCleared::operator() (Harmony const& h) const {
     for (int i = 0; i < gameLength; ++i ) {
         Tetromino const* best = FindBestMove(state, h);
         if (best != NULL) {
-            // Apply move to state
+            int cleared = state.ApplyMove(*best);
+            if (cleared != -1) {
+                rowsCleared += static_cast<float>(cleared);
+            }
+            else {
+                std::cout << "ERROR: best move failed." << std::endl;
+            }
             delete best;
+        }
+        else {
+            std::cout << "ERROR: got NULL best move." << std::endl;
+        }
+        if (i < gameLength-1) {
+            state.SetPieceInPlay(m_generator.GetPiece(i+1));
         }
     }
     return rowsCleared;

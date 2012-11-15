@@ -16,6 +16,16 @@ GameState::~GameState() {
     }
 }
 
+int GameState::ApplyMove(Tetromino const& t) {
+    if (t.GetType() != m_pieceInPlay.GetType())
+        return -1;
+    bool success = m_board.ApplyMove(t);
+    std::vector<int> const* cleared = m_board.ClearRows();
+    int clearCount = cleared->size();
+    delete cleared;
+    return clearCount;
+}
+
 bool GameState::PushMove(Tetromino const& t) {
     if (t.GetType() != m_pieceInPlay.GetType())
         return false;
@@ -43,7 +53,11 @@ bool GameState::PiecesLeftInQueue() const {
     return (m_depthInQueue < m_pieceQueue.size()-1);
 }
 
-Tetromino const& GameState::GetPieceInPlay() {
+void GameState::SetPieceInPlay(Tetromino const& t) {
+    m_pieceInPlay = t;
+}
+
+Tetromino const& GameState::GetPieceInPlay() const {
     return m_pieceInPlay;
 }
 

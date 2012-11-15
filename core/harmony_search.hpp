@@ -10,6 +10,7 @@ public:
                     float r_accept, float r_pa, float b_range);
     ~HarmonySearch();
     void Iterate();
+    void EraseHarmonyCaches() const;
     Harmony const* GetRanked(unsigned rank) const;
 private:
     HarmonyCompareWrapper const& m_compare;

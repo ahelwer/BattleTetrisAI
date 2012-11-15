@@ -16,6 +16,7 @@ class Harmony : public std::vector<float> {
 public:
     Harmony();
     float ApplyToSelf(ObjectiveFunction const& f) const;
+    float EraseCache() const;
 private:
     mutable bool m_isCached;
     mutable float m_cached;

@@ -16,11 +16,11 @@ int RowTransitions(GameState const& state);
 int ColTransitions(GameState const& state);
 int HighestHole(GameState const& state);
 int BlocksAboveHighestHole(GameState const& state);
-int PotentialRows(GameState const& state);  // TODO
+int PotentialRows(GameState const& state);
 int Smoothness(GameState const& state);
-int ErodedPieces(GameState const& state);   // TODO
-int RowHoles(GameState const& state);   // TODO
-int HoleDepth(GameState const& state);  // TODO
+int ErodedPieces(GameState const& state);
+int RowHoles(GameState const& state);
+int HoleDepth(GameState const& state);
 
 
 int GetVarCount() {
@@ -35,7 +35,27 @@ HarmonyRanges const* GetRanges() {
 }
 
 float EvaluateMove(GameState const& state, Harmony const& h) {
-    return 0.0;
+    float result = 0.0;
+    result += h.at(0)*PileHeight(state);
+    result += h.at(1)*Holes(state);
+    result += h.at(2)*ConnectedHoles(state);
+    result += h.at(3)*RemovedRows(state);
+    result += h.at(4)*AltitudeDifference(state);
+    result += h.at(5)*MaxWellDepth(state);
+    result += h.at(6)*SumOfAllWells(state);
+    result += h.at(7)*LandingHeight(state);
+    result += h.at(8)*Blocks(state);
+    result += h.at(9)*WeightedBlocks(state);
+    result += h.at(10)*RowTransitions(state);
+    result += h.at(11)*ColTransitions(state);
+    result += h.at(12)*HighestHole(state);
+    result += h.at(13)*BlocksAboveHighestHole(state);
+    result += h.at(14)*PotentialRows(state);
+    result += h.at(15)*Smoothness(state);
+    result += h.at(16)*ErodedPieces(state);
+    result += h.at(17)*RowHoles(state);
+    result += h.at(18)*HoleDepth(state);
+    return result;
 }
 
 /* *

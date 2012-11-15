@@ -15,6 +15,13 @@ float Harmony::ApplyToSelf(ObjectiveFunction const& f) const {
     return result;
 }
 
+float Harmony::EraseCache() const {
+    m_isCached = false;
+    float cached = m_cached;
+    m_cached = 0.0;
+    return cached;
+}
+
 HarmonyFactory::HarmonyFactory(unsigned decisionVarCount, HarmonyRanges const& ranges)
     : m_vCount(decisionVarCount), m_ranges(ranges)
 { 
