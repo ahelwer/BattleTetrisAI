@@ -26,7 +26,7 @@ void Control::Execute() {
     bool inMoveSequence = false;
     std::vector<enum Tetromino::Move> const* sequence = NULL;
     while (!gameOver) {
-        if (best != NULL && inMoveSequence) {
+        if (best != NULL && game.GetPieceInPlay() != NULL && inMoveSequence) {
             if (sequence != NULL) {
                 delete sequence;
                 sequence = NULL;
@@ -37,7 +37,9 @@ void Control::Execute() {
         State const* s = m_si.GetState();
         gameOver = s->ExecuteUpdates(game);
         delete s;
-        if (game.WasRowClearEvent()) {
+        if (game.WasRowClearEvent() || game.PieceHasChanged()) {
+            if (game.GetPieceInPlay() != NULL)
+                std::cout << *(game.GetPieceInPlay()) << std::endl;
             inMoveSequence = false;
         }
         if (game.GetPieceInPlay() != NULL && !inMoveSequence) {
@@ -46,6 +48,9 @@ void Control::Execute() {
                 best = NULL;
             }
             best = FindBestMove(game, h);
+            game.PushMove(*best);
+            std::cout << game << std::endl;
+            game.PopMove();
             if (best != NULL) {
                 inMoveSequence = true;
             }

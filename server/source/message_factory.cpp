@@ -3,7 +3,6 @@
 #include <model/tetromino.hpp>
 #include <cstdio>
 #include <cstring>
-#include <sstream>
 
 MessageFactory::MessageFactory()
 { }
@@ -42,8 +41,11 @@ bool MessageFactory::ParseInitReply(std::string const& reply) {
     // Extract comm type (expect "MatchConnectResp")
     std::string commType = root.get("comm_type", "not found").asString();
     success = (commType.compare("MatchConnectResp") == 0);
-    //if (commType.compare("ErrorResp") == 0)
-        //PrintErrorMessage(reply);
+    if (commType.compare("ErrorResp") == 0) {
+        std::string errorMessage = root.get("message", "not found").asString();
+        errorMessage = "Move command rejected: " + errorMessage;
+        return new ErrorState(errorMessage.c_str());
+    }
     if (!success)
         return success;
 
@@ -94,9 +96,8 @@ std::string const* MessageFactory::CreateMoveMessage(enum Tetromino::Move move, 
         root["move"] = moveV;
     }
 
-    std::stringstream ss;
-    ss << pieceId;
-    root["piece_number"] = ss.str();
+    Json::Value number (pieceId);
+    root["piece_number"] = number;
 
     std::string const* serialized = new std::string(writer.write(root));
     return serialized;

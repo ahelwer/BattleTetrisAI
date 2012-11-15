@@ -78,7 +78,7 @@ void GameState::SetPieceInPlay(Tetromino* t) {
         m_pieceNumber = -1;
     }
     else {
-        m_pPieceInPlay = t;
+        m_pPieceInPlay = new Tetromino(*t);
     }
 }
 
@@ -101,6 +101,9 @@ int GameState::GetCurrentPieceNumber() const {
 }
 
 void GameState::RegisterCurrentPieceNumber(int n) {
+    if (n != m_pieceNumber) {
+        m_pieceChanged = true;
+    }
     if (n == -1 && m_pPieceInPlay != NULL) {
         delete m_pPieceInPlay;
         m_pPieceInPlay = NULL;
@@ -116,6 +119,12 @@ bool GameState::WasRowClearEvent() {
     bool wasCleared = m_rowsCleared;
     m_rowsCleared = false;
     return wasCleared;
+}
+
+bool GameState::PieceHasChanged() {
+    bool changed = m_pieceChanged;
+    m_pieceChanged = false;
+    return changed;
 }
 
 Tetromino const& GameState::LastPiecePlayed() const {

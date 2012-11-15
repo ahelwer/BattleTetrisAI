@@ -22,6 +22,7 @@ public:
     void RegisterCurrentPieceNumber(int n);
     void RegisterRowClearEvent();
     bool WasRowClearEvent();
+    bool PieceHasChanged();
     Tetromino const& LastPiecePlayed() const;
     GameBoard& GetBoard();
     GameBoard const& GetBoard() const;
@@ -35,5 +36,6 @@ private:
     Tetromino* m_pPieceInPlay;
     int m_pieceNumber;
     bool m_rowsCleared;
+    bool m_pieceChanged;
 };
 

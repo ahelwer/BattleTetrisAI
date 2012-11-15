@@ -95,17 +95,20 @@ bool GamePieceState::ExecuteUpdates(GameState& game) const {
 std::ostream& operator<< (std::ostream& out, GamePieceState const& s) {
     out << "My tetronimo: ";
     if (s.m_pMyTet != NULL)
-        out << *(s.m_pMyTet);
+        out << s.m_pMyTet->GetType();
     else
         out << "NULL";
     out << ", ";
     out << "Their tetronimo: ";
     if (s.m_pTheirTet != NULL)
-        out << *(s.m_pTheirTet);
+        out << s.m_pTheirTet->GetType();
     else
         out << "NULL";
     out << ", ";
-    out << "Queue: " << *(s.m_pQueue);
+    out << "Queue: [";
+    for (int i = 0; i < s.m_pQueue->size(); ++i)
+        out << s.m_pQueue->at(i).GetType() << ", ";
+    out << "]";
     return out;
 }
 
