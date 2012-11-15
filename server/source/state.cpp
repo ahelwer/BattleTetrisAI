@@ -56,6 +56,7 @@ bool GameBoardState::ExecuteUpdates(GameState& game) const {
     if (m_pTheirCleared->size() > 0) {
         game.RegisterRowClearEvent();
     }
+    //std::cout << (*this) << std::endl;
     return false;
 }
 
@@ -68,9 +69,11 @@ std::ostream& operator<< (std::ostream& out, GameBoardState const& s) {
 GamePieceState::GamePieceState(int sequence, double timestamp,
                                 Tetromino* myTet, 
                                 Tetromino* theirTet, 
+                                int myNumber, int theirNumber,
                                 std::vector<Tetromino>* queue)
     : State(sequence, timestamp), m_pMyTet(myTet), 
-        m_pTheirTet(theirTet), m_pQueue(queue)
+        m_pTheirTet(theirTet), m_myNumber(myNumber),
+        m_theirNumber(theirNumber), m_pQueue(queue)
 { }
 
 GamePieceState::~GamePieceState() {
@@ -83,7 +86,9 @@ GamePieceState::~GamePieceState() {
 }
 
 bool GamePieceState::ExecuteUpdates(GameState& game) const {
-    std::cout << (*this) << std::endl;
+    game.SetPieceInPlay(m_pMyTet);
+    game.RegisterCurrentPieceNumber(m_myNumber);
+    //std::cout << (*this) << std::endl;
     return false;
 }
 
