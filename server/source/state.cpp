@@ -46,6 +46,10 @@ GameBoardState::~GameBoardState() {
 }
 
 bool GameBoardState::ExecuteUpdates(GameState& game) const {
+    GameBoard& board = game.GetBoard();
+    if (board.HasChanged(m_pMyBoard)) {
+        board.Update(m_pMyBoard);
+    }
 	std::cout << (*this) << std::endl;
 	return false;
 }
