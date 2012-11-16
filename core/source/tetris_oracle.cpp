@@ -246,6 +246,10 @@ Tetromino const* BFS(GameState const& state, Tetromino const& s,
 
 std::vector<enum Tetromino::Move> const* FindPath(GameState const& state, 
                                     Tetromino const& source, Tetromino const& target) {
+    if (source == target) {
+        return (new std::vector<enum Tetromino::Move>());
+    }
+
     // Initializes breadth-first search
     // visited [Column][Row][Rotation]
     bool v[10][20][4];
