@@ -5,6 +5,7 @@
 #include <core/harmony.hpp>
 #include <server/state.hpp>
 #include <algorithm>
+#include <queue>
 
 Control::Control(zmq::context_t&, ServerInterface& si)
     : m_si(si)
@@ -36,9 +37,17 @@ void Control::Execute() {
 			if (sequence->size() > 0)
 				ExecuteSequence(*sequence, game.GetCurrentPieceNumber());
         }
+        std::queue<State const*> messages;
         State const* s = m_si.GetState();
-        gameOver = s->ExecuteUpdates(game);
-        delete s;
+        while (s != NULL) {
+            messages.push(s);
+            s = m_si.GetState();
+        }
+        while (!messages.empty()) {
+            gameOver = s->ExecuteUpdates(game);
+            delete s;
+            messages.pop();
+        }
         if (game.WasRowClearEvent() || game.PieceHasChanged()) {
             inMoveSequence = false;
         }
@@ -48,9 +57,9 @@ void Control::Execute() {
                 best = NULL;
             }
             best = FindBestMove(game, h);
-            //game.PushMove(*best);
-            //std::cout << game << std::endl;
-            //game.PopMove();
+            GameState next = game;
+            next.ApplyMove(*best);
+            std::cout << next << std::endl;
             if (best != NULL) {
                 inMoveSequence = true;
             }
@@ -60,11 +69,8 @@ void Control::Execute() {
 
 void Control::ExecuteSequence(std::vector<enum Tetromino::Move> const& sequence,
                                int pieceId) {
-	bool endsInDrop = (sequence.back() == Tetromino::drop);
-	int sequenceSize = sequence.size();
-	int executeCount = sequenceSize;
-	if (!endsInDrop)
-		executeCount = std::min(sequenceSize, 10);
+    int sequenceSize = sequence.size();
+    int executeCount = std::min(sequenceSize, 10);
     for (int i = 0; i < executeCount; ++i) {
         enum Tetromino::Move move = sequence.at(i);
         bool success = m_si.SendMove(move, pieceId);

@@ -61,8 +61,13 @@ bool ServerInterface::SendMove(enum Tetromino::Move move, int pieceId) {
     m_command.send(moveCommand);
 
     zmq::message_t reply;
-    m_command.recv(&reply);
-    std::string replyS (static_cast<char const*>(reply.data()), reply.size());
-    return m_factory.ParseMoveReply(replyS);
+    int error = m_command.recv(&reply, ZMQ_NOBLOCK);
+    if (error != -1) {
+        std::string replyS (static_cast<char const*>(reply.data()), reply.size());
+        return m_factory.ParseMoveReply(replyS);
+    }
+    else {
+        return NULL;
+    }
 }
 
