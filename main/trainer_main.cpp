@@ -23,12 +23,10 @@ int main(int argc, char* argv[]) {
     }
 
     int const varCount = GetVarCount();
-    HarmonyRanges const* ranges = GetRanges();
     int const memorySize = 5;
     float const r_accept = 0.95;
     float const r_pa = 0.99;
     float const r_range = 0.1;
-    HarmonyFactory const factory (varCount, *ranges);
 
     std::vector<Harmony> init;
     if (initHarmonies) {
@@ -55,6 +53,8 @@ int main(int argc, char* argv[]) {
 
     #pragma omp parallel for num_threads(threadCount)
     for (int t = 0; t < threadCount; ++t) {
+        HarmonyRanges const* ranges = GetRanges();
+        HarmonyFactory const factory (varCount, *ranges);
         GeneratedGame generator (gameLength);
         TetrisRowsCleared f (generator);
         HarmonyCompareMax maxComp (f);
@@ -73,6 +73,7 @@ int main(int argc, char* argv[]) {
                 std::cout << "COMPLETED ITERATION " << i << std::endl;
             }
         }
+        delete ranges;
 
         std::vector<Harmony const*> memory;
         for (int i = 0; i < memorySize; ++i)
@@ -91,7 +92,6 @@ int main(int argc, char* argv[]) {
         for (int i = 0; i < memorySize; ++i)
             delete memory.at(i);
     }
-    delete ranges;
 
     std::cout << "Completed!" << std::endl;
 

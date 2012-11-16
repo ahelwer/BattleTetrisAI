@@ -1,8 +1,8 @@
 env = Environment()
 
 env.Append(CPPPATH = ['#'])
-env.MergeFlags(['-g', '-O0', '-Wall', '-Wextra'])
-#env.MergeFlags(['-O2', '-DNDEBUG', '-Wall', '-Wextra'])
+#env.MergeFlags(['-g', '-O0', '-Wall', '-Wextra'])
+env.MergeFlags(['-O2', '-DNDEBUG', '-Wall', '-Wextra'])
 
 control_cpp = env.Glob('#/control/source/*.cpp')
 control_obj = env.Object(control_cpp, LIBS = ['zmq', 'json'])
