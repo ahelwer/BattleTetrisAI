@@ -9,7 +9,7 @@ TetrisRowsCleared::TetrisRowsCleared(GeneratedGame const& generator)
 float TetrisRowsCleared::operator() (Harmony const& h) const {
     float rowsCleared = 0.0;
     Tetromino const& tetInPlay = m_generator.GetPiece(0);
-    std::vector<Tetromino> const* queue = m_generator.GetQueue(0);
+    std::queue<Tetromino> const* queue = m_generator.GetQueue(0);
     GameState state(*queue, tetInPlay);
     delete queue;
     int gameLength = m_generator.GameLength();

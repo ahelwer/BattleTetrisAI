@@ -1,25 +1,21 @@
 #include <model/game_state.hpp>
 
 GameState::GameState()
-    : m_depthInQueue(-1), m_pPieceInPlay(NULL), m_pieceNumber(-1),
-        m_rowsCleared(false)
+    : m_board(), m_piecePlayedStack(), m_rowsClearedStack(),
+       m_pieceQueueStack(), m_pPieceInPlay(NULL), m_pieceNumber(-1),
+       m_rowsCleared(false), m_pieceChanged(false)
 { }
 
-GameState::GameState(std::vector<Tetromino> const& queue, Tetromino const& inPlay)
-    : m_pieceQueue(queue), m_depthInQueue(-1), 
-        m_pPieceInPlay(new Tetromino(inPlay)), m_pieceNumber(-1),
-        m_rowsCleared(false)
+GameState::GameState(std::queue<Tetromino> const& queue, Tetromino const& inPlay)
+    : m_board(), m_piecePlayedStack(), m_rowsClearedStack(),
+        m_pieceQueueStack(), m_pPieceInPlay(new Tetromino(inPlay)), 
+        m_pieceNumber(-1), m_rowsCleared(false), m_pieceChanged(false)
 { 
-    m_rowClearedStack.push_back(new std::vector<int>());
+    m_rowsClearedStack.push(std::vector<int>());
+    m_pieceQueueStack.push(queue);
 }
 
 GameState::~GameState() {
-    for (int i = 0; i < m_rowClearedStack.size(); ++i) {
-        if (m_rowClearedStack.at(i) != NULL) {
-            delete m_rowClearedStack.at(i);
-            m_rowClearedStack[i] = NULL;
-        }
-    }
     if (m_pPieceInPlay != NULL) {
         delete m_pPieceInPlay;
         m_pPieceInPlay = NULL;
@@ -46,9 +42,10 @@ bool GameState::PushMove(Tetromino const& t) {
         return false;
     bool success = m_board.PushMove(t);
     if (success) {
-        m_playedStack.push_back(t);
+        m_piecePlayedStack.push(t);
         std::vector<int> const* cleared = m_board.ClearRows();
-        m_rowClearedStack.push_back(cleared);
+        m_rowsClearedStack.push(*cleared);
+        delete cleared;
     }
     return success;
 }
@@ -56,16 +53,41 @@ bool GameState::PushMove(Tetromino const& t) {
 bool GameState::PopMove() {
     bool success = m_board.PopMove();
     if (success) {
-        m_playedStack.pop_back();
-        std::vector<int> const* top = m_rowClearedStack.back();
-        m_rowClearedStack.pop_back();
-        delete top;
+        m_piecePlayedStack.pop();
+        m_rowsClearedStack.pop();
     }
     return success;
 }
 
-bool GameState::PiecesLeftInQueue() const {
-    return (m_depthInQueue < m_pieceQueue.size()-1);
+bool GameState::PushFeedFromQueue(int feedCount) {
+    std::queue<Tetromino> next = m_pieceQueueStack.top();
+    if (feedCount >= next.size())
+        return false;
+    if (m_pPieceInPlay != NULL) {
+        delete m_pPieceInPlay;
+        m_pPieceInPlay = NULL;
+    }
+    for (int i = 0; i < feedCount-1; ++i) {
+        next.pop(); 
+    }
+    m_pPieceInPlay = new Tetromino(next.front());
+    next.pop();
+    m_pieceQueueStack.push(next);
+    return true;
+}
+
+bool GameState::PopFeedFromQueue() {
+    m_pieceQueueStack.pop();
+    if (m_pPieceInPlay != NULL) {
+        delete m_pPieceInPlay;
+        m_pPieceInPlay = NULL;
+    }
+    m_pPieceInPlay = new Tetromino(m_piecePlayedStack.top());
+    return true;
+}
+
+int GameState::QueuedPieces() const {
+    return (m_pieceQueueStack.top().size());
 }
 
 void GameState::SetPieceInPlay(Tetromino const* t) {
@@ -79,7 +101,12 @@ void GameState::SetPieceInPlay(Tetromino const* t) {
     }
     else {
         m_pPieceInPlay = new Tetromino(*t);
+        m_pieceNumber = -1;
     }
+}
+
+void GameState::SetQueueInPlay(std::queue<Tetromino> const& q) {
+    m_pieceQueueStack.top() = q;
 }
 
 Tetromino const* GameState::GetPieceInPlay() const {
@@ -87,11 +114,11 @@ Tetromino const* GameState::GetPieceInPlay() const {
 }
 
 std::vector<int> const& GameState::LastClearedRows() const {
-    return *(m_rowClearedStack.back());
+    return m_rowsClearedStack.top();
 }
 
 void GameState::RegisterLastClearedRows(std::vector<int> const& cleared) {
-    m_rowClearedStack.push_back(new std::vector<int>(cleared));
+    m_rowsClearedStack.push(cleared);
 }
 
 int GameState::GetCurrentPieceNumber() const {
@@ -126,7 +153,7 @@ bool GameState::PieceHasChanged() {
 }
 
 Tetromino const& GameState::LastPiecePlayed() const {
-    return m_playedStack.back();
+    return m_piecePlayedStack.top();
 }
 
 GameBoard& GameState::GetBoard() {

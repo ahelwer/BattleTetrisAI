@@ -3,6 +3,20 @@
 #include <cfloat>
 #include <deque>
 #include <string>
+#include <algorithm>
+
+float BestScore(GameState& state, Harmony const& h) {
+    std::vector<Tetromino> const* possible = FindPossibleMoves(state);
+    float maxScore = -1.0*FLT_MAX;
+    for (int i = 0; i < possible->size(); ++i) {
+        state.PushMove(possible->at(i));
+        float result = EvaluateMove(state, h);
+        state.PopMove();
+        maxScore = std::max(result, maxScore);
+    }
+    delete possible;
+    return maxScore;
+}
 
 Tetromino const* FindBestMove(GameState& state, Harmony const& h) {
     std::vector<Tetromino> const* possible = FindPossibleMoves(state);
@@ -11,6 +25,12 @@ Tetromino const* FindBestMove(GameState& state, Harmony const& h) {
     for (int i = 0; i < possible->size(); ++i) {
         state.PushMove(possible->at(i));
         float result = EvaluateMove(state, h);
+        int feedSize = std::min(state.QueuedPieces(), 2);
+        for (int i = 0; i < feedSize; ++i) {
+            state.PushFeedFromQueue(i);
+            result += (BestScore(state, h) / (float)feedSize);
+            state.PopFeedFromQueue();
+        }
         state.PopMove();
         if (result > maxScore) {
             maxIdx = i;
