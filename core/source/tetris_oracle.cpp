@@ -8,18 +8,15 @@ Tetromino const* FindBestMove(GameState& state, Harmony const& h) {
     std::vector<Tetromino> const* possible = FindPossibleMoves(state);
     int maxIdx = -1;
     float maxScore = -1.0*FLT_MAX;
-    //std::cout << std::endl << "found: " << possible->size() << std::endl;
     for (int i = 0; i < possible->size(); ++i) {
         state.PushMove(possible->at(i));
         float result = EvaluateMove(state, h);
-        //std::cout << result << " " << maxScore << std::endl;
         state.PopMove();
         if (result > maxScore) {
             maxIdx = i;
             maxScore = result;
         }
     }
-    //std::cout << std::endl;
     Tetromino* ret = NULL;
     if (maxIdx != -1)
         ret = new Tetromino(possible->at(maxIdx));
@@ -39,12 +36,7 @@ std::vector<Tetromino> const* Neighbours(Tetromino const& current) {
     n = current;
     n.ShiftLeft();
     adj->push_back(n);
-
-    // shift down
-    n = current;
-    n.ShiftDown();
-    adj->push_back(n);
-
+    
     // rotate left
     n = current;
     n.RotateLeft();
@@ -54,7 +46,12 @@ std::vector<Tetromino> const* Neighbours(Tetromino const& current) {
     n = current;
     n.RotateRight();
     adj->push_back(n);
-    
+
+    // shift down
+    n = current;
+    n.ShiftDown();
+    adj->push_back(n);
+
     return adj;
 }
 

@@ -38,8 +38,6 @@ void Control::Execute() {
         gameOver = s->ExecuteUpdates(game);
         delete s;
         if (game.WasRowClearEvent() || game.PieceHasChanged()) {
-            if (game.GetPieceInPlay() != NULL)
-                std::cout << *(game.GetPieceInPlay()) << std::endl;
             inMoveSequence = false;
         }
         if (game.GetPieceInPlay() != NULL && !inMoveSequence) {
@@ -62,8 +60,10 @@ void Control::ExecuteSequence(std::vector<enum Tetromino::Move> const& sequence,
                                int pieceId) {
     for (int i = 0; i < sequence.size(); ++i) {
         enum Tetromino::Move move = sequence.at(i);
+        /*
         if (move == Tetromino::down)
             return;
+            */
         bool success = m_si.SendMove(move, pieceId);
         if (!success)
             return;
