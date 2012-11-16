@@ -14,6 +14,7 @@ public:
     int GetSequence() const;
     double GetTimestamp() const;
     virtual bool ExecuteUpdates(GameState& game) const = 0;
+    virtual bool ShouldTerminate() const = 0;
     friend std::ostream& operator<< (std::ostream& out, State const& s);
 protected:
     int m_sequence;
@@ -29,6 +30,7 @@ public:
                     std::vector<int>* theirCleared);
     ~GameBoardState();
     virtual bool ExecuteUpdates(GameState& game) const;
+    virtual bool ShouldTerminate() const;
     friend std::ostream& operator<< (std::ostream& out, GameBoardState const& s);
 private:
     char const* m_pMyBoard;
@@ -47,6 +49,7 @@ public:
                     std::vector<Tetromino>* queue);    
     ~GamePieceState();
     virtual bool ExecuteUpdates(GameState& game) const;
+    virtual bool ShouldTerminate() const;
     friend std::ostream& operator<< (std::ostream& out, GamePieceState const& s);
 private:
     Tetromino* m_pMyTet;
@@ -61,6 +64,7 @@ public:
     GameEnd(int sequence, double timestamp, bool won,
             int myScore, int theirScore);
     virtual bool ExecuteUpdates(GameState& game) const;
+    virtual bool ShouldTerminate() const;
     friend std::ostream& operator<< (std::ostream& out, GameEnd const& s);
 private:
     bool m_won;
@@ -71,6 +75,7 @@ private:
 class MatchEnd : public State {
 public:
     virtual bool ExecuteUpdates(GameState& game) const;
+    virtual bool ShouldTerminate() const;
     friend std::ostream& operator<< (std::ostream& out, MatchEnd const& s);
 };
 
@@ -78,6 +83,7 @@ class ErrorState : public State {
 public:
     ErrorState(char const* errorMessage);
     virtual bool ExecuteUpdates(GameState& game) const;
+    virtual bool ShouldTerminate() const;
     friend std::ostream& operator<< (std::ostream& out, ErrorState const& s);
 private:
     std::string m_errorMessage;

@@ -7,11 +7,32 @@
 #include <algorithm>
 #include <queue>
 
+void* DispatchThread(void* varg) {
+    Control* c = static_cast<Control*>(varg);
+    c->PollStateMessages();
+}
+
+void Control::PollStateMessages() {
+    bool terminate = false;
+    while (!terminate) {
+        State const* state = m_si.GetState(); 
+        terminate = state->ShouldTerminate();
+        pthread_mutex_lock(&m_queueMutex);
+        m_messageQueue.push(state);
+        pthread_mutex_unlock(&m_queueMutex);
+    }
+}
+
 Control::Control(zmq::context_t&, ServerInterface& si)
     : m_si(si)
 { }
 
 void Control::Execute() {
+
+    // Launches state messaging thread
+    pthread_t worker = 0;
+    pthread_create(&worker, NULL, DispatchThread, static_cast<void*>(this));
+
     int weightCount = GetVarCount();
     float weights[] = {0.413627, -0.723112, -0.214118, 0.0572252, 
                         0.666599, -0.758947, 0.297272, 0.112221, 
@@ -37,17 +58,14 @@ void Control::Execute() {
 			if (sequence->size() > 0)
 				ExecuteSequence(*sequence, game.GetCurrentPieceNumber());
         }
-        std::queue<State const*> messages;
-        State const* s = m_si.GetState();
-        while (s != NULL) {
-            messages.push(s);
-            s = m_si.GetState();
-        }
-        while (!messages.empty()) {
+        pthread_mutex_lock(&m_queueMutex);
+        while (!m_messageQueue.empty()) {
+            State const* s = m_messageQueue.front();
+            m_messageQueue.pop();
             gameOver = s->ExecuteUpdates(game);
             delete s;
-            messages.pop();
         }
+        pthread_mutex_unlock(&m_queueMutex);
         if (game.WasRowClearEvent() || game.PieceHasChanged()) {
             inMoveSequence = false;
         }
@@ -65,6 +83,7 @@ void Control::Execute() {
             }
         }
     }
+    pthread_join(worker, NULL);
 }
 
 void Control::ExecuteSequence(std::vector<enum Tetromino::Move> const& sequence,

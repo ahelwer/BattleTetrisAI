@@ -1,4 +1,5 @@
 env = Environment()
+env.MergeFlags('-pthread')
 
 env.Append(CPPPATH = ['#'])
 #env.MergeFlags(['-g', '-O0', '-Wall', '-Wextra'])

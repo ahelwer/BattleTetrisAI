@@ -60,6 +60,10 @@ bool GameBoardState::ExecuteUpdates(GameState& game) const {
     return false;
 }
 
+bool GameBoardState::ShouldTerminate() const {
+    return false;
+}
+
 std::ostream& operator<< (std::ostream& out, GameBoardState const& s) {
     out << "My cleared: " << *(s.m_pMyCleared) << ", ";
     out << "Their cleared: " << *(s.m_pTheirCleared);
@@ -89,6 +93,10 @@ bool GamePieceState::ExecuteUpdates(GameState& game) const {
     game.SetPieceInPlay(m_pMyTet);
     game.SetCurrentPieceNumber(m_myNumber);
     //std::cout << (*this) << std::endl;
+    return false;
+}
+
+bool GamePieceState::ShouldTerminate() const {
     return false;
 }
 
@@ -126,6 +134,10 @@ bool GameEnd::ExecuteUpdates(GameState& game) const {
     return false;
 }
 
+bool GameEnd::ShouldTerminate() const {
+    return false;
+}
+
 std::ostream& operator<< (std::ostream& out, GameEnd const& s) {
     if (s.m_won)
         out << "We won!";
@@ -141,6 +153,10 @@ bool MatchEnd::ExecuteUpdates(GameState& game) const {
     return true;
 }
 
+bool MatchEnd::ShouldTerminate() const {
+    return true;
+}
+
 std::ostream& operator<< (std::ostream& out, MatchEnd const&) {
     out << "Game is over.";
     return out;
@@ -152,6 +168,10 @@ ErrorState::ErrorState(char const* errorMessage)
 
 bool ErrorState::ExecuteUpdates(GameState& game) const {
     std::cout << (*this) << std::endl;
+    return false;
+}
+
+bool ErrorState::ShouldTerminate() const {
     return false;
 }
 
