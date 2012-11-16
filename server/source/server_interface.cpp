@@ -46,10 +46,15 @@ bool ServerInterface::Initialize() {
 State const* ServerInterface::GetState() {
     zmq::message_t address;
     zmq::message_t state;
-    m_state.recv(&address);
-    m_state.recv(&state);
-    std::string stateS (static_cast<char const*>(state.data()), state.size());
-    return m_factory.ParseStateMessage(stateS);
+    int error = m_state.recv(&address, ZMQ_NOBLOCK);
+    if (error != -1) {
+        m_state.recv(&state);
+        std::string stateS (static_cast<char const*>(state.data()), state.size());
+        return m_factory.ParseStateMessage(stateS);
+    }
+    else {
+        return NULL;
+    }
 }
 
 bool ServerInterface::SendMove(enum Tetromino::Move move, int pieceId) {
@@ -61,13 +66,8 @@ bool ServerInterface::SendMove(enum Tetromino::Move move, int pieceId) {
     m_command.send(moveCommand);
 
     zmq::message_t reply;
-    int error = m_command.recv(&reply, ZMQ_NOBLOCK);
-    if (error != -1) {
-        std::string replyS (static_cast<char const*>(reply.data()), reply.size());
-        return m_factory.ParseMoveReply(replyS);
-    }
-    else {
-        return NULL;
-    }
+    m_command.recv(&reply);
+    std::string replyS (static_cast<char const*>(reply.data()), reply.size());
+    return m_factory.ParseMoveReply(replyS);
 }
 
