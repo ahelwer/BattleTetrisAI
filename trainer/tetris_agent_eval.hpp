@@ -3,9 +3,9 @@
 #include <core/harmony.hpp>
 #include <trainer/generated_game.hpp>
 
-class TetrisRowsCleared : public ObjectiveFunction {
+class TetrisPointsEarned : public ObjectiveFunction {
 public:
-    TetrisRowsCleared(GeneratedGame const& generator);
+    TetrisPointsEarned(GeneratedGame const& generator);
     float operator() (Harmony const& h) const;
 private:
     GeneratedGame const& m_generator;

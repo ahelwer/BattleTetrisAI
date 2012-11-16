@@ -1,5 +1,5 @@
+#include <trainer/tetris_agent_eval.hpp>
 #include <trainer/generated_game.hpp>
-#include <trainer/tetris_rows_cleared.hpp>
 #include <core/game_state_eval.hpp>
 #include <core/harmony_search.hpp>
 #include <core/harmony.hpp>
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
         HarmonyRanges const* ranges = GetRanges();
         HarmonyFactory const factory (varCount, *ranges);
         GeneratedGame generator (gameLength);
-        TetrisRowsCleared f (generator);
+        TetrisPointsEarned f (generator);
         HarmonyCompareMax maxComp (f);
         HarmonyCompareWrapper comp (maxComp);
         HarmonySearch search (comp, factory, varCount, memorySize,
