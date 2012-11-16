@@ -12,6 +12,16 @@ void* DispatchThread(void* varg) {
     c->PollStateMessages();
 }
 
+Control::Control(zmq::context_t&, ServerInterface& si)
+    : m_si(si)
+{ 
+    pthread_mutex_init(&m_queueMutex, NULL);
+}
+
+Control::~Control() {
+    pthread_mutex_destroy(&m_queueMutex);
+}
+
 void Control::PollStateMessages() {
     bool terminate = false;
     while (!terminate) {
@@ -22,10 +32,6 @@ void Control::PollStateMessages() {
         pthread_mutex_unlock(&m_queueMutex);
     }
 }
-
-Control::Control(zmq::context_t&, ServerInterface& si)
-    : m_si(si)
-{ }
 
 void Control::Execute() {
 

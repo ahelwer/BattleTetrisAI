@@ -8,6 +8,7 @@
 class Control {
 public:
     Control(zmq::context_t& context, ServerInterface& si);
+    ~Control();
     void Execute();
     void PollStateMessages();
 private:
