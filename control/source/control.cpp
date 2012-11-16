@@ -93,7 +93,7 @@ void Control::Execute() {
             GameState next = game;
             next.ApplyMove(*best);
             std::cout << next << std::endl;
-            if (best != NULL) {
+            if (best != NULL && (*best) != *(game.GetPieceInPlay())) {
                 inMoveSequence = true;
             }
         }
