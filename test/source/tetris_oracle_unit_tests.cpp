@@ -4,12 +4,11 @@
 #include <model/game_state.hpp>
 #include <model/tetromino.hpp>
 #include <util/constants.hpp>
-#include <queue>
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TetrisOracleUnitTests);
 
 void TetrisOracleUnitTests::TestSquareBlockOnEmptyGrid() {
-    std::queue<Tetromino> queue;
+    std::vector<Tetromino> queue;
     Tetromino t ('O', 0, 5, 1);
     GameState state (queue, t);
     std::vector<Tetromino> const* found = FindPossibleMoves(state);
@@ -30,7 +29,7 @@ void TetrisOracleUnitTests::TestSquareBlockOnEmptyGrid() {
 }
 
 void TetrisOracleUnitTests::TestLineBlockOnEmptyGrid() {
-    std::queue<Tetromino> queue;
+    std::vector<Tetromino> queue;
     Tetromino t ('I', 0, 5, 1);
     GameState state (queue, t);
     std::vector<Tetromino> const* found = FindPossibleMoves(state);
@@ -44,7 +43,7 @@ void TetrisOracleUnitTests::TestLineBlockOnEmptyGrid() {
 }
 
 void TetrisOracleUnitTests::TestFindBestMoveSquareBlockEmptyGrid() {
-    std::queue<Tetromino> queue;
+    std::vector<Tetromino> queue;
     Tetromino t ('O', 0, 5, 1);
     GameState state (queue, t);
     Harmony h;

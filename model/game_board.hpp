@@ -11,6 +11,7 @@ class GameBoard {
 public:
     GameBoard();
     GameBoard(char const* desc);
+    GameBoard& operator= (GameBoard const& o);
     ~GameBoard();
     bool ApplyMove(Tetromino const& t);
     bool PushMove(Tetromino const& t);

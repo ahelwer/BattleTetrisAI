@@ -51,10 +51,10 @@ bool GameBoardState::ExecuteUpdates(GameState& game) const {
         board.Update(m_pMyBoard);
     }
     if (m_pMyCleared->size() > 0) {
-        game.RegisterLastClearedRows(*m_pMyCleared);
+        game.SetLastClearedRows(*m_pMyCleared);
     }
     if (m_pTheirCleared->size() > 0) {
-        game.RegisterRowClearEvent();
+        game.SetRowClearEvent();
     }
     //std::cout << (*this) << std::endl;
     return false;
@@ -87,7 +87,7 @@ GamePieceState::~GamePieceState() {
 
 bool GamePieceState::ExecuteUpdates(GameState& game) const {
     game.SetPieceInPlay(m_pMyTet);
-    game.RegisterCurrentPieceNumber(m_myNumber);
+    game.SetCurrentPieceNumber(m_myNumber);
     //std::cout << (*this) << std::endl;
     return false;
 }
@@ -122,7 +122,7 @@ bool GameEnd::ExecuteUpdates(GameState& game) const {
     GameBoard& board = game.GetBoard();
     board.ClearBoard();
     game.SetPieceInPlay(NULL);
-    game.RegisterCurrentPieceNumber(-1);
+    game.SetCurrentPieceNumber(-1);
     return false;
 }
 

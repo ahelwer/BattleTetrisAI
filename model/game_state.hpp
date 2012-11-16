@@ -4,42 +4,40 @@
 #include <util/vector.hpp>
 #include <model/game_board.hpp>
 #include <model/tetromino.hpp>
-#include <queue>
-#include <stack>
 
 class GameState {
 public:
     GameState();
-    GameState(std::queue<Tetromino> const& queue, Tetromino const& inPlay);
+    GameState(std::vector<Tetromino> const& queue, Tetromino const& inPlay);
+    GameState(GameState const& o);
+    GameState& operator= (GameState const& state);
     ~GameState();
 
     int ApplyMove(Tetromino const& t);
-    bool PushMove(Tetromino const& t);
-    bool PopMove();
-    bool PushFeedFromQueue(int feedCount);
-    bool PopFeedFromQueue();
+    bool FeedFromQueue(int feedCount);
+    int QueuedPieceCount() const;
 
-    int QueuedPieces() const;
     void SetPieceInPlay(Tetromino const* t);
-    void SetQueueInPlay(std::queue<Tetromino> const& queue);
+    void SetQueueInPlay(std::vector<Tetromino> const& queue);
+    void SetLastClearedRows(std::vector<int> const& cleared);
+    void SetCurrentPieceNumber(int n);
+    void SetRowClearEvent();
+
     Tetromino const* GetPieceInPlay() const;
     std::vector<int> const& LastClearedRows() const;
+    Tetromino const& LastPiecePlayed() const;
     int GetCurrentPieceNumber() const;
-    void RegisterLastClearedRows(std::vector<int> const& cleared);
-    void RegisterCurrentPieceNumber(int n);
-    void RegisterRowClearEvent();
     bool WasRowClearEvent();
     bool PieceHasChanged();
-    Tetromino const& LastPiecePlayed() const;
     GameBoard& GetBoard();
     GameBoard const& GetBoard() const;
     friend std::ostream& operator<< (std::ostream& out, GameState const& state);
 private:
     GameBoard m_board;
-    std::stack<Tetromino> m_piecePlayedStack;
-    std::stack<std::vector<int> > m_rowsClearedStack;
-    std::stack<std::queue<Tetromino> > m_pieceQueueStack;
+    std::vector<int> m_lastRowsCleared;
+    std::vector<Tetromino> m_pieceQueue;
     Tetromino* m_pPieceInPlay;
+    Tetromino m_lastPiecePlayed;
     int m_pieceNumber;
     bool m_rowsCleared;
     bool m_pieceChanged;

@@ -22,6 +22,25 @@ GameBoard::GameBoard(char const* desc)
     Translate(desc);
 }
 
+GameBoard& GameBoard::operator= (GameBoard const& o) {
+    if (this == &o)
+        return (*this);
+
+    m_boardStack = o.m_boardStack;
+    if (m_pDesc != NULL) {
+        delete[] m_pDesc;
+        m_pDesc = NULL;
+    }
+    if (o.m_pDesc == NULL) {
+        m_pDesc = NULL;
+    }
+    else {
+        m_pDesc = new char[BOARD_DESC_SIZE];
+        memcpy((void*)m_pDesc, (void*)o.m_pDesc, BOARD_DESC_SIZE);
+    }
+    return (*this);
+}
+
 GameBoard::~GameBoard() {
     if (m_pDesc != NULL) {
         delete[] m_pDesc;

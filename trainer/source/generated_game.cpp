@@ -41,10 +41,10 @@ Tetromino const& GeneratedGame::GetPiece(int idx) const {
     return (*ret);
 }
 
-std::queue<Tetromino> const* GeneratedGame::GetQueue(int idx) const {
-    std::queue<Tetromino>* queue = new std::queue<Tetromino>();
+std::vector<Tetromino> const* GeneratedGame::GetQueue(int idx) const {
+    std::vector<Tetromino>* queue = new std::vector<Tetromino>();
     for (int i = idx+1; i < std::min(m_gameLength, i+5); ++i)
-        queue->push(*m_sequence.at(i));
+        queue->push_back(*m_sequence.at(i));
     return queue;
 }
 

@@ -1,18 +1,57 @@
 #include <model/game_state.hpp>
 
 GameState::GameState()
-    : m_board(), m_piecePlayedStack(), m_rowsClearedStack(),
-       m_pieceQueueStack(), m_pPieceInPlay(NULL), m_pieceNumber(-1),
-       m_rowsCleared(false), m_pieceChanged(false)
+    : m_board(), m_lastRowsCleared(), m_pieceQueue(),
+       m_pPieceInPlay(NULL), 
+       m_lastPiecePlayed(Tetromino('O', 0, 5, 1)),
+       m_pieceNumber(-1), m_rowsCleared(false), 
+       m_pieceChanged(false)
 { }
 
-GameState::GameState(std::queue<Tetromino> const& queue, Tetromino const& inPlay)
-    : m_board(), m_piecePlayedStack(), m_rowsClearedStack(),
-        m_pieceQueueStack(), m_pPieceInPlay(new Tetromino(inPlay)), 
-        m_pieceNumber(-1), m_rowsCleared(false), m_pieceChanged(false)
-{ 
-    m_rowsClearedStack.push(std::vector<int>());
-    m_pieceQueueStack.push(queue);
+GameState::GameState(std::vector<Tetromino> const& queue, 
+                        Tetromino const& inPlay)
+    : m_board(), m_lastRowsCleared(), m_pieceQueue(queue),
+        m_pPieceInPlay(new Tetromino(inPlay)), 
+        m_lastPiecePlayed(Tetromino('O', 0, 5, 1)),
+        m_pieceNumber(-1), m_rowsCleared(false), 
+        m_pieceChanged(false)
+{ }
+
+GameState::GameState(GameState const& o)
+    : m_board(), m_lastRowsCleared(), m_pieceQueue(),
+       m_pPieceInPlay(NULL), 
+       m_lastPiecePlayed(Tetromino('O', 0, 5, 1)),
+       m_pieceNumber(-1), m_rowsCleared(false),
+       m_pieceChanged(false)
+{
+    (*this) = o;    
+}
+
+GameState& GameState::operator= (GameState const& o) {
+    if (this == &o) { // detects self-assignment
+        return *this;
+    }
+
+    m_board = o.m_board;
+    m_lastRowsCleared = o.m_lastRowsCleared;
+
+    if (m_pPieceInPlay != NULL) {
+        delete m_pPieceInPlay;
+        m_pPieceInPlay = NULL;
+    }
+    if (o.m_pPieceInPlay == NULL) {
+        m_pPieceInPlay = NULL;
+    }
+    else {
+        m_pPieceInPlay = new Tetromino(*(o.m_pPieceInPlay));
+    }
+
+    m_lastPiecePlayed = o.m_lastPiecePlayed;
+    m_pieceNumber = o.m_pieceNumber;
+    m_rowsCleared = o.m_rowsCleared;
+    m_pieceChanged = o.m_pieceChanged;
+
+    return (*this);
 }
 
 GameState::~GameState() {
@@ -29,7 +68,14 @@ int GameState::ApplyMove(Tetromino const& t) {
     if (success) {
         std::vector<int> const* cleared = m_board.ClearRows();
         int clearCount = cleared->size();
+        m_lastRowsCleared = *cleared;
         delete cleared;
+        if (m_pPieceInPlay != NULL) {
+            m_lastPiecePlayed = *m_pPieceInPlay;
+            delete m_pPieceInPlay;
+            m_pPieceInPlay = NULL;
+            m_pieceNumber = -1;
+        }
         return clearCount;
     }
     else {
@@ -37,57 +83,19 @@ int GameState::ApplyMove(Tetromino const& t) {
     }
 }
 
-bool GameState::PushMove(Tetromino const& t) {
-    if (t.GetType() != m_pPieceInPlay->GetType())
-        return false;
-    bool success = m_board.PushMove(t);
-    if (success) {
-        m_piecePlayedStack.push(t);
-        std::vector<int> const* cleared = m_board.ClearRows();
-        m_rowsClearedStack.push(*cleared);
-        delete cleared;
-    }
-    return success;
-}
-
-bool GameState::PopMove() {
-    bool success = m_board.PopMove();
-    if (success) {
-        m_piecePlayedStack.pop();
-        m_rowsClearedStack.pop();
-    }
-    return success;
-}
-
-bool GameState::PushFeedFromQueue(int feedCount) {
-    std::queue<Tetromino> next = m_pieceQueueStack.top();
-    if (feedCount >= next.size())
+bool GameState::FeedFromQueue(int feedCount) {
+    if (feedCount >= m_pieceQueue.size())
         return false;
     if (m_pPieceInPlay != NULL) {
         delete m_pPieceInPlay;
         m_pPieceInPlay = NULL;
     }
-    for (int i = 0; i < feedCount-1; ++i) {
-        next.pop(); 
-    }
-    m_pPieceInPlay = new Tetromino(next.front());
-    next.pop();
-    m_pieceQueueStack.push(next);
+    m_pPieceInPlay = new Tetromino(m_pieceQueue.at(feedCount));
     return true;
 }
 
-bool GameState::PopFeedFromQueue() {
-    m_pieceQueueStack.pop();
-    if (m_pPieceInPlay != NULL) {
-        delete m_pPieceInPlay;
-        m_pPieceInPlay = NULL;
-    }
-    m_pPieceInPlay = new Tetromino(m_piecePlayedStack.top());
-    return true;
-}
-
-int GameState::QueuedPieces() const {
-    return (m_pieceQueueStack.top().size());
+int GameState::QueuedPieceCount() const {
+    return m_pieceQueue.size();
 }
 
 void GameState::SetPieceInPlay(Tetromino const* t) {
@@ -105,8 +113,8 @@ void GameState::SetPieceInPlay(Tetromino const* t) {
     }
 }
 
-void GameState::SetQueueInPlay(std::queue<Tetromino> const& q) {
-    m_pieceQueueStack.top() = q;
+void GameState::SetQueueInPlay(std::vector<Tetromino> const& q) {
+    m_pieceQueue = q;
 }
 
 Tetromino const* GameState::GetPieceInPlay() const {
@@ -114,18 +122,22 @@ Tetromino const* GameState::GetPieceInPlay() const {
 }
 
 std::vector<int> const& GameState::LastClearedRows() const {
-    return m_rowsClearedStack.top();
+    return m_lastRowsCleared;
 }
 
-void GameState::RegisterLastClearedRows(std::vector<int> const& cleared) {
-    m_rowsClearedStack.push(cleared);
+Tetromino const& GameState::LastPiecePlayed() const {
+    return m_lastPiecePlayed;
+}
+
+void GameState::SetLastClearedRows(std::vector<int> const& cleared) {
+    m_lastRowsCleared = cleared;
 }
 
 int GameState::GetCurrentPieceNumber() const {
     return m_pieceNumber;
 }
 
-void GameState::RegisterCurrentPieceNumber(int n) {
+void GameState::SetCurrentPieceNumber(int n) {
     if (n != m_pieceNumber) {
         m_pieceChanged = true;
     }
@@ -136,7 +148,7 @@ void GameState::RegisterCurrentPieceNumber(int n) {
     m_pieceNumber = n;
 }
 
-void GameState::RegisterRowClearEvent() {
+void GameState::SetRowClearEvent() {
     m_rowsCleared = true;
 }
 
@@ -150,10 +162,6 @@ bool GameState::PieceHasChanged() {
     bool changed = m_pieceChanged;
     m_pieceChanged = false;
     return changed;
-}
-
-Tetromino const& GameState::LastPiecePlayed() const {
-    return m_piecePlayedStack.top();
 }
 
 GameBoard& GameState::GetBoard() {

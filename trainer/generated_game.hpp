@@ -2,7 +2,6 @@
 
 #include <model/tetromino.hpp>
 #include <util/vector.hpp>
-#include <queue>
 
 class GeneratedGame {
 public:
@@ -10,7 +9,7 @@ public:
     ~GeneratedGame();
     void GenerateNewGame();
     Tetromino const& GetPiece(int idx) const; 
-    std::queue<Tetromino> const* GetQueue(int idx) const;
+    std::vector<Tetromino> const* GetQueue(int idx) const;
     int GameLength() const;
 private:
     int m_gameLength;

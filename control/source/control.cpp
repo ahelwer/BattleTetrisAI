@@ -48,9 +48,9 @@ void Control::Execute() {
                 best = NULL;
             }
             best = FindBestMove(game, h);
-            game.PushMove(*best);
-            std::cout << game << std::endl;
-            game.PopMove();
+            //game.PushMove(*best);
+            //std::cout << game << std::endl;
+            //game.PopMove();
             if (best != NULL) {
                 inMoveSequence = true;
             }
