@@ -212,7 +212,8 @@ Tetromino const* BFS(GameState const& state, Tetromino const& s,
     return NULL;
 }
 
-std::vector<enum Tetromino::Move> const* FindPath(GameState const& state, Tetromino const& source, Tetromino const& target) {
+std::vector<enum Tetromino::Move> const* FindPath(GameState const& state, 
+                                    Tetromino const& source, Tetromino const& target) {
     GameBoard const& board = state.GetBoard();
 
     // Initializes breadth-first search
@@ -227,13 +228,16 @@ std::vector<enum Tetromino::Move> const* FindPath(GameState const& state, Tetrom
     }
 
     bool reached = false;
+    // last == NULL if no drop, otherwise set to state dropped from
     Tetromino const* last = BFS(state, source, target, v, p, reached);
     if (!reached) {
+        std::cout << "ERROR: Could not reach target" << std::endl;
         return (new std::vector<enum Tetromino::Move>());
     }
 
     std::vector<enum Tetromino::Move> sequence;
     Tetromino c = target;
+    // Pushes drop move to sequence and sets current to pre-drop
     if (last != NULL) {
         sequence.push_back(Tetromino::drop);
         c = *last;
@@ -245,6 +249,7 @@ std::vector<enum Tetromino::Move> const* FindPath(GameState const& state, Tetrom
         c = GetPrevious(c, move);
     }
 
+    // Reverses order of sequence
     std::vector<enum Tetromino::Move>* moves = new std::vector<enum Tetromino::Move>();
     for (int i = sequence.size()-1; i >= 0; --i)
         moves->push_back(sequence.at(i));
