@@ -15,8 +15,18 @@ HarmonySearch::HarmonySearch(HarmonyCompareWrapper const& compare, HarmonyFactor
 
 HarmonySearch::~HarmonySearch() {
     for (unsigned i = 0; i < m_memory.size(); ++i) {
-        if (m_memory[i] != NULL)
-            delete m_memory[i];
+        if (m_memory.at(i) != NULL)
+            delete m_memory.at(i);
+    }
+}
+
+void HarmonySearch::InitializeHarmonies(std::vector<Harmony> const& init) {
+    for (int i = 0; i < m_memory.size(); ++i) {
+        if (m_memory.at(i) != NULL) {
+            delete m_memory.at(i);
+            m_memory.at(i) = NULL;
+        }
+        m_memory.at(i) = new Harmony(init.at(i));
     }
 }
 
@@ -40,11 +50,11 @@ void HarmonySearch::Iterate() {
     }
 
     // Compares new harmony to worst harmony
-    Harmony* worst = m_memory.back();
+    Harmony const* worst = m_memory.back();
     if (m_compare(newHarmony, worst)) {
-        m_memory.pop_back();
         delete worst;
-        m_memory.push_back(newHarmony);
+        worst = NULL;
+        m_memory.back() = newHarmony;
         std::sort(m_memory.begin(), m_memory.end(), m_compare);
     }
     else {

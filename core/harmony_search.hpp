@@ -9,13 +9,14 @@ public:
                     unsigned varCount, unsigned memorySize, 
                     float r_accept, float r_pa, float b_range);
     ~HarmonySearch();
+    void InitializeHarmonies(std::vector<Harmony> const& init);
     void Iterate();
     void EraseHarmonyCaches() const;
     Harmony const* GetRanked(unsigned rank) const;
 private:
     HarmonyCompareWrapper const& m_compare;
     HarmonyFactory const& m_factory;
-    std::vector<Harmony*> m_memory;
+    std::vector<Harmony const*> m_memory;
     unsigned m_varCount;
     float m_r_accept;
     float m_r_pa;

@@ -9,7 +9,7 @@
 class ObjectiveFunction;
 class Harmony;
 typedef std::vector< std::pair<float, float> > HarmonyRanges;
-typedef std::binary_function<Harmony*, Harmony*, bool> Comparator;
+typedef std::binary_function<Harmony const*, Harmony const*, bool> Comparator;
 
 // Wrapper around std::vector which caches function calculations
 class Harmony : public std::vector<float> {
