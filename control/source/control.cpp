@@ -108,7 +108,8 @@ void Control::Execute() {
 void Control::ExecuteSequence(std::vector<enum Tetromino::Move> const& sequence,
                                int pieceId, zmq::socket_t& commandSocket) {
     int sequenceSize = sequence.size();
-    int executeCount = std::min(sequenceSize, 10);
+    //int executeCount = std::min(sequenceSize, 10);
+    int executeCount = sequenceSize;
     for (int i = 0; i < executeCount; ++i) {
         enum Tetromino::Move move = sequence.at(i);
         bool success = m_si.SendMove(move, pieceId, commandSocket);
