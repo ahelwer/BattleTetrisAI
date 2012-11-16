@@ -6,21 +6,16 @@
 #include <algorithm>
 
 #ifdef PARALLEL
-    #include <omp.h>
+#include <omp.h>
 #endif
 
 float BestScore(GameState& state, Harmony const& h) {
     std::vector<Tetromino> const* possible = FindPossibleMoves(state);
     float maxScore = -1.0*FLT_MAX;
-#ifdef PARALLEL
-    #pragma omp parallel for
-#endif
     for (int i = 0; i < possible->size(); ++i) {
         GameState next = state;
         next.ApplyMove(possible->at(i));
-        //state.PushMove(possible->at(i));
         float result = EvaluateMove(state, h);
-        //state.PopMove();
         maxScore = std::max(result, maxScore);
     }
     delete possible;
@@ -31,24 +26,29 @@ Tetromino const* FindBestMove(GameState& state, Harmony const& h) {
     std::vector<Tetromino> const* possible = FindPossibleMoves(state);
     int maxIdx = -1;
     float maxScore = -1.0*FLT_MAX;
+    #ifdef PARALLEL
+    omp_set_num_threads(8);
+    #pragma omp parallel for
+    #endif
+    {
     for (int i = 0; i < possible->size(); ++i) {
         GameState next = state;
-        //state.PushMove(possible->at(i));
         next.ApplyMove(possible->at(i));
         float result = EvaluateMove(next, h);
-        /*
         int feedSize = std::min(state.QueuedPieceCount(), 2);
         for (int i = 0; i < feedSize; ++i) {
-            //state.PushFeedFromQueue(i);
             result += (BestScore(state, h) / (float)feedSize);
-            //state.PopFeedFromQueue();
         }
-        */
-        //state.PopMove();
+        #ifdef PARALLEL
+        #pragma omp critical
+        #endif
+        {
         if (result > maxScore) {
             maxIdx = i;
             maxScore = result;
         }
+        }
+    }
     }
     Tetromino* ret = NULL;
     if (maxIdx != -1)
@@ -246,8 +246,6 @@ Tetromino const* BFS(GameState const& state, Tetromino const& s,
 
 std::vector<enum Tetromino::Move> const* FindPath(GameState const& state, 
                                     Tetromino const& source, Tetromino const& target) {
-    GameBoard const& board = state.GetBoard();
-
     // Initializes breadth-first search
     // visited [Column][Row][Rotation]
     bool v[10][20][4];

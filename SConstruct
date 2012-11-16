@@ -36,5 +36,6 @@ test_env.Program(target = 'runTests', source = control_obj+model_obj+server_obj+
 
 trainer_env = env.Clone()
 trainer_env.MergeFlags(['-fopenmp'])
+trainer_env.Append(CPPDEFINES = ['PARALLEL'])
 trainer_env.Program(target = 'runTrainer', source = core_obj+trainer_obj+model_obj+trainer_main, LIBS = ['gomp'])
 

@@ -8,6 +8,7 @@ TetrisPointsEarned::TetrisPointsEarned(GeneratedGame const& generator)
 
 float TetrisPointsEarned::operator() (Harmony const& h) const {
     float pointsEarned = 0.0;
+    int rowsCleared = 0;
     Tetromino const& tetInPlay = m_generator.GetPiece(0);
     std::vector<Tetromino> const* queue = m_generator.GetQueue(0);
     GameState state(*queue, tetInPlay);
@@ -26,6 +27,7 @@ float TetrisPointsEarned::operator() (Harmony const& h) const {
                     pointsEarned += 5.0;
                 else if (cleared == 4)
                     pointsEarned += 8.0;
+                rowsCleared += cleared;
             }
             else {
                 std::cout << "ERROR: best move failed." << std::endl;
@@ -40,5 +42,6 @@ float TetrisPointsEarned::operator() (Harmony const& h) const {
             state.SetPieceInPlay(&nextTet);
         }
     }
+    std::cout << "Rows cleared: " << rowsCleared << std::endl;
     return pointsEarned;
 }
