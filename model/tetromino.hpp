@@ -22,8 +22,8 @@ public:
     void RotateLeft();
     void RotateRight();
     friend std::ostream& operator<< (std::ostream& out, Tetromino const& t);
-    bool operator== (Tetromino const& o);
-    bool operator!= (Tetromino const& o);
+    bool operator== (Tetromino const& o) const;
+    bool operator!= (Tetromino const& o) const;
     enum Move {
         left,
         right,

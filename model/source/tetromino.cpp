@@ -176,13 +176,13 @@ void Tetromino::RotateRight() {
     m_pDesc = GetDesc(m_type, m_orient);
 }
 
-bool Tetromino::operator== (Tetromino const& o) {
+bool Tetromino::operator== (Tetromino const& o) const {
     return (m_orient == o.m_orient &&
             m_row == o.m_row &&
             m_col == o.m_col);
 }
 
-bool Tetromino::operator!= (Tetromino const& o) {
+bool Tetromino::operator!= (Tetromino const& o) const {
     return !(*this == o);
 }
 
