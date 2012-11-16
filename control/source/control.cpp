@@ -4,6 +4,7 @@
 #include <core/tetris_oracle.hpp>
 #include <core/harmony.hpp>
 #include <server/state.hpp>
+#include <algorithm>
 
 Control::Control(zmq::context_t&, ServerInterface& si)
     : m_si(si)
@@ -32,7 +33,8 @@ void Control::Execute() {
                 sequence = NULL;
             }
             sequence = FindPath(game, *(game.GetPieceInPlay()), *best);
-            ExecuteSequence(*sequence, game.GetCurrentPieceNumber());
+			if (sequence->size() > 0)
+				ExecuteSequence(*sequence, game.GetCurrentPieceNumber());
         }
         State const* s = m_si.GetState();
         gameOver = s->ExecuteUpdates(game);
@@ -58,7 +60,12 @@ void Control::Execute() {
 
 void Control::ExecuteSequence(std::vector<enum Tetromino::Move> const& sequence,
                                int pieceId) {
-    for (int i = 0; i < std::min(sequence.size(), 10); ++i) {
+	bool endsInDrop = (sequence.back() == Tetromino::drop);
+	int sequenceSize = sequence.size();
+	int executeCount = sequenceSize;
+	if (!endsInDrop)
+		executeCount = std::min(sequenceSize, 10);
+    for (int i = 0; i < executeCount; ++i) {
         enum Tetromino::Move move = sequence.at(i);
         bool success = m_si.SendMove(move, pieceId);
         if (!success)
