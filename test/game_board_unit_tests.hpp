@@ -11,6 +11,7 @@ class GameBoardUnitTests : public CppUnit::TestFixture {
     CPPUNIT_TEST(TestTranslateComplex);
     CPPUNIT_TEST(TestApplyPiece);
     CPPUNIT_TEST(TestApplyMultiplePieces);
+    CPPUNIT_TEST(TestClearRows);
     CPPUNIT_TEST_SUITE_END();
 public:
     void setUp();
@@ -21,8 +22,8 @@ public:
     void TestTranslateComplex();
     void TestApplyPiece();
     void TestApplyMultiplePieces();
+    void TestClearRows();
 private:
     GameBoard* m_pBoard;
 };
-
 

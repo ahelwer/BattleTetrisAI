@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
     std::stringstream ss;
     std::ofstream out (outName.c_str(), std::ios::app);
     for (int i = 0; i < memorySize; ++i)
-        ss << *(memory.at(i)) << std::endl;
+        ss << *(memory.at(i)) << std::endl << std::endl;
 
     ss << std::endl;
     out << ss.str();
