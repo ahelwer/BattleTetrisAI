@@ -5,16 +5,17 @@
 #include <core/harmony.hpp>
 #include <cstdlib>
 #include <sstream>
-//#include <omp>
+#include <omp.h>
 
 int main(int argc, char* argv[]) {
     srand(time(NULL));
     int threadCount = 1;
     if (argc == 2)
         std::istringstream(argv[1]) >> threadCount;
-    std::cout << "Launching " << threadCount << " trainers." << std::endl;
     int const gameLength = 1000;
-    int const iterationCount = 1000;
+    int const iterationCount = 10;
+    std::cout << "Launching " << threadCount << " trainers for ";
+    std::cout << iterationCount << " iterations." << std::endl;
 
     int const varCount = GetVarCount();
     HarmonyRanges const* ranges = GetRanges();
@@ -22,30 +23,41 @@ int main(int argc, char* argv[]) {
     float const r_accept = 0.95;
     float const r_pa = 0.99;
     float const r_range = 0.1;
-    HarmonyFactory factory (varCount, *ranges);
+    HarmonyFactory const factory (varCount, *ranges);
 
-    //#pragma omp parallel for num_threads(threadCount)
-    //for (int t = 0; t < threadCount; ++t) {
+    #pragma omp parallel for num_threads(threadCount)
+    for (int t = 0; t < threadCount; ++t) {
         GeneratedGame generator (gameLength);
         TetrisRowsCleared f (generator);
         HarmonyCompareMax maxComp (f);
         HarmonyCompareWrapper comp (maxComp);
         HarmonySearch search (comp, factory, varCount, memorySize,
                                 r_accept, r_pa, r_range);
+
         for (int i = 0; i < iterationCount; ++i) {
             search.Iterate();
             generator.GenerateNewGame();
             search.EraseHarmonyCaches();
-            std::cout << "COMPLETED ITERATION " << i << std::endl;
+            #pragma omp master
+            {
+                std::cout << "COMPLETED ITERATION " << i << std::endl;
+            }
         }
-    //}
-    std::vector<Harmony const*> memory;
-    for (int i = 0; i < memorySize; ++i)
-        memory.push_back(search.GetRanked(i));
-    for (int i = 0; i < memorySize; ++i)
-        std::cout << *(memory.at(i)) << std::endl;
-    for (int i = 0; i < memorySize; ++i)
-        delete memory.at(i);
+
+        #pragma omp barrier
+        std::vector<Harmony const*> memory;
+        for (int i = 0; i < memorySize; ++i)
+            memory.push_back(search.GetRanked(i));
+        #pragma omp critical
+        {
+            std::cout << "Trainer " << t << " results:" << std::endl;
+            for (int i = 0; i < memorySize; ++i)
+                std::cout << *(memory.at(i)) << std::endl;
+            std::cout << std::endl;
+        }
+        for (int i = 0; i < memorySize; ++i)
+            delete memory.at(i);
+    }
     delete ranges;
 
     return 0;

@@ -33,6 +33,5 @@ float TetrisRowsCleared::operator() (Harmony const& h) const {
             state.SetPieceInPlay(nextTet);
         }
     }
-    std::cout << "Cleared: " << rowsCleared<<  std::endl;
     return rowsCleared;
 }
