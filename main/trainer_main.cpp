@@ -10,10 +10,12 @@
 int main(int argc, char* argv[]) {
     srand(time(NULL));
     std::ifstream in;
+    std::string outName;
     bool initHarmonies = false;
-    if (argc == 2) {
+    if (argc == 3) {
         in.open(argv[1]);
         initHarmonies = in.is_open();
+        outName = std::string(argv[2]);
     }
 
     int const varCount = GetVarCount();
@@ -67,7 +69,7 @@ int main(int argc, char* argv[]) {
         memory.push_back(search.GetRanked(i));
 
     std::stringstream ss;
-    std::ofstream out ("results.txt", std::ios::app);
+    std::ofstream out (outName.c_str(), std::ios::app);
     for (int i = 0; i < memorySize; ++i)
         ss << *(memory.at(i)) << std::endl;
 
