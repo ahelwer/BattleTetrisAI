@@ -58,12 +58,8 @@ void Control::Execute() {
 
 void Control::ExecuteSequence(std::vector<enum Tetromino::Move> const& sequence,
                                int pieceId) {
-    for (int i = 0; i < sequence.size(); ++i) {
+    for (int i = 0; i < std::min(sequence.size(), 10); ++i) {
         enum Tetromino::Move move = sequence.at(i);
-        /*
-        if (move == Tetromino::down)
-            return;
-            */
         bool success = m_si.SendMove(move, pieceId);
         if (!success)
             return;
