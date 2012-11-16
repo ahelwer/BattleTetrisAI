@@ -29,8 +29,8 @@ float TetrisRowsCleared::operator() (Harmony const& h) const {
             break;
         }
         if (i < gameLength-1) {
-            Tetromino* nextTet = new Tetromino(m_generator.GetPiece(i+1));
-            state.SetPieceInPlay(nextTet);
+            Tetromino nextTet = m_generator.GetPiece(i+1);
+            state.SetPieceInPlay(&nextTet);
         }
     }
     return rowsCleared;

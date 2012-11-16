@@ -48,8 +48,8 @@ int main(int argc, char* argv[]) {
     }
     in.close();
 
-    int const gameLength = 1000;
-    int const iterationCount = 1000;
+    int const gameLength = 100;
+    int const iterationCount = 3;
     std::cout << "Launching " << threadCount << " trainers for ";
     std::cout << iterationCount << " iterations." << std::endl;
 

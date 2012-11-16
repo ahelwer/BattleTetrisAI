@@ -68,7 +68,7 @@ bool GameState::PiecesLeftInQueue() const {
     return (m_depthInQueue < m_pieceQueue.size()-1);
 }
 
-void GameState::SetPieceInPlay(Tetromino* t) {
+void GameState::SetPieceInPlay(Tetromino const* t) {
     if (m_pPieceInPlay != NULL) {
         delete m_pPieceInPlay;
         m_pPieceInPlay = NULL;

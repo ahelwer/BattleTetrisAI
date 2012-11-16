@@ -14,7 +14,7 @@ public:
     bool PushMove(Tetromino const& t);
     bool PopMove();
     bool PiecesLeftInQueue() const;
-    void SetPieceInPlay(Tetromino* t);
+    void SetPieceInPlay(Tetromino const* t);
     Tetromino const* GetPieceInPlay() const;
     std::vector<int> const& LastClearedRows() const;
     int GetCurrentPieceNumber() const;
