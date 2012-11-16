@@ -8,20 +8,20 @@
 
 class ServerInterface {
 public:
-    ServerInterface(zmq::context_t& context, 
-                    std::string const& commandServer,
+    ServerInterface(std::string const& commandServer,
                     std::string const& stateServer,
                     std::string const& matchToken);
-    ~ServerInterface();
-    // Performs initial handshake with server
-    bool Initialize();
+    // Connects provided socket to command server
+    bool ConnectToCommandServer(zmq::socket_t& commandSocket) const;
+    // Connects provided socket to state server
+    void ConnectToStateServer(zmq::socket_t& stateSocket) const;
     // Polls state
-    State const* GetState();
+    State const* GetState(zmq::socket_t& stateSocket) const;
     // Sends move
-    bool SendMove(enum Tetromino::Move move, int pieceId);
+    bool SendMove(enum Tetromino::Move move, int pieceId, zmq::socket_t& commandSocket) const;
 private:
-    zmq::socket_t m_command;
-    zmq::socket_t m_state;
+    std::string const& m_commandServer;
+    std::string const& m_stateServer;
     std::string const& m_matchToken;
     MessageFactory m_factory;
 };

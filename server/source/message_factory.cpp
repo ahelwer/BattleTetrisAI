@@ -28,7 +28,7 @@ std::string const* MessageFactory::CreateInitMessage(std::string const& matchTok
     return serialized;
 }
 
-bool MessageFactory::ParseInitReply(std::string const& reply) {
+bool MessageFactory::ParseInitReply(std::string const& reply) const {
     bool success = true;
 
     // Parse message

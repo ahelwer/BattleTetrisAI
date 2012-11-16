@@ -25,12 +25,9 @@ int main(int argc, char* argv[]) {
     zmq::context_t context(1);
 
     // Create and initializes server interface
-    ServerInterface si (context, commandServer, stateServer, matchToken);
-    bool success = si.Initialize();
-    if (success) {
-        Control top (context, si);
-        top.Execute();
-    }
+    ServerInterface si (commandServer, stateServer, matchToken);
+    Control top (context, si);
+    top.Execute();
 
     return 0;
 }

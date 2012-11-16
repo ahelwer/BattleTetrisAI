@@ -13,7 +13,8 @@ public:
     void PollStateMessages();
 private:
     void ExecuteSequence(std::vector<enum Tetromino::Move> const& sequence, 
-                            int pieceId); 
+                            int pieceId, zmq::socket_t& commandSocket); 
+    zmq::context_t& m_context;
     ServerInterface& m_si;
     std::queue<State const*> m_messageQueue;
     pthread_mutex_t m_queueMutex;

@@ -12,8 +12,8 @@ void* DispatchThread(void* varg) {
     c->PollStateMessages();
 }
 
-Control::Control(zmq::context_t&, ServerInterface& si)
-    : m_si(si)
+Control::Control(zmq::context_t& context, ServerInterface& si)
+    : m_context(context), m_si(si)
 { 
     pthread_mutex_init(&m_queueMutex, NULL);
 }
@@ -23,21 +23,29 @@ Control::~Control() {
 }
 
 void Control::PollStateMessages() {
+    zmq::socket_t stateSocket(m_context, ZMQ_SUB);
+    m_si.ConnectToStateServer(stateSocket);
     bool terminate = false;
     while (!terminate) {
-        State const* state = m_si.GetState(); 
+        State const* state = m_si.GetState(stateSocket); 
         terminate = state->ShouldTerminate();
         pthread_mutex_lock(&m_queueMutex);
         m_messageQueue.push(state);
         pthread_mutex_unlock(&m_queueMutex);
     }
+    stateSocket.close();
 }
 
 void Control::Execute() {
-
     // Launches state messaging thread
     pthread_t worker = 0;
     pthread_create(&worker, NULL, DispatchThread, static_cast<void*>(this));
+
+    zmq::socket_t commandSocket(m_context, ZMQ_REQ);
+    bool success = m_si.ConnectToCommandServer(commandSocket);
+    if (!success)
+        exit(-1);
+    std::cout << "Entering main loop." << std::endl;
 
     int weightCount = GetVarCount();
     float weights[] = {0.413627, -0.723112, -0.214118, 0.0572252, 
@@ -62,7 +70,8 @@ void Control::Execute() {
             }
             sequence = FindPath(game, *(game.GetPieceInPlay()), *best);
 			if (sequence->size() > 0)
-				ExecuteSequence(*sequence, game.GetCurrentPieceNumber());
+				ExecuteSequence(*sequence, game.GetCurrentPieceNumber(), 
+                                    commandSocket);
         }
         pthread_mutex_lock(&m_queueMutex);
         while (!m_messageQueue.empty()) {
@@ -90,15 +99,16 @@ void Control::Execute() {
         }
     }
     pthread_join(worker, NULL);
+    commandSocket.close();
 }
 
 void Control::ExecuteSequence(std::vector<enum Tetromino::Move> const& sequence,
-                               int pieceId) {
+                               int pieceId, zmq::socket_t& commandSocket) {
     int sequenceSize = sequence.size();
     int executeCount = std::min(sequenceSize, 10);
     for (int i = 0; i < executeCount; ++i) {
         enum Tetromino::Move move = sequence.at(i);
-        bool success = m_si.SendMove(move, pieceId);
+        bool success = m_si.SendMove(move, pieceId, commandSocket);
         if (!success)
             return;
     }

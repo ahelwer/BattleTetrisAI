@@ -1,39 +1,24 @@
 #include <server/server_interface.hpp>
 #include <iostream>
 
-ServerInterface::ServerInterface(zmq::context_t& context, 
-                                    std::string const& commandServer,
+ServerInterface::ServerInterface(std::string const& commandServer,
                                     std::string const& stateServer,
                                     std::string const& matchToken)
-    : m_command(context, ZMQ_REQ), m_state(context, ZMQ_SUB),
+    : m_commandServer(commandServer), m_stateServer(stateServer), 
         m_matchToken(matchToken)
-{
-    std::cout << "Connecting to command server " << commandServer << std::endl;
-    m_command.connect(commandServer.c_str());
-    std::cout << "Connecting to state server " << stateServer << std::endl;
-    m_state.connect(stateServer.c_str());
-}
+{ }
 
-ServerInterface::~ServerInterface() {
-    std::cout << "Closing sockets." << std::endl;
-    m_command.close();
-    m_state.close();
-}
-
-bool ServerInterface::Initialize() {
-    // Sends initial message to command server
-    std::cout << "Initiating handshake... ";
+bool ServerInterface::ConnectToCommandServer(zmq::socket_t& commandSocket) const {
+    commandSocket.connect(m_commandServer.c_str());
+    std::cout << "Connecting to command server... ";
     std::string const* requestS = m_factory.CreateInitMessage(m_matchToken);
     zmq::message_t request (requestS->size());
     memcpy(static_cast<void*>(request.data()), requestS->data(), requestS->size());
     delete requestS;
-    m_command.send(request);
-
-    // Subscribes to state server
-    m_state.setsockopt(ZMQ_SUBSCRIBE, m_matchToken.c_str(), m_matchToken.size());
+    commandSocket.send(request);
 
     zmq::message_t reply;
-    m_command.recv(&reply);
+    commandSocket.recv(&reply);
     std::string replyS (static_cast<char const*>(reply.data()), reply.size());
     bool success = m_factory.ParseInitReply(replyS);
     if (success)
@@ -43,25 +28,31 @@ bool ServerInterface::Initialize() {
     return success;
 }
 
-State const* ServerInterface::GetState() {
+void ServerInterface::ConnectToStateServer(zmq::socket_t& stateSocket) const {
+    std::cout << "Connecting to state server " << m_stateServer << std::endl;
+    stateSocket.connect(m_stateServer.c_str());
+    stateSocket.setsockopt(ZMQ_SUBSCRIBE, m_matchToken.c_str(), m_matchToken.size());
+}
+
+State const* ServerInterface::GetState(zmq::socket_t& stateSocket) const {
     zmq::message_t address;
     zmq::message_t state;
-    m_state.recv(&address);
-    m_state.recv(&state);
+    stateSocket.recv(&address);
+    stateSocket.recv(&state);
     std::string stateS (static_cast<char const*>(state.data()), state.size());
     return m_factory.ParseStateMessage(stateS);
 }
 
-bool ServerInterface::SendMove(enum Tetromino::Move move, int pieceId) {
+bool ServerInterface::SendMove(enum Tetromino::Move move, int pieceId, zmq::socket_t& commandSocket) const {
     std::string const* moveCommandS = m_factory.CreateMoveMessage(move, pieceId);
     zmq::message_t moveCommand (moveCommandS->size());
     memcpy(static_cast<void*>(moveCommand.data()), moveCommandS->data(), 
                                 moveCommandS->size());
     delete moveCommandS;
-    m_command.send(moveCommand);
+    commandSocket.send(moveCommand);
 
     zmq::message_t reply;
-    m_command.recv(&reply);
+    commandSocket.recv(&reply);
     std::string replyS (static_cast<char const*>(reply.data()), reply.size());
     return m_factory.ParseMoveReply(replyS);
 }
