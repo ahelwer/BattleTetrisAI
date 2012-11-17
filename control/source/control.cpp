@@ -28,10 +28,12 @@ void Control::PollStateMessages() {
     bool terminate = false;
     while (!terminate) {
         State const* state = m_si.GetState(stateSocket); 
-        terminate = state->ShouldTerminate();
-        pthread_mutex_lock(&m_queueMutex);
-        m_messageQueue.push(state);
-        pthread_mutex_unlock(&m_queueMutex);
+        if (state != NULL) {
+            terminate = state->ShouldTerminate();
+            pthread_mutex_lock(&m_queueMutex);
+            m_messageQueue.push(state);
+            pthread_mutex_unlock(&m_queueMutex);
+        }
     }
     stateSocket.close();
 }
@@ -70,7 +72,7 @@ void Control::Execute() {
                 sequence = NULL;
             }
             sequence = FindPath(game, *(game.GetPieceInPlay()), *best);
-			if (sequence->size() > 0)
+			if (sequence != NULL && sequence->size() > 0)
 				ExecuteSequence(*sequence, game.GetCurrentPieceNumber(), 
                                     commandSocket);
         }
@@ -78,8 +80,10 @@ void Control::Execute() {
         while (!m_messageQueue.empty()) {
             State const* s = m_messageQueue.front();
             m_messageQueue.pop();
-            gameOver = s->ExecuteUpdates(game);
-            delete s;
+            if (s != NULL) {
+                gameOver = s->ExecuteUpdates(game);
+                delete s;
+            }
         }
         pthread_mutex_unlock(&m_queueMutex);
         if (game.WasRowClearEvent() || game.PieceHasChanged()) {
@@ -91,13 +95,24 @@ void Control::Execute() {
                 best = NULL;
             }
             best = FindBestMove(game, h);
-            GameState next = game;
-            next.ApplyMove(*best);
-            std::cout << next << std::endl;
-            if (best != NULL && (*best) != *(game.GetPieceInPlay())) {
+            if (best != NULL) {
+                GameState next = game;
+                next.ApplyMove(*best);
+                std::cout << next << std::endl;
+            }
+            if (best != NULL && game.GetPieceInPlay() != NULL && 
+                    (*best) != *(game.GetPieceInPlay())) {
                 inMoveSequence = true;
             }
         }
+    }
+    if (best != NULL) {
+        delete best;
+        best = NULL;
+    }
+    if (sequence != NULL) {
+        delete sequence;
+        sequence = NULL;
     }
     pthread_join(worker, NULL);
     commandSocket.close();
