@@ -14,7 +14,8 @@ float TetrisPointsEarned::operator() (Harmony const& h) const {
     GameState state(*queue, tetInPlay);
     delete queue;
     int gameLength = m_generator.GameLength();
-    int survivedUntil = 0;
+    int survivalCount = 0;
+    bool died = false;
     for (int i = 0; i < gameLength; ++i ) {
         Tetromino const* best = FindBestMove(state, h);
         if (best != NULL) {
@@ -36,18 +37,27 @@ float TetrisPointsEarned::operator() (Harmony const& h) const {
             delete best;
         }
         else {
-            survivedUntil = i+1;
+            died = true;
             break;
         }
-        if (i < gameLength-1) {
-            Tetromino nextTet = m_generator.GetPiece(i+1);
+        ++survivalCount;
+        int chance = rand() % 2;
+        int nextIdx = i+1+chance;
+        if (nextIdx < gameLength) {
+            Tetromino nextTet = m_generator.GetPiece(nextIdx);
             state.SetPieceInPlay(&nextTet);
+            queue = m_generator.GetQueue(nextIdx);
+            state.SetQueueInPlay(*queue);
+            delete queue;
         }
     }
     // death penalty
-    pointsEarned = pointsEarned*((float)survivedUntil/(float)gameLength);
-    // survival bonus
-    pointsEarned = pointsEarned*1.10;
-    std::cout << "Rows cleared: " << rowsCleared << std::endl;
+    if (died)
+        pointsEarned /= 2.0;
+    std::cout << "Rows cleared: " << rowsCleared << ", ";
+    if (died)
+        std::cout << "did not survive." << std::endl;
+    else
+        std::cout << "survived." << std::endl;
     return pointsEarned;
 }
