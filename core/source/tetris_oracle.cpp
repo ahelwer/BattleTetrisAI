@@ -255,7 +255,8 @@ std::vector<enum Tetromino::Move> const* FindPath(GameState const& state,
     }
 
     GameBoard const& board = state.GetBoard();
-    if (!board.IsValidMove(source) || !board.IsValidMove(target))
+    if (!board.IsValidMove(source) || !board.IsValidMove(target) ||
+            source.GetType() != target.GetType())
         return NULL;
 
     // Initializes breadth-first search
@@ -277,8 +278,8 @@ std::vector<enum Tetromino::Move> const* FindPath(GameState const& state,
             delete last;
             last = NULL;
         }
-        std::cout << "ERROR: Could not reach target" << std::endl;
-        return (new std::vector<enum Tetromino::Move>());
+        //std::cout << "ERROR: Could not reach target" << std::endl;
+        return NULL;
     }
 
     std::vector<enum Tetromino::Move> sequence;

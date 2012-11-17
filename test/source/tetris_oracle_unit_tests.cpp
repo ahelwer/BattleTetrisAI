@@ -150,6 +150,15 @@ void TetrisOracleUnitTests::TestFindPathSlideIn() {
 }
 
 void TetrisOracleUnitTests::TestNoPath() {
-
+    GameState state;
+    GameBoard const& board = state.GetBoard();
+    Tetromino barrier ('I', 1, 5, ROWS-3);
+    state.SetPieceInPlay(&barrier);
+    CPPUNIT_ASSERT(state.ApplyMove(barrier) != -1);
+    Tetromino source ('T', 3, 4, ROWS-4);
+    Tetromino target ('T', 2, 8, ROWS-1);
+    CPPUNIT_ASSERT(board.IsValidMove(target));
+    PathSequence const* path = FindPath(state, source, target);
+    CPPUNIT_ASSERT(path == NULL);
 }
 
