@@ -239,6 +239,35 @@ void GameBoard::Translate(char const* desc) {
     }
 }
 
+bool GameBoard::operator== (GameBoard const& o) const {
+    if (this == &o)
+        return true;
+
+    bool descEqual = (memcmp((void*)m_pDesc, (void*)o.m_pDesc, 
+                        BOARD_DESC_SIZE) == 0);
+
+    bool boardEqual = true;
+    if (m_boardStack.size() == o.m_boardStack.size()) {
+        for (int k = 0; k < m_boardStack.size(); ++k) {
+            BoardDesc const& mine = m_boardStack.at(k);
+            BoardDesc const& theirs = o.m_boardStack.at(k);
+            for (int i = 0; i < COLS; ++i) {
+                for (int j = 0; j < ROWS; ++j) {
+                    if (mine[i][j] != theirs[i][j])
+                        boardEqual = false;
+                }
+            }
+        }
+    }
+
+    return (descEqual && boardEqual);
+
+}
+
+bool GameBoard::operator!= (GameBoard const& o) const {
+    return !(*this == o);
+}
+
 std::ostream& operator<< (std::ostream& out, GameBoard const& gb) {
     BoardDesc const& board = gb.GetBoardDesc();
     out << board;

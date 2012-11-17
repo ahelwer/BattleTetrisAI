@@ -174,6 +174,9 @@ GameBoard const& GameState::GetBoard() const {
 }
 
 bool GameState::operator== (GameState const& o) const {
+    if (this == &o)
+        return true;
+
     bool lastRowsClearedEqual = (m_lastRowsCleared.size() == 
                                     o.m_lastRowsCleared.size());
     for (int i = 0; i < m_lastRowsCleared.size(); ++i) {
@@ -209,15 +212,17 @@ bool GameState::operator== (GameState const& o) const {
     else {
         currentPieceEqual = false;
     }
+
+    bool gameBoardEqual = (m_board == o.m_board);
     
     return (lastRowsClearedEqual && pieceQueueEqual &&
             lastPiecePlayedEqual && pieceNumberEqual &&
             rowsClearedEqual && pieceChangedEqual &&
-            currentPieceEqual);
+            currentPieceEqual && gameBoardEqual);
 }
 
 bool GameState::operator!= (GameState const& o) const {
-    return (*this == o);
+    return !(*this == o);
 }
 
 std::ostream& operator<< (std::ostream& out, GameState const& state) {

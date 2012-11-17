@@ -27,6 +27,8 @@ public:
     int WellDepth(int x) const;
     void Update(char const* desc);
     bool HasChanged(char const* desc) const;
+    bool operator== (GameBoard const& o) const;
+    bool operator!= (GameBoard const& o) const;
     friend std::ostream& operator<< (std::ostream& out, GameBoard const& gb);
 private:
     void ApplyMoveToBoard(Tetromino const& t);
