@@ -62,7 +62,7 @@ GameState::~GameState() {
 }
 
 int GameState::ApplyMove(Tetromino const& t) {
-    if (t.GetType() != m_pPieceInPlay->GetType())
+    if (m_pPieceInPlay == NULL || t.GetType() != m_pPieceInPlay->GetType())
         return -1;
     bool success = m_board.ApplyMove(t);
     if (success) {

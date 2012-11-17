@@ -20,6 +20,6 @@ public:
     void TestSetMethods();
     void TestEventMethods();
 private:
-    GameBoard* m_pBoard;
+    GameState* m_pState;
 };
 
