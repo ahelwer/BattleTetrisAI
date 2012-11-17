@@ -22,6 +22,7 @@ float TetrisPointsEarned::operator() (Harmony const& h) const {
         if (best != NULL) {
             int cleared = state.ApplyMove(*best);
             if (cleared != -1) {
+                /*
                 if (cleared == 1)
                     pointsEarned += 1.0;
                 else if (cleared == 2)
@@ -30,6 +31,7 @@ float TetrisPointsEarned::operator() (Harmony const& h) const {
                     pointsEarned += 5.0;
                 else if (cleared == 4)
                     pointsEarned += 8.0;
+                    */
                 rowsCleared += cleared;
             }
             else {
@@ -54,12 +56,15 @@ float TetrisPointsEarned::operator() (Harmony const& h) const {
         }
     }
     // death penalty
+    /*
     if (died)
         pointsEarned /= 2.0;
     std::cout << "Rows cleared: " << rowsCleared << ", ";
+    */
+    std::cout << "rows " << rowsCleared << " ";
     if (died)
         std::cout << "did not survive." << std::endl;
     else
         std::cout << "survived." << std::endl;
-    return pointsEarned;
+    return rowsCleared;
 }

@@ -47,6 +47,7 @@ Tetromino const* FindBestMove(GameState& state, Harmony const& h) {
             continue;
         }
         float result = EvaluateMove(next, h);
+        /*
         int feedSize = std::min(next.QueuedPieceCount(), 2);
         for (int i = 0; i < feedSize; ++i) {
             bool success = next.FeedFromQueue(i);
@@ -54,6 +55,7 @@ Tetromino const* FindBestMove(GameState& state, Harmony const& h) {
                 result += ((BestScore(next, h) / (float)feedSize));
             }
         }
+        */
         #ifdef PARALLEL
         #pragma omp critical
         #endif
