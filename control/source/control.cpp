@@ -98,11 +98,13 @@ void Control::Execute() {
                 best = NULL;
             }
             best = FindBestMove(game, h);
+			/**
             if (best != NULL) {
                 GameState next = game;
                 next.ApplyMove(*best);
                 std::cout << next << std::endl;
             }
+			*/
             if (best != NULL && game.GetPieceInPlay() != NULL && 
                     (*best) != *(game.GetPieceInPlay())) {
                 inMoveSequence = true;

@@ -7,12 +7,13 @@
 #include <control/control.hpp>
 
 int main(int argc, char* argv[]) {
-    /*
-    if (argc != 3) {
-        std::cout << "ERROR: Usage <server> <match token>" << std::endl;
-        return 0;
+	std::string opponent;
+    if (argc == 3) {
+		opponent = std::string("Test Client");
     }
-    */
+	else if (argc == 4) {
+		opponent = "Team " + std::string(argv[3]);
+	}
 
     // Parses command line arguments
     std::string protocol (PROTOCOL);
@@ -22,7 +23,6 @@ int main(int argc, char* argv[]) {
     std::string matchToken (argv[2]);
     std::string commandServer = protocol + ip + commandPort;
     std::string stateServer = protocol + ip + statePort;
-    std::string opponent = "Team " + std::string(argv[3]);
     std::cout << opponent << std::endl;
 
     // Create zmq context
