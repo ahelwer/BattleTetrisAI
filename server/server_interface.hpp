@@ -8,17 +8,19 @@
 
 class ServerInterface {
 public:
+    ServerInterface();
     ServerInterface(std::string const& commandServer,
                     std::string const& stateServer,
                     std::string const& matchToken);
+    virtual ~ServerInterface();
     // Connects provided socket to command server
-    bool ConnectToCommandServer(zmq::socket_t& commandSocket) const;
+    virtual bool ConnectToCommandServer(zmq::socket_t& commandSocket) const;
     // Connects provided socket to state server
-    void ConnectToStateServer(zmq::socket_t& stateSocket) const;
+    virtual void ConnectToStateServer(zmq::socket_t& stateSocket) const;
     // Polls state
-    State const* GetState(zmq::socket_t& stateSocket) const;
+    virtual State const* GetState(zmq::socket_t& stateSocket) const;
     // Sends move
-    bool SendMove(enum Tetromino::Move move, int pieceId, zmq::socket_t& commandSocket) const;
+    virtual bool SendMove(enum Tetromino::Move move, int pieceId, zmq::socket_t& commandSocket) const;
 private:
     std::string const& m_commandServer;
     std::string const& m_stateServer;

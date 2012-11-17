@@ -1,11 +1,18 @@
 #include <server/server_interface.hpp>
 #include <iostream>
 
+ServerInterface::ServerInterface()
+    : m_commandServer("test"), m_stateServer("test"), m_matchToken("test")
+{ }
+
 ServerInterface::ServerInterface(std::string const& commandServer,
                                     std::string const& stateServer,
                                     std::string const& matchToken)
     : m_commandServer(commandServer), m_stateServer(stateServer), 
         m_matchToken(matchToken)
+{ }
+
+ServerInterface::~ServerInterface()
 { }
 
 bool ServerInterface::ConnectToCommandServer(zmq::socket_t& commandSocket) const {

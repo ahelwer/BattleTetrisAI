@@ -1,28 +1,6 @@
 #include <core/game_state_eval.hpp>
 #include <util/constants.hpp>
 
-// Declarations of all feature functions
-int PileHeight(GameState const& state);
-int Holes(GameState const& state);
-int ConnectedHoles(GameState const& state);
-int RemovedRows(GameState const& state); 
-int AltitudeDifference(GameState const& state);
-int MaxWellDepth(GameState const& state);
-int SumOfAllWells(GameState const& state); 
-int LandingHeight(GameState const& state);
-int Blocks(GameState const& state);
-int WeightedBlocks(GameState const& state);
-int RowTransitions(GameState const& state);
-int ColTransitions(GameState const& state);
-int HighestHole(GameState const& state);
-int BlocksAboveHighestHole(GameState const& state);
-int PotentialRows(GameState const& state);
-int Smoothness(GameState const& state);
-int ErodedPieces(GameState const& state);
-int RowHoles(GameState const& state);
-int HoleDepth(GameState const& state);
-
-
 int GetVarCount() {
     return 19;
 }

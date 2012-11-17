@@ -88,8 +88,6 @@ int TetrisOracleUnitTests::SimulatePath(GameState const& state,
         return path->size();
     }
     Tetromino c = source;
-    int pastCount = -1;
-    bool hitTarget = false;
     for (int i = 0; i < path->size(); ++i) {
         enum Tetromino::Move move = path->at(i);
         if (move == Tetromino::left)
