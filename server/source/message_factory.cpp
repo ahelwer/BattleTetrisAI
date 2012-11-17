@@ -4,7 +4,8 @@
 #include <cstdio>
 #include <cstring>
 
-MessageFactory::MessageFactory()
+MessageFactory::MessageFactory(std::string const& opponent)
+    : m_opponent(opponent)
 { }
 
 MessageFactory::~MessageFactory()
@@ -169,7 +170,7 @@ State const* MessageFactory::ParseGameBoardStateMessage(Json::Value const& root)
     for (unsigned i = 0; i < myClearedV.size(); ++i)
         myCleared->push_back(myClearedV[i].asInt());
 
-    Json::Value theirs = states.get("Test Client", "not found");
+    Json::Value theirs = states.get(m_opponent.c_str(), "not found");
     int theirPiece = theirs.get("piece_number", -1).asInt();
     Json::Value theirBoardV = theirs.get("board_state", "0");
     if (theirBoardV.asString().size() != BOARD_DESC_SIZE)
@@ -218,7 +219,7 @@ State const* MessageFactory::ParseGamePieceStateMessage(Json::Value const& root)
 
     Tetromino* theirTet = NULL;
     int theirNumber = -1;
-    Json::Value theirs = states.get("Test Client", "not found");
+    Json::Value theirs = states.get(m_opponent.c_str(), "not found");
     if (!theirs.isNull() && !theirs.isInt()) {
         std::string theirPieceS = theirs.get("piece", "not found").asString();
         if (theirPieceS.size() != 1)
@@ -250,7 +251,7 @@ State const* MessageFactory::ParseGameEndStateMessage(Json::Value const& root) c
 
     Json::Value scores = root.get("scores", "not found");
     int myScore = scores.get(USERNAME, -1).asInt();
-    int theirScore = scores.get("Test Client", -1).asInt();
+    int theirScore = scores.get(m_opponent.c_str(), -1).asInt();
 
     return new GameEnd(sequence, timestamp, won, myScore, theirScore);
 }

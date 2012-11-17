@@ -7,7 +7,7 @@
 
 class MessageFactory {
 public:
-    MessageFactory();
+    MessageFactory(std::string const& opponent);
     ~MessageFactory();
     std::string const* CreateInitMessage(std::string const& matchToken) const;
     bool ParseInitReply(std::string const& reply) const;
@@ -20,5 +20,6 @@ private:
     State const* ParseMatchEndStateMessage() const;
     State const* ParseGameEndStateMessage(Json::Value const& root) const;
     mutable std::string m_clientToken;
+    std::string m_opponent;
 };
 

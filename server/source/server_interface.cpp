@@ -1,15 +1,18 @@
 #include <server/server_interface.hpp>
 #include <iostream>
 
+/*
 ServerInterface::ServerInterface()
     : m_commandServer("test"), m_stateServer("test"), m_matchToken("test")
 { }
+*/
 
 ServerInterface::ServerInterface(std::string const& commandServer,
                                     std::string const& stateServer,
-                                    std::string const& matchToken)
+                                    std::string const& matchToken,
+                                    std::string const& opponent)
     : m_commandServer(commandServer), m_stateServer(stateServer), 
-        m_matchToken(matchToken)
+        m_matchToken(matchToken), m_factory(opponent)
 { }
 
 ServerInterface::~ServerInterface()

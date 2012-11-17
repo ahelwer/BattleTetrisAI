@@ -8,10 +8,13 @@
 
 class ServerInterface {
 public:
+/*
     ServerInterface();
+    */
     ServerInterface(std::string const& commandServer,
                     std::string const& stateServer,
-                    std::string const& matchToken);
+                    std::string const& matchToken,
+                    std::string const& opponent);
     virtual ~ServerInterface();
     // Connects provided socket to command server
     virtual bool ConnectToCommandServer(zmq::socket_t& commandSocket) const;
