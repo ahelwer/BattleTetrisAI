@@ -42,9 +42,14 @@ void TetrisOracleUnitTests::TestLineBlockOnEmptyGrid() {
     delete found;
 }
 
+void TetrisOracleUnitTests::TestFindBestMove() {
+
+}
+
 void TetrisOracleUnitTests::TestFindBestMoveSquareBlockEmptyGrid() {
     std::vector<Tetromino> queue;
     Tetromino t ('O', 0, 5, 1);
+    queue.push_back(t);
     GameState state (queue, t);
     Harmony h;
     int varCount = GetVarCount();

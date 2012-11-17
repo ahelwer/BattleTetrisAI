@@ -9,6 +9,7 @@ class TetrisOracleUnitTests : public CppUnit::TestFixture {
     CPPUNIT_TEST_SUITE(TetrisOracleUnitTests);
     CPPUNIT_TEST(TestSquareBlockOnEmptyGrid);
     CPPUNIT_TEST(TestLineBlockOnEmptyGrid);
+    CPPUNIT_TEST(TestFindBestMove);
     CPPUNIT_TEST(TestFindBestMoveSquareBlockEmptyGrid);
     CPPUNIT_TEST(TestFindPath);
     CPPUNIT_TEST(TestSourceTargetEqual);
@@ -19,6 +20,7 @@ class TetrisOracleUnitTests : public CppUnit::TestFixture {
 public:
     void TestSquareBlockOnEmptyGrid();
     void TestLineBlockOnEmptyGrid();
+    void TestFindBestMove();
     void TestFindBestMoveSquareBlockEmptyGrid();
     int SimulatePath(GameState const& state,
                         PathSequence const* path, 

@@ -9,14 +9,15 @@ TetrisPointsEarned::TetrisPointsEarned(GeneratedGame const& generator)
 float TetrisPointsEarned::operator() (Harmony const& h) const {
     float pointsEarned = 0.0;
     int rowsCleared = 0;
-    Tetromino const& tetInPlay = m_generator.GetPiece(0);
-    std::vector<Tetromino> const* queue = m_generator.GetQueue(0);
+    int start = 0;
+    Tetromino const& tetInPlay = m_generator.GetPiece(start);
+    std::vector<Tetromino> const* queue = m_generator.GetQueue(start);
     GameState state(*queue, tetInPlay);
     delete queue;
     int gameLength = m_generator.GameLength();
     int survivalCount = 0;
     bool died = false;
-    for (int i = 0; i < gameLength; ++i ) {
+    for (int i = start; i < gameLength; ++i ) {
         Tetromino const* best = FindBestMove(state, h);
         if (best != NULL) {
             int cleared = state.ApplyMove(*best);
@@ -49,7 +50,7 @@ float TetrisPointsEarned::operator() (Harmony const& h) const {
             queue = m_generator.GetQueue(nextIdx);
             state.SetQueueInPlay(*queue);
             delete queue;
-            //i = nextIdx;
+            i = nextIdx-1;
         }
     }
     // death penalty

@@ -14,8 +14,11 @@ float BestScore(GameState& state, Harmony const& h) {
     float maxScore = -1.0*FLT_MAX;
     for (int i = 0; i < possible->size(); ++i) {
         GameState next = state;
-        next.ApplyMove(possible->at(i));
-        float result = EvaluateMove(state, h);
+        int cleared = next.ApplyMove(possible->at(i));
+        if (cleared == -1) {
+            continue;
+        }
+        float result = EvaluateMove(next, h);
         maxScore = std::max(result, maxScore);
     }
     delete possible;
@@ -33,22 +36,26 @@ Tetromino const* FindBestMove(GameState& state, Harmony const& h) {
     {
     for (int i = 0; i < possible->size(); ++i) {
         GameState next = state;
-        next.ApplyMove(possible->at(i));
+        int cleared = next.ApplyMove(possible->at(i));
+        if (cleared == -1) {
+            continue;
+        }
         float result = EvaluateMove(next, h);
         int feedSize = std::min(next.QueuedPieceCount(), 2);
-        for (int i = 1; i <= feedSize; ++i) {
+        for (int i = 0; i < feedSize; ++i) {
             bool success = next.FeedFromQueue(i);
-            if (success)
+            if (success) {
                 result += ((BestScore(next, h) / (float)feedSize));
+            }
         }
         #ifdef PARALLEL
         #pragma omp critical
         #endif
         {
-        if (result > maxScore) {
-            maxIdx = i;
-            maxScore = result;
-        }
+            if (result > maxScore) {
+                maxIdx = i;
+                maxScore = result;
+            }
         }
     }
     }
@@ -250,11 +257,11 @@ Tetromino const* BFS(GameState const& state, Tetromino const& s,
     return NULL;
 }
 
-std::vector<enum Tetromino::Move> const* FindPath(GameState const& state, 
-                                    Tetromino const& source, 
-                                    Tetromino const& target) {
+PathSequence const* FindPath(GameState const& state, 
+                                Tetromino const& source, 
+                                Tetromino const& target) {
     if (source == target) {
-        return (new std::vector<enum Tetromino::Move>());
+        return (new PathSequence());
     }
 
     GameBoard const& board = state.GetBoard();
@@ -301,7 +308,7 @@ std::vector<enum Tetromino::Move> const* FindPath(GameState const& state,
     }
 
     // Reverses order of sequence
-    std::vector<enum Tetromino::Move>* moves = new std::vector<enum Tetromino::Move>();
+    PathSequence* moves = new PathSequence();
     for (int i = sequence.size()-1; i >= 0; --i)
         moves->push_back(sequence.at(i));
     // Append drop on to end if last move is not drop
