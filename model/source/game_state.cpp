@@ -48,6 +48,7 @@ GameState& GameState::operator= (GameState const& o) {
 
     m_lastPiecePlayed = o.m_lastPiecePlayed;
     m_pieceNumber = o.m_pieceNumber;
+    m_pieceQueue = o.m_pieceQueue;
     m_rowsCleared = o.m_rowsCleared;
     m_pieceChanged = o.m_pieceChanged;
 
@@ -84,13 +85,13 @@ int GameState::ApplyMove(Tetromino const& t) {
 }
 
 bool GameState::FeedFromQueue(int feedCount) {
-    if (feedCount >= m_pieceQueue.size())
+    if (feedCount > m_pieceQueue.size())
         return false;
     if (m_pPieceInPlay != NULL) {
         delete m_pPieceInPlay;
         m_pPieceInPlay = NULL;
     }
-    m_pPieceInPlay = new Tetromino(m_pieceQueue.at(feedCount));
+    m_pPieceInPlay = new Tetromino(m_pieceQueue.at(feedCount-1));
     return true;
 }
 
