@@ -9,7 +9,6 @@ class GameStateUnitTests : public CppUnit::TestFixture {
     CPPUNIT_TEST(TestAssignment);
     CPPUNIT_TEST(TestApplyMove);
     CPPUNIT_TEST(TestFeedFromQueue);
-    CPPUNIT_TEST(TestSetMethods);
     CPPUNIT_TEST(TestEventMethods);
     CPPUNIT_TEST_SUITE_END();
 public:
@@ -19,7 +18,6 @@ public:
     void TestAssignment();
     void TestApplyMove();
     void TestFeedFromQueue();
-    void TestSetMethods();
     void TestEventMethods();
 private:
     GameState* m_pState;

@@ -14,21 +14,27 @@ public:
     ~GameState();
 
     int ApplyMove(Tetromino const& t);
-    bool FeedFromQueue(int feedCount);
-    int QueuedPieceCount() const;
 
+    // Pieces
     void SetPieceInPlay(Tetromino const* t);
-    void SetQueueInPlay(std::vector<Tetromino> const& queue);
-    void SetLastClearedRows(std::vector<int> const& cleared);
-    void SetCurrentPieceNumber(int n);
-    void SetRowClearEvent();
-
     Tetromino const* GetPieceInPlay() const;
-    std::vector<int> const& LastClearedRows() const;
     Tetromino const& LastPiecePlayed() const;
+    void SetCurrentPieceNumber(int n);
     int GetCurrentPieceNumber() const;
-    bool WasRowClearEvent();
     bool PieceHasChanged();
+
+    // Piece Queue
+    int QueuedPieceCount() const;
+    void SetQueueInPlay(std::vector<Tetromino> const& queue);
+    bool FeedFromQueue(int feedCount);
+
+    // Cleared rows
+    std::vector<int> const& LastClearedRows() const;
+    void SetLastClearedRows(std::vector<int> const& cleared);
+    void SetRowClearEvent();
+    bool WasRowClearEvent();
+
+    // Game board
     GameBoard& GetBoard();
     GameBoard const& GetBoard() const;
     bool operator== (GameState const& o) const;

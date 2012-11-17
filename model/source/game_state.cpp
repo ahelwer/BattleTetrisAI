@@ -85,13 +85,13 @@ int GameState::ApplyMove(Tetromino const& t) {
 }
 
 bool GameState::FeedFromQueue(int feedCount) {
-    if (feedCount > m_pieceQueue.size())
+    if (feedCount < 0 || feedCount >= m_pieceQueue.size())
         return false;
     if (m_pPieceInPlay != NULL) {
         delete m_pPieceInPlay;
         m_pPieceInPlay = NULL;
     }
-    m_pPieceInPlay = new Tetromino(m_pieceQueue.at(feedCount-1));
+    m_pPieceInPlay = new Tetromino(m_pieceQueue.at(feedCount));
     return true;
 }
 
