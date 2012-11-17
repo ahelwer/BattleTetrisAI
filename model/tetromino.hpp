@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <util/vector.hpp>
 
 class Tetromino {
 public:
@@ -41,4 +42,6 @@ private:
     int m_row;
     bool const* m_pDesc;
 };
+
+typedef std::vector<enum Tetromino::Move> PathSequence;
 

@@ -294,8 +294,9 @@ std::vector<enum Tetromino::Move> const* FindPath(GameState const& state,
     std::vector<enum Tetromino::Move>* moves = new std::vector<enum Tetromino::Move>();
     for (int i = sequence.size()-1; i >= 0; --i)
         moves->push_back(sequence.at(i));
-    // Append drop on to end
-    moves->push_back(Tetromino::drop);
+    // Append drop on to end if last move is not drop
+    if (moves->back() != Tetromino::drop)
+        moves->push_back(Tetromino::drop);
 
     return moves;
 }

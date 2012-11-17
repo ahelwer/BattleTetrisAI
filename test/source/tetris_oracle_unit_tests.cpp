@@ -56,3 +56,60 @@ void TetrisOracleUnitTests::TestFindBestMoveSquareBlockEmptyGrid() {
     delete best;
 }
 
+int TetrisOracleUnitTests::SimulatePath(GameState const& state,
+                                            PathSequence const* path,
+                                            Tetromino const& source,
+                                            Tetromino const& target) {
+    GameBoard const& board = state.GetBoard();
+    if (source == target) {
+        return path->size();
+    }
+    Tetromino c = source;
+    int pastCount = -1;
+    bool hitTarget = false;
+    for (int i = 0; i < path->size(); ++i) {
+        enum Tetromino::Move move = path->at(i);
+        if (move == Tetromino::left)
+            c.ShiftLeft();
+        else if (move == Tetromino::right)
+            c.ShiftRight();
+        else if (move == Tetromino::down)
+            c.ShiftDown();
+        else if (move == Tetromino::lrotate)
+            c.RotateLeft();
+        else if (move == Tetromino::rrotate)
+            c.RotateRight();
+        else if (move == Tetromino::drop) {
+            while (!board.IsAtRest(c) && board.IsValidMove(c))
+                c.ShiftDown();
+        }
+        if (!board.IsValidMove(c))
+            return -1;
+        if (c == target)
+            return (path->size() - i - 1);
+    }
+    return -1;
+}
+
+void TetrisOracleUnitTests::TestFindPath() {
+    GameState state;
+    Tetromino source ('Z', 1, 5, 1);
+    Tetromino target ('Z', 0, COLS-2, ROWS-2);
+    PathSequence const* path = FindPath(state, source, target);
+    CPPUNIT_ASSERT(path != NULL);
+    CPPUNIT_ASSERT_EQUAL(0, SimulatePath(state, path, source, target));
+    delete path;
+}
+
+void TetrisOracleUnitTests::TestFindPathUnderOverhang() {
+
+}
+
+void TetrisOracleUnitTests::TestFindPathSlideIn() {
+
+}
+
+void TetrisOracleUnitTests::TestNoPath() {
+
+}
+
