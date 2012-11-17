@@ -21,12 +21,18 @@ float BestScore(GameState& state, Harmony const& h) {
         float result = EvaluateMove(next, h);
         maxScore = std::max(result, maxScore);
     }
-    delete possible;
+    if (possible != NULL) {
+        delete possible;
+        possible = NULL;
+    }
     return maxScore;
 }
 
 Tetromino const* FindBestMove(GameState& state, Harmony const& h) {
     std::vector<Tetromino> const* possible = FindPossibleMoves(state);
+    if (possible == NULL) {
+        return NULL;
+    }
     int maxIdx = -1;
     float maxScore = -1.0*FLT_MAX;
     #ifdef PARALLEL
@@ -62,7 +68,10 @@ Tetromino const* FindBestMove(GameState& state, Harmony const& h) {
     Tetromino* ret = NULL;
     if (maxIdx != -1)
         ret = new Tetromino(possible->at(maxIdx));
-    delete possible;
+    if (possible != NULL) {
+        delete possible;
+        possible = NULL;
+    }
     return ret;
 }
 
@@ -131,7 +140,10 @@ std::vector<Tetromino> const* FindPossibleMoves(GameState& state) {
                     moves->push_back(n);
             }
         }
-        delete adj;
+        if (adj != NULL) {
+            delete adj;
+            adj = NULL;
+        }
     }
 
     return moves;
@@ -246,12 +258,18 @@ Tetromino const* BFS(GameState const& state, Tetromino const& s,
                 // Checks if reached target naturally
                 if (n == t) {
                     reached = true;
-                    delete adj;
+                    if (adj != NULL) {
+                        delete adj;
+                        adj = NULL;
+                    }
                     return NULL;
                 }
             }
         }
-        delete adj;
+        if (adj != NULL) {
+            delete adj;
+            adj = NULL;
+        }
     }
     reached = false;
     return NULL;

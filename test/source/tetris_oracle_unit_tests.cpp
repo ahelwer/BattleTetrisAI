@@ -43,12 +43,31 @@ void TetrisOracleUnitTests::TestLineBlockOnEmptyGrid() {
 }
 
 void TetrisOracleUnitTests::TestFindBestMove() {
-
+    std::vector<Tetromino> queue;
+    Tetromino t ('Z', 0, 5, 1);
+    GameState state (queue, t);
+    Harmony h;
+    int varCount = GetVarCount();
+    for (int i = 0; i < varCount; ++i)
+        h.push_back(-1.0);
+    Tetromino const* best = FindBestMove(state, h);
+    CPPUNIT_ASSERT(best != NULL);
+    CPPUNIT_ASSERT(state.ApplyMove(*best) != -1);
+    delete best;
+    best = NULL;
+    t = Tetromino('T', 0, 5, 1);
+    state.SetPieceInPlay(&t);
+    best = FindBestMove(state, h);
+    CPPUNIT_ASSERT(best != NULL);
+    CPPUNIT_ASSERT(state.ApplyMove(*best) != -1);
+    delete best;
 }
 
 void TetrisOracleUnitTests::TestFindBestMoveSquareBlockEmptyGrid() {
     std::vector<Tetromino> queue;
     Tetromino t ('O', 0, 5, 1);
+    queue.push_back(t);
+    queue.push_back(t);
     queue.push_back(t);
     GameState state (queue, t);
     Harmony h;
@@ -56,7 +75,6 @@ void TetrisOracleUnitTests::TestFindBestMoveSquareBlockEmptyGrid() {
     for (int i = 0; i < varCount; ++i)
         h.push_back(1.0);
     Tetromino const* best = FindBestMove(state, h);
-    //std::cout << std::endl << *best << std::endl;
     CPPUNIT_ASSERT(best != NULL);
     delete best;
 }
