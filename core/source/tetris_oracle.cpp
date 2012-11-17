@@ -93,6 +93,9 @@ std::vector<Tetromino> const* Neighbours(Tetromino const& current) {
 std::vector<Tetromino> const* FindPossibleMoves(GameState& state) {
     std::vector<Tetromino>* moves = new std::vector<Tetromino>();
     GameBoard& board = state.GetBoard();
+    Tetromino const* inPlay = state.GetPieceInPlay();
+    if (inPlay == NULL || !board.IsValidMove(*inPlay))
+        return moves;
 
     // Initializes breadth-first search
     // visited [Column][Row][Rotation]
