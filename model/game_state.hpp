@@ -31,6 +31,8 @@ public:
     bool PieceHasChanged();
     GameBoard& GetBoard();
     GameBoard const& GetBoard() const;
+    bool operator== (GameState const& o) const;
+    bool operator!= (GameState const& o) const;
     friend std::ostream& operator<< (std::ostream& out, GameState const& state);
 private:
     GameBoard m_board;

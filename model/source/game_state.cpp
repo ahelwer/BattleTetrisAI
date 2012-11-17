@@ -173,6 +173,53 @@ GameBoard const& GameState::GetBoard() const {
     return m_board;
 }
 
+bool GameState::operator== (GameState const& o) const {
+    bool lastRowsClearedEqual = (m_lastRowsCleared.size() == 
+                                    o.m_lastRowsCleared.size());
+    for (int i = 0; i < m_lastRowsCleared.size(); ++i) {
+        if (m_lastRowsCleared.at(i) != o.m_lastRowsCleared.at(i)) {
+            lastRowsClearedEqual = false;
+            break;
+        }
+    }
+
+    bool pieceQueueEqual = (m_pieceQueue.size() ==
+                                o.m_pieceQueue.size());
+    for (int i = 0; i < m_pieceQueue.size(); ++i) {
+        if (m_pieceQueue.at(i) != o.m_pieceQueue.at(i)) {
+            pieceQueueEqual = false;
+            break;
+        }
+    }
+
+    bool lastPiecePlayedEqual = (m_lastPiecePlayed ==
+                                    o.m_lastPiecePlayed);
+
+    bool pieceNumberEqual = (m_pieceNumber == o.m_pieceNumber);
+    bool rowsClearedEqual = (m_rowsCleared == o.m_rowsCleared);
+    bool pieceChangedEqual = (m_pieceChanged == o.m_pieceChanged);
+
+    bool currentPieceEqual = true;
+    if (m_pPieceInPlay != NULL && o.m_pPieceInPlay != NULL) {
+        currentPieceEqual = (*m_pPieceInPlay == *(o.m_pPieceInPlay));
+    }
+    else if (m_pPieceInPlay == o.m_pPieceInPlay) {
+        currentPieceEqual = true;
+    }
+    else {
+        currentPieceEqual = false;
+    }
+    
+    return (lastRowsClearedEqual && pieceQueueEqual &&
+            lastPiecePlayedEqual && pieceNumberEqual &&
+            rowsClearedEqual && pieceChangedEqual &&
+            currentPieceEqual);
+}
+
+bool GameState::operator!= (GameState const& o) const {
+    return (*this == o);
+}
+
 std::ostream& operator<< (std::ostream& out, GameState const& state) {
     out << state.GetBoard();
     return out;
