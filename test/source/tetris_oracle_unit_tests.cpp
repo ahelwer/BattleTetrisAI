@@ -85,8 +85,12 @@ int TetrisOracleUnitTests::SimulatePath(GameState const& state,
         }
         if (!board.IsValidMove(c))
             return -1;
-        if (c == target)
+        if (c == target) {
+            int pathLeft = path->size() - i - 1;
+            if (pathLeft == 1 && path->back() == Tetromino::drop)
+                return 0;
             return (path->size() - i - 1);
+        }
     }
     return -1;
 }
@@ -101,12 +105,48 @@ void TetrisOracleUnitTests::TestFindPath() {
     delete path;
 }
 
-void TetrisOracleUnitTests::TestFindPathUnderOverhang() {
+void TetrisOracleUnitTests::TestSourceTargetEqual() {
+    GameState state;
+    Tetromino t ('S', 0, 1, ROWS-2);
+    PathSequence const* path = FindPath(state, t, t);
+    CPPUNIT_ASSERT(path != NULL);
+    int pathSize = path->size();
+    CPPUNIT_ASSERT_EQUAL(0, pathSize);
+    delete path;
+}
 
+void TetrisOracleUnitTests::TestFindPathUnderOverhang() {
+    GameState state;
+    Tetromino j ('J', 1, 3, ROWS-2);
+    state.SetPieceInPlay(&j);
+    CPPUNIT_ASSERT(state.ApplyMove(j) != -1);
+    Tetromino i ('I', 0, 6, ROWS-4);
+    state.SetPieceInPlay(&i);
+    CPPUNIT_ASSERT(state.ApplyMove(i) != -1);
+    Tetromino oS ('O', 0, 5, 1);
+    Tetromino oT ('O', 0, 5, ROWS-2);
+    PathSequence const* path = FindPath(state, oS, oT);
+    CPPUNIT_ASSERT(path != NULL);
+    CPPUNIT_ASSERT_EQUAL(0, SimulatePath(state, path, oS, oT));
+    delete path;
 }
 
 void TetrisOracleUnitTests::TestFindPathSlideIn() {
-
+    GameState state;
+    Tetromino init ('S', 0, 1, ROWS-2);
+    state.SetPieceInPlay(&init);
+    CPPUNIT_ASSERT(state.ApplyMove(init) != -1);
+    init.ShiftUp();
+    init.ShiftUp();
+    init.ShiftRight();
+    state.SetPieceInPlay(&init);
+    CPPUNIT_ASSERT(state.ApplyMove(init) != -1);
+    Tetromino source ('J', 2, 1, 1);
+    Tetromino target ('J', 3, 3, ROWS-2);
+    PathSequence const* path = FindPath(state, source, target);
+    CPPUNIT_ASSERT(path != NULL);
+    CPPUNIT_ASSERT_EQUAL(0, SimulatePath(state, path, source, target));
+    delete path;
 }
 
 void TetrisOracleUnitTests::TestNoPath() {

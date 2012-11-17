@@ -11,6 +11,7 @@ class TetrisOracleUnitTests : public CppUnit::TestFixture {
     CPPUNIT_TEST(TestLineBlockOnEmptyGrid);
     CPPUNIT_TEST(TestFindBestMoveSquareBlockEmptyGrid);
     CPPUNIT_TEST(TestFindPath);
+    CPPUNIT_TEST(TestSourceTargetEqual);
     CPPUNIT_TEST(TestFindPathUnderOverhang);
     CPPUNIT_TEST(TestFindPathSlideIn);
     CPPUNIT_TEST(TestNoPath);
@@ -24,6 +25,7 @@ public:
                         Tetromino const& source,
                         Tetromino const& target);
     void TestFindPath();
+    void TestSourceTargetEqual();
     void TestFindPathUnderOverhang();
     void TestFindPathSlideIn();
     void TestNoPath();

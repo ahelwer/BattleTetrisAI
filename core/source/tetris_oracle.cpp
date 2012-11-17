@@ -232,12 +232,13 @@ Tetromino const* BFS(GameState const& state, Tetromino const& s,
                 v[n.GetX()][n.GetY()][n.GetOrient()] = true;
                 p[n.GetX()][n.GetY()][n.GetOrient()] = GetTransition(c, n);
                 Q.push_back(n);
-            }
-            // Checks if reached target naturally
-            if (n == t) {
-                reached = true;
-                delete adj;
-                return NULL;
+                
+                // Checks if reached target naturally
+                if (n == t) {
+                    reached = true;
+                    delete adj;
+                    return NULL;
+                }
             }
         }
         delete adj;
@@ -247,10 +248,15 @@ Tetromino const* BFS(GameState const& state, Tetromino const& s,
 }
 
 std::vector<enum Tetromino::Move> const* FindPath(GameState const& state, 
-                                    Tetromino const& source, Tetromino const& target) {
+                                    Tetromino const& source, 
+                                    Tetromino const& target) {
     if (source == target) {
         return (new std::vector<enum Tetromino::Move>());
     }
+
+    GameBoard const& board = state.GetBoard();
+    if (!board.IsValidMove(source) || !board.IsValidMove(target))
+        return NULL;
 
     // Initializes breadth-first search
     // visited [Column][Row][Rotation]

@@ -156,14 +156,14 @@ void GameBoardUnitTests::TestClearAdjacentRows() {
     for (int i = 0; i < (COLS)/2; ++i) {
         CPPUNIT_ASSERT(m_pBoard->IsValidMove(t));
         CPPUNIT_ASSERT(m_pBoard->IsAtRest(t));
-        CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+        CPPUNIT_ASSERT(m_pBoard->ApplyMove(t) != -1);
         t.ShiftRight();
         t.ShiftRight();
     }
     Tetromino n ('I', 0, 5, ROWS-3);
     CPPUNIT_ASSERT(m_pBoard->IsValidMove(n));
     CPPUNIT_ASSERT(m_pBoard->IsAtRest(n));
-    CPPUNIT_ASSERT(m_pBoard->ApplyMove(n));
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(n) != -1);
 
     std::vector<int> const* cleared = m_pBoard->ClearRows();
     int clearCount = cleared->size();
@@ -191,28 +191,28 @@ void GameBoardUnitTests::TestClearAdjacentRows() {
 
 void GameBoardUnitTests::TestClearSpacedRows() {
     Tetromino t ('I', 0, 2, ROWS-1);
-    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t) != -1);
     t.ShiftUp();
     t.ShiftUp();
-    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t) != -1);
     t.ShiftDown();
     t.ShiftDown();
     t.ShiftRight();
     t.ShiftRight();
     t.ShiftUp();
-    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t) != -1);
     t.ShiftUp();
     t.ShiftUp();
-    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t) != -1);
     t.ShiftDown();
     t.ShiftDown();
     t.ShiftDown();
     t.ShiftRight();
     t.ShiftRight();
-    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t) != -1);
     t.ShiftUp();
     t.ShiftUp();
-    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t) != -1);
     t.ShiftDown();
     t.ShiftDown();
     t.ShiftRight();
@@ -220,13 +220,13 @@ void GameBoardUnitTests::TestClearSpacedRows() {
     t.RotateRight();
     t.ShiftUp();
     t.ShiftUp();
-    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t) != -1);
     std::vector<int> const* cleared = m_pBoard->ClearRows();
     int clearCount = cleared->size();
     CPPUNIT_ASSERT_EQUAL(0, clearCount);
     delete cleared;
     t.ShiftRight();
-    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t) != -1);
     cleared = m_pBoard->ClearRows();
     clearCount = cleared->size();
     CPPUNIT_ASSERT_EQUAL(2, clearCount);
