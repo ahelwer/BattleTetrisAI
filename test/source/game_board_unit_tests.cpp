@@ -151,7 +151,113 @@ void GameBoardUnitTests::TestApplyMultiplePieces() {
     m_pBoard->PopMove();
 }
 
-void GameBoardUnitTests::TestClearRows() {
+void GameBoardUnitTests::TestClearAdjacentRows() {
+    Tetromino t ('O', 0, 1, ROWS-2);
+    for (int i = 0; i < (COLS)/2; ++i) {
+        CPPUNIT_ASSERT(m_pBoard->IsValidMove(t));
+        CPPUNIT_ASSERT(m_pBoard->IsAtRest(t));
+        CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+        t.ShiftRight();
+        t.ShiftRight();
+    }
+    Tetromino n ('I', 0, 5, ROWS-3);
+    CPPUNIT_ASSERT(m_pBoard->IsValidMove(n));
+    CPPUNIT_ASSERT(m_pBoard->IsAtRest(n));
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(n));
 
+    std::vector<int> const* cleared = m_pBoard->ClearRows();
+    int clearCount = cleared->size();
+    CPPUNIT_ASSERT_EQUAL(2, clearCount);
+    CPPUNIT_ASSERT_EQUAL(ROWS-2, cleared->at(0));
+    CPPUNIT_ASSERT_EQUAL(ROWS-1, cleared->at(1));
+    delete cleared;
+    BoardDesc const& desc = m_pBoard->GetBoardDesc();
+    for(int i = 0; i < COLS; ++i) {
+        for (int j = 0; j < ROWS-1; ++j) {
+            CPPUNIT_ASSERT(!desc[i][j]);
+        }
+    }
+    CPPUNIT_ASSERT(!desc[0][ROWS-1]);
+    CPPUNIT_ASSERT(!desc[1][ROWS-1]);
+    CPPUNIT_ASSERT(!desc[2][ROWS-1]);
+    CPPUNIT_ASSERT(desc[3][ROWS-1]);
+    CPPUNIT_ASSERT(desc[4][ROWS-1]);
+    CPPUNIT_ASSERT(desc[5][ROWS-1]);
+    CPPUNIT_ASSERT(desc[6][ROWS-1]);
+    CPPUNIT_ASSERT(!desc[7][ROWS-1]);
+    CPPUNIT_ASSERT(!desc[8][ROWS-1]);
+    CPPUNIT_ASSERT(!desc[9][ROWS-1]);
+}
+
+void GameBoardUnitTests::TestClearSpacedRows() {
+    Tetromino t ('I', 0, 2, ROWS-1);
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+    t.ShiftUp();
+    t.ShiftUp();
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+    t.ShiftDown();
+    t.ShiftDown();
+    t.ShiftRight();
+    t.ShiftRight();
+    t.ShiftUp();
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+    t.ShiftUp();
+    t.ShiftUp();
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+    t.ShiftDown();
+    t.ShiftDown();
+    t.ShiftDown();
+    t.ShiftRight();
+    t.ShiftRight();
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+    t.ShiftUp();
+    t.ShiftUp();
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+    t.ShiftDown();
+    t.ShiftDown();
+    t.ShiftRight();
+    t.ShiftRight();
+    t.RotateRight();
+    t.ShiftUp();
+    t.ShiftUp();
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+    std::vector<int> const* cleared = m_pBoard->ClearRows();
+    int clearCount = cleared->size();
+    CPPUNIT_ASSERT_EQUAL(0, clearCount);
+    delete cleared;
+    t.ShiftRight();
+    CPPUNIT_ASSERT(m_pBoard->ApplyMove(t));
+    cleared = m_pBoard->ClearRows();
+    clearCount = cleared->size();
+    CPPUNIT_ASSERT_EQUAL(2, clearCount);
+    CPPUNIT_ASSERT_EQUAL(ROWS-3, cleared->at(0));
+    CPPUNIT_ASSERT_EQUAL(ROWS-1, cleared->at(1));
+    delete cleared;
+    BoardDesc const& desc = m_pBoard->GetBoardDesc();
+    for(int i = 0; i < COLS; ++i) {
+        for (int j = 0; j < ROWS-2; ++j) {
+            CPPUNIT_ASSERT(!desc[i][j]);
+        }
+    }
+    CPPUNIT_ASSERT(!desc[0][ROWS-1]);
+    CPPUNIT_ASSERT(!desc[1][ROWS-1]);
+    CPPUNIT_ASSERT(desc[2][ROWS-1]);
+    CPPUNIT_ASSERT(desc[3][ROWS-1]);
+    CPPUNIT_ASSERT(desc[4][ROWS-1]);
+    CPPUNIT_ASSERT(desc[5][ROWS-1]);
+    CPPUNIT_ASSERT(!desc[6][ROWS-1]);
+    CPPUNIT_ASSERT(!desc[7][ROWS-1]);
+    CPPUNIT_ASSERT(desc[8][ROWS-1]);
+    CPPUNIT_ASSERT(desc[9][ROWS-1]);
+    CPPUNIT_ASSERT(!desc[0][ROWS-2]);
+    CPPUNIT_ASSERT(!desc[1][ROWS-2]);
+    CPPUNIT_ASSERT(desc[2][ROWS-2]);
+    CPPUNIT_ASSERT(desc[3][ROWS-2]);
+    CPPUNIT_ASSERT(desc[4][ROWS-2]);
+    CPPUNIT_ASSERT(desc[5][ROWS-2]);
+    CPPUNIT_ASSERT(!desc[6][ROWS-2]);
+    CPPUNIT_ASSERT(!desc[7][ROWS-2]);
+    CPPUNIT_ASSERT(desc[8][ROWS-2]);
+    CPPUNIT_ASSERT(desc[9][ROWS-2]);
 }
 
