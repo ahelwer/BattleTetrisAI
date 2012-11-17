@@ -49,6 +49,7 @@ float TetrisPointsEarned::operator() (Harmony const& h) const {
             queue = m_generator.GetQueue(nextIdx);
             state.SetQueueInPlay(*queue);
             delete queue;
+            i = nextIdx;
         }
     }
     // death penalty

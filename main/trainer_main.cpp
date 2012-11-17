@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
     in.close();
 
     int const gameLength = 1000;
-    int const iterationCount = 1000;
+    int const iterationCount = 50;
 
     HarmonyRanges const* ranges = GetRanges();
     HarmonyFactory const factory (varCount, *ranges);
