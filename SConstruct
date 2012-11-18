@@ -3,7 +3,7 @@ env.MergeFlags('-pthread')
 
 env.Append(CPPPATH = ['#'])
 #env.MergeFlags(['-g', '-O0', '-Wall', '-Wextra', '-fpermissive'])
-env.MergeFlags(['-O2', '-DNDEBUG', '-Wall', '-Wextra', '-fpermissive'])
+env.MergeFlags(['-O3', '-DNDEBUG', '-Wall', '-Wextra', '-fpermissive'])
 
 control_cpp = env.Glob('#/control/source/*.cpp')
 control_obj = env.Object(control_cpp, LIBS = ['zmq', 'json'])
