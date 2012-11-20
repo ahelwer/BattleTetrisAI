@@ -102,6 +102,8 @@ SCons 2.2.0 - http://www.scons.org/download.php
 
 g++ 4.4.6 or newer - http://gcc.gnu.org/
 
+The program has only been tested to build and run on Linux.
+
 Literature Used
 -----------
 
