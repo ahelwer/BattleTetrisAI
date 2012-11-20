@@ -1,8 +1,6 @@
-pason2012
-=========
+# pason2012
 
-Introduction
----------
+## Introduction
 
 Entry for 2012 Pason Bring on the Battle Coding Contest.
 
@@ -17,8 +15,7 @@ http://codingcontest.pason.com/tetris/index.html?mode=log&match_token=86c2006d-e
 I am Raven, and my opponent is Notepad.
 Team Notepad was overwhelmed with the number of rows being sent over, rendering their client nearly non-functional.
 
-Program Overview
-----------
+## Program Overview
 
 The program communicates with a remote game server, receiving game state descriptions and sending move commands.
 When a piece is put into play, Breadth-First Search is used to find all positions on the game board reachable by that piece.
@@ -30,6 +27,59 @@ The problem is one of maximizing the number of lines cleared for a random simula
 It can be formally stated as a numerical search for the global maxima of a 19-dimensional function over the range [-1, 1] along each dimension.
 Harmony Search, a new stochastic metaheuristic Machine Learning algorithm, was used to rapidly converge on the mathematically optimal expected performance ratio of 1 line cleared for every 2.5 blocks given.
 Once the Harmony Search converged (a process taking several hours on a cc2.8xlarge AWS EC2 instance), the resulting weights were hardcoded into the Battle Tetris client for use in move evaluation.
+
+## Program Usage
+
+Clone the repository and run scons to build the project (see <i>Required Libraries & Software</i> below).
+Three targets will be built:
+
+runTrainer - The Machine Learning training program. Takes several hours of runtime on a fast server to converge.
+
+runTetris - The Tetris client itself. Expects a game server IP and match token as command line arguments.
+
+runTests - Runs all unit, function, and integration tests using CppUnit.
+
+Running the client itself requires the existence of a functioning gameserver.
+More information on this as it is released by Pason.
+
+## Program Architecture
+
+Overview of packages in this repository.
+
+### main
+
+Main entry points of each of the three targets built, which are described above.
+
+### control
+
+The main control loop for the Tetris client. 
+Coordinates communication with the server, updating game state appropriately as messages are received.
+Launches searches to determine best piece position as well as necessary sequence of moves to get there.
+
+### server
+
+Code which serializes and de-serializes messages to and from the server.
+The ServerInterface class in particular provides a simple interface for networked communication.
+
+### model
+
+Classes used to represent, interact with, and modify internal game state.
+
+### core
+
+Tetris Oracle; functions for calculating the best move and the path to get there. Implementation of Harmony Search.
+
+### trainer
+
+Classes related to the training of the Tetris AI.
+
+### util
+
+Miscellaneous utility classes such as global constants and debug output functions.
+
+### test
+
+Unit, functional, and integration tests code.
 
 Required Libraries & Software
 -----------
