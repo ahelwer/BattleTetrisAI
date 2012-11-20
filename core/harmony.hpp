@@ -11,34 +11,68 @@ class Harmony;
 typedef std::vector< std::pair<float, float> > HarmonyRanges;
 typedef std::binary_function<Harmony const*, Harmony const*, bool> Comparator;
 
-// Wrapper around std::vector which caches function calculations
+/* *
+ * Class Harmony
+ *
+ * Represents list of weight variables. Basically a wrapper around
+ * an std::vector which caches applications of the objective function
+ * to itself.
+ * */
 class Harmony : public std::vector<float> {
 public:
     Harmony();
+    // Applies function to itself, caching and returning result
     float ApplyToSelf(ObjectiveFunction const& f) const;
+    // Erases cached value of objective function
     float EraseCache() const;
 private:
     mutable bool m_isCached;
     mutable float m_cached;
 };
 
+/* *
+ * Class HarmonyFactory
+ *
+ * Generates harmonies within provided range, generates random
+ * individual weights, or adjusts individual weights.
+ * */
 class HarmonyFactory {
 public:
+    /* *
+     * Parameters:
+     *
+     * decisionVarCount - number of weights in harmony
+     * ranges - ranges each harmony weight is restricted to
+     * */
     HarmonyFactory(unsigned decisionVarCount, HarmonyRanges const& ranges);
     virtual ~HarmonyFactory();
+    // Generates purely random harmony within ranges
     virtual Harmony* GenerateRandomHarmony() const;
+    // Generates random individual weight within range
     virtual float GenerateRandomVariable(unsigned var) const;
+    // Adjusts individual weight within range
     virtual float ModifyVariableTone(unsigned var, float old, float p) const;
 protected:
     unsigned m_vCount;
     HarmonyRanges const& m_ranges;
 };
 
+/* *
+ * Class ObjectiveFunction
+ *
+ * Interface class, evaluates harmony for efficacy.
+ * */
 class ObjectiveFunction {
 public:
     virtual float operator() (Harmony const& h) const = 0;
 };
 
+/* *
+ * Class HarmonyCompare
+ *
+ * Interface class, used to order harmonies according to a
+ * provided ObjectiveFunction.
+ * */
 class HarmonyCompare : public Comparator {
 public:
     HarmonyCompare(ObjectiveFunction const& f);

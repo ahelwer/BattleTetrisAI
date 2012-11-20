@@ -26,6 +26,7 @@ void Control::PollStateMessages() {
     zmq::socket_t stateSocket(m_context, ZMQ_SUB);
     m_si.ConnectToStateServer(stateSocket);
     bool terminate = false;
+    // Reads messages into queue
     while (!terminate) {
         State const* state = m_si.GetState(stateSocket); 
         if (state != NULL) {
@@ -50,9 +51,12 @@ void Control::Execute() {
     std::cout << "Entering main loop." << std::endl;
 
     int weightCount = GetVarCount();
-    // Original weights
-    float weights[] = {0.831252, -0.833718, -0.484039, -0.669239, -0.74901, -0.445552, -0.129955, -0.0353312, 0.468689, -0.115297, -0.604853, -0.436222, 0.760341, -0.0589, -0.79345, 0.102076, 0.941241, -0.154894, -0.437886};
+    float weights[] = {0.831252, -0.833718, -0.484039, -0.669239, -0.74901, 
+                        -0.445552, -0.129955, -0.0353312, 0.468689, -0.115297, 
+                        -0.604853, -0.436222, 0.760341, -0.0589, -0.79345, 
+                        0.102076, 0.941241, -0.154894, -0.437886};
     /*
+    // Original weights
     float weights[] = {0.413627, -0.723112, -0.214118, 0.0572252, 
                         0.666599, -0.758947, 0.297272, 0.112221, 
                         -0.571268, -0.255358, -0.63998, -0.572694, 
@@ -68,7 +72,10 @@ void Control::Execute() {
     Tetromino const* best = NULL;
     bool inMoveSequence = false;
     std::vector<enum Tetromino::Move> const* sequence = NULL;
+
+    // Main loop
     while (!gameOver) {
+        // Finds path to current best move then executes it
         if (best != NULL && game.GetPieceInPlay() != NULL && inMoveSequence) {
             if (sequence != NULL) {
                 delete sequence;
@@ -79,6 +86,8 @@ void Control::Execute() {
 				ExecuteSequence(*sequence, game.GetCurrentPieceNumber(), 
                                     commandSocket);
         }
+
+        // Updates state by batching messages in queue
         pthread_mutex_lock(&m_queueMutex);
         while (!m_messageQueue.empty()) {
             State const* s = m_messageQueue.front();
@@ -88,10 +97,14 @@ void Control::Execute() {
                 delete s;
             }
         }
+
+        // Determines if a re-search for best move is required
         pthread_mutex_unlock(&m_queueMutex);
         if (game.WasRowClearEvent() || game.PieceHasChanged()) {
             inMoveSequence = false;
         }
+
+        // Finds best move in current state
         if (game.GetPieceInPlay() != NULL && !inMoveSequence) {
             if (best != NULL) {
                 delete best;
@@ -111,6 +124,8 @@ void Control::Execute() {
             }
         }
     }
+
+    // Cleanup
     if (best != NULL) {
         delete best;
         best = NULL;

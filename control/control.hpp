@@ -5,13 +5,22 @@
 #include <queue>
 #include <pthread.h>
 
+/* *
+ * Class Control
+ *
+ * Main control loop for Tetris client. Coordinates querying server for updates,
+ * searching for best move, and sending move commands to server.
+ * */
 class Control {
 public:
     Control(zmq::context_t& context, ServerInterface& si);
     ~Control();
+    // Main execution method
     void Execute();
+    // Launched in additional thread. Parse state messages into queue.
     void PollStateMessages();
 private:
+    // Sends sequence of moves to be executed on server.
     void ExecuteSequence(std::vector<enum Tetromino::Move> const& sequence, 
                             int pieceId, zmq::socket_t& commandSocket); 
     zmq::context_t& m_context;

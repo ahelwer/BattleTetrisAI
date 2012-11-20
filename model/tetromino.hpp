@@ -4,10 +4,16 @@
 #include <iostream>
 #include <util/vector.hpp>
 
+/* *
+ * Class Tetromino
+ *
+ * Represents the Tetromino type, position, and orientation.
+ * */
 class Tetromino {
 public:
     Tetromino(char tetType, int rotation = 0, 
                 int x = 5, int y = 1);
+    // Gets boolean array description of Tetromino
     bool const* GetDesc() const;
     char GetType() const;
     int GetOrient() const;

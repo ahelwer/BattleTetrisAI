@@ -6,11 +6,14 @@
 #include <server/state.hpp>
 #include <model/tetromino.hpp>
 
+/* *
+ * Class ServerInterface
+ * 
+ * Provides simple interface to game server, obfuscating all the messy stuff.
+ * */
 class ServerInterface {
 public:
-/*
     ServerInterface();
-    */
     ServerInterface(std::string const& commandServer,
                     std::string const& stateServer,
                     std::string const& matchToken,

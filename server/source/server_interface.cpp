@@ -1,11 +1,10 @@
 #include <server/server_interface.hpp>
 #include <iostream>
 
-/*
 ServerInterface::ServerInterface()
-    : m_commandServer("test"), m_stateServer("test"), m_matchToken("test")
+    : m_commandServer("test"), m_stateServer("test"), 
+        m_matchToken("test"), m_factory("test")
 { }
-*/
 
 ServerInterface::ServerInterface(std::string const& commandServer,
                                     std::string const& stateServer,
