@@ -28,6 +28,8 @@ It can be formally stated as a numerical search for the global maxima of a 19-di
 Harmony Search, a new stochastic metaheuristic Machine Learning algorithm, was used to rapidly converge on the mathematically optimal expected performance ratio of 1 line cleared for every 2.5 blocks given.
 Once the Harmony Search converged (a process taking several hours on a cc2.8xlarge AWS EC2 instance), the resulting weights were hardcoded into the Battle Tetris client for use in move evaluation.
 
+The program contains approximately 4500 lines of code in total and required over 50 hours to write.
+
 ## Program Usage
 
 Clone the repository and run scons to build the project (see <i>Required Libraries & Software</i> below).
