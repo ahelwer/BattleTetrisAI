@@ -42,6 +42,8 @@ runTests - Runs all unit, function, and integration tests using CppUnit.
 Running the client itself requires the existence of a functioning gameserver.
 More information on this as it is released by Pason.
 
+If running on an AWS EC2 instance, run "python init.py" to use an HTTP GET request to get game details and automatically launch the Tetris client.
+
 ## Program Architecture
 
 Overview of packages in this repository.
