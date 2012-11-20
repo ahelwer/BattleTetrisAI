@@ -12,7 +12,7 @@ void* DispatchThread(void* varg) {
     c->PollStateMessages();
 }
 
-Control::Control(zmq::context_t& context, ServerInterface& si)
+Control::Control(zmq::context_t& context, ServerInterface const& si)
     : m_context(context), m_si(si)
 { 
     pthread_mutex_init(&m_queueMutex, NULL);
@@ -20,6 +20,14 @@ Control::Control(zmq::context_t& context, ServerInterface& si)
 
 Control::~Control() {
     pthread_mutex_destroy(&m_queueMutex);
+    while (!m_messageQueue.empty()) {
+        State const* s = m_messageQueue.front();
+        m_messageQueue.pop();
+        if (s != NULL) {
+            delete s;
+            s = NULL;
+        }
+    }
 }
 
 void Control::PollStateMessages() {
@@ -40,6 +48,7 @@ void Control::PollStateMessages() {
 }
 
 void Control::Execute() {
+    std::cout << "Entering main loop." << std::endl;
     // Launches state messaging thread
     pthread_t worker = 0;
     pthread_create(&worker, NULL, DispatchThread, static_cast<void*>(this));
@@ -48,7 +57,6 @@ void Control::Execute() {
     bool success = m_si.ConnectToCommandServer(commandSocket);
     if (!success)
         exit(-1);
-    std::cout << "Entering main loop." << std::endl;
 
     int weightCount = GetVarCount();
     float weights[] = {0.831252, -0.833718, -0.484039, -0.669239, -0.74901, 
@@ -71,7 +79,7 @@ void Control::Execute() {
     GameState game;
     Tetromino const* best = NULL;
     bool inMoveSequence = false;
-    std::vector<enum Tetromino::Move> const* sequence = NULL;
+    PathSequence const* sequence = NULL;
 
     // Main loop
     while (!gameOver) {
@@ -87,7 +95,7 @@ void Control::Execute() {
                                     commandSocket);
         }
 
-        // Updates state by batching messages in queue
+        // Updates state by batch-processing messages in queue
         pthread_mutex_lock(&m_queueMutex);
         while (!m_messageQueue.empty()) {
             State const* s = m_messageQueue.front();
@@ -97,9 +105,9 @@ void Control::Execute() {
                 delete s;
             }
         }
+        pthread_mutex_unlock(&m_queueMutex);
 
         // Determines if a re-search for best move is required
-        pthread_mutex_unlock(&m_queueMutex);
         if (game.WasRowClearEvent() || game.PieceHasChanged()) {
             inMoveSequence = false;
         }
