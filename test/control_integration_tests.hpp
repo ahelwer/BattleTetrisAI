@@ -26,6 +26,7 @@ public:
     virtual bool SendMove(enum Tetromino::Move move, int pieceId, 
                             zmq::socket_t& commandSocket) const;
     void AddStateMessage(State const* message) const;
+    bool HasMoveMessages() const;
     std::pair<enum Tetromino::Move, int> GetNextMove() const;
 private:
     mutable std::queue<State const*> m_messages;

@@ -69,6 +69,14 @@ void TestServerInterface::AddStateMessage(State const* message) const {
     pthread_mutex_unlock(&m_messageMutex);
 }
 
+bool TestServerInterface::HasMoveMessages() const {
+    bool haveMessages = false;
+    pthread_mutex_lock(&m_moveMutex);
+    haveMessages = !m_moves.empty();
+    pthread_mutex_unlock(&m_moveMutex);
+    return haveMessages;
+}
+
 std::pair<enum Tetromino::Move, int> TestServerInterface::GetNextMove() const {
     pthread_mutex_lock(&m_moveMutex);
     if (m_moves.empty()) {
@@ -115,6 +123,11 @@ bool SynchronizeMessage::ShouldTerminate() const {
     return false;
 }
 
+void* ControlExecute(void* varg) {
+    Control* c = static_cast<Control*>(varg);
+    c->Execute();
+}
+
 void ControlIntegrationTests::TestPlacePiece() {
     std::queue<State const*> messages;        
     GameState* game = NULL;
@@ -145,7 +158,8 @@ void ControlIntegrationTests::TestPlacePiece() {
 
     // Launches main execute loop, waits to intercept state
     pthread_mutex_lock(&pointerMutex);
-    command.Execute();
+    pthread_t execute = 0;
+    pthread_create(&execute, NULL, ControlExecute, static_cast<void*>(&command));
     pthread_cond_wait(&pointerSet, &pointerMutex);
     pthread_mutex_unlock(&pointerMutex);
 
@@ -163,5 +177,17 @@ void ControlIntegrationTests::TestPlacePiece() {
     si.AddStateMessage(sync);
     pthread_cond_wait(&syncWithControl, &syncMutex);
     pthread_mutex_unlock(&syncMutex);
+
+    while (si.HasMoveMessages()) {
+        move = si.GetNextMove();
+        CPPUNIT_ASSERT_EQUAL(0, move.second);
+        moves.push_back(move.first);
+    }
+
+    State const* term = new MatchEnd();
+    si.AddStateMessage(term);
+    pthread_join(execute, NULL);
+
+    // Test move path
 }
 
