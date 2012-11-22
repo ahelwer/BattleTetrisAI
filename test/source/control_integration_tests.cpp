@@ -2,6 +2,8 @@
 #include <core/game_state_eval.hpp>
 #include <util/constants.hpp>
 
+CPPUNIT_TEST_SUITE_REGISTRATION(ControlIntegrationTests);
+
 TestServerInterface::TestServerInterface()
     : m_messages(), m_commandConnected(false), m_stateConnected(false)
 { 
