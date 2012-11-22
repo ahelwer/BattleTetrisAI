@@ -2,7 +2,6 @@
 #include <model/game_state.hpp>
 #include <core/game_state_eval.hpp>
 #include <core/tetris_oracle.hpp>
-#include <core/harmony.hpp>
 #include <server/state.hpp>
 #include <algorithm>
 #include <queue>
@@ -10,10 +9,12 @@
 void* DispatchThread(void* varg) {
     Control* c = static_cast<Control*>(varg);
     c->PollStateMessages();
+    return varg;
 }
 
-Control::Control(zmq::context_t& context, ServerInterface const& si)
-    : m_context(context), m_si(si)
+Control::Control(zmq::context_t& context, ServerInterface const& si,
+                    Harmony const& weights)
+    : m_context(context), m_si(si), m_weights(weights)
 { 
     pthread_mutex_init(&m_queueMutex, NULL);
     pthread_cond_init(&m_queueNonempty, NULL);
@@ -61,23 +62,6 @@ void Control::Execute() {
     if (!success)
         exit(-1);
 
-    int weightCount = GetVarCount();
-    float weights[] = {0.831252, -0.833718, -0.484039, -0.669239, -0.74901, 
-                        -0.445552, -0.129955, -0.0353312, 0.468689, -0.115297, 
-                        -0.604853, -0.436222, 0.760341, -0.0589, -0.79345, 
-                        0.102076, 0.941241, -0.154894, -0.437886};
-    /*
-    // Original weights
-    float weights[] = {0.413627, -0.723112, -0.214118, 0.0572252, 
-                        0.666599, -0.758947, 0.297272, 0.112221, 
-                        -0.571268, -0.255358, -0.63998, -0.572694, 
-                        0.870288, -0.777475, -0.13282, -0.329776, 
-                        0.285539, -0.739775, -0.163327};
-                        */
-    Harmony h;
-    for (int i = 0; i < weightCount; ++i)
-        h.push_back(weights[i]);
-
     bool gameOver = false;
     GameState game;
     Tetromino const* best = NULL;
@@ -92,7 +76,7 @@ void Control::Execute() {
                 delete best;
                 best = NULL;
             }
-            best = FindBestMove(game, h);
+            best = FindBestMove(game, m_weights);
             if (best != NULL && (*best) != *(game.GetPieceInPlay())) {
                 inMoveSequence = true;
             }

@@ -18,6 +18,13 @@ int GetVarCount();
 HarmonyRanges const* GetRanges();
 
 /* *
+ * Function GetBestHarmony
+ *
+ * Returns current best harmony.
+ * */
+Harmony const* GetBestHarmony();
+
+/* *
  * function EvaluateMove
  *
  * Returns the state score for the given Tetris feature harmony.

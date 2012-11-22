@@ -1,8 +1,9 @@
 #include <test/control_integration_tests.hpp>
+#include <core/game_state_eval.hpp>
 #include <util/constants.hpp>
 
-TestServerInterface::TestServerInterface(std::queue<State const*>& messages)
-    : m_messages(messages), m_commandConnected(false), m_stateConnected(false)
+TestServerInterface::TestServerInterface()
+    : m_messages(), m_commandConnected(false), m_stateConnected(false)
 { 
     pthread_mutex_init(&m_messageMutex, NULL);
     pthread_mutex_init(&m_moveMutex, NULL);
@@ -112,7 +113,7 @@ SynchronizeMessage::SynchronizeMessage(pthread_mutex_t& signalMutex,
     : m_signalMutex(signalMutex), m_signal(signal)
 { }
 
-bool SynchronizeMessage::ExecuteUpdates(GameState& game) const {
+bool SynchronizeMessage::ExecuteUpdates(GameState&) const {
     pthread_mutex_lock(&m_signalMutex);
     pthread_cond_signal(&m_signal);
     pthread_mutex_unlock(&m_signalMutex);
@@ -126,10 +127,11 @@ bool SynchronizeMessage::ShouldTerminate() const {
 void* ControlExecute(void* varg) {
     Control* c = static_cast<Control*>(varg);
     c->Execute();
+    return varg;
 }
 
 void ControlIntegrationTests::TestPlacePiece() {
-    std::queue<State const*> messages;        
+    TestServerInterface si;
     GameState* game = NULL;
     pthread_mutex_t pointerMutex = PTHREAD_MUTEX_INITIALIZER;
     pthread_cond_t pointerSet = PTHREAD_COND_INITIALIZER;
@@ -149,12 +151,12 @@ void ControlIntegrationTests::TestPlacePiece() {
     Tetromino* theirTet = new Tetromino('S', 0, 5, 1);
     State const* initPiece = new GamePieceState(1, 2.0, myTet, theirTet, 0, 1,
                                                 new std::vector<Tetromino>());
-    messages.push(intercept);
-    messages.push(initBoard);
-    messages.push(initPiece);
-    TestServerInterface si (messages);
+    si.AddStateMessage(intercept);
+    si.AddStateMessage(initBoard);
+    si.AddStateMessage(initPiece);
+    Harmony const* weights = GetBestHarmony();
     zmq::context_t context (1);
-    Control command (context, si);
+    Control command (context, si, *weights);
 
     // Launches main execute loop, waits to intercept state
     pthread_mutex_lock(&pointerMutex);
@@ -184,10 +186,16 @@ void ControlIntegrationTests::TestPlacePiece() {
         moves.push_back(move.first);
     }
 
+    // Test move path
+    
+    // cleanup
     State const* term = new MatchEnd();
     si.AddStateMessage(term);
     pthread_join(execute, NULL);
-
-    // Test move path
+    pthread_mutex_destroy(&pointerMutex);
+    pthread_cond_destroy(&pointerSet);
+    pthread_mutex_destroy(&syncMutex);
+    pthread_cond_destroy(&syncWithControl);
+    delete weights;
 }
 

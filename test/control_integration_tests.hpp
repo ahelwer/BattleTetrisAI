@@ -18,7 +18,7 @@
  * */
 class TestServerInterface : public ServerInterface {
 public:
-    TestServerInterface(std::queue<State const*>& messages);
+    TestServerInterface();
     ~TestServerInterface(); 
     virtual bool ConnectToCommandServer(zmq::socket_t& commandSocket) const;
     virtual void ConnectToStateServer(zmq::socket_t& stateSocket) const;

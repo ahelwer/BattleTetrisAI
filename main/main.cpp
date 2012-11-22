@@ -5,6 +5,7 @@
 #include <util/constants.hpp>
 #include <server/server_interface.hpp>
 #include <control/control.hpp>
+#include <core/game_state_eval.hpp>
 
 int main(int argc, char* argv[]) {
 	std::string opponent;
@@ -25,13 +26,13 @@ int main(int argc, char* argv[]) {
     std::string stateServer = protocol + ip + statePort;
     std::cout << opponent << std::endl;
 
-    // Create zmq context
-    zmq::context_t context(1);
-
-    // Create and initializes server interface
+    // Initializes and launches main loop
+    zmq::context_t context (1);
     ServerInterface si (commandServer, stateServer, matchToken, opponent);
-    Control top (context, si);
+    Harmony const* weights = GetBestHarmony();
+    Control top (context, si, *weights);
     top.Execute();
+    delete weights;
 
     return 0;
 }

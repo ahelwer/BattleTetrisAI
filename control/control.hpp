@@ -3,6 +3,7 @@
 #include <zmq.hpp>
 #include <server/server_interface.hpp>
 #include <model/tetromino.hpp>
+#include <core/harmony.hpp>
 #include <queue>
 #include <pthread.h>
 
@@ -14,7 +15,8 @@
  * */
 class Control {
 public:
-    Control(zmq::context_t& context, ServerInterface const& si);
+    Control(zmq::context_t& context, ServerInterface const& si,
+            Harmony const& weights);
     ~Control();
     // Main execution method
     void Execute();
@@ -26,6 +28,7 @@ private:
                             zmq::socket_t& commandSocket); 
     zmq::context_t& m_context;
     ServerInterface const& m_si;
+    Harmony const& m_weights;
     std::queue<State const*> m_messageQueue;
     pthread_mutex_t m_queueMutex;
     pthread_cond_t m_queueNonempty;
