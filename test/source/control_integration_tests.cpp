@@ -187,6 +187,7 @@ void ControlIntegrationTests::TestPlacePiece() {
     }
 
     // Test move path
+    std::cout << std::endl << moves << std::endl;
     
     // cleanup
     State const* term = new MatchEnd();
