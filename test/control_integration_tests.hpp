@@ -5,6 +5,8 @@
 #include <server/state.hpp>
 #include <control/control.hpp>
 #include <queue>
+#include <utility>
+#include <pthread.h>
 #include <zmq.h>
 
 class TestServerInterface : public ServerInterface {
@@ -16,8 +18,15 @@ public:
     virtual State const* GetState(zmq::socket_t& stateSocket) const;
     virtual bool SendMove(enum Tetromino::Move move, int pieceId, 
                             zmq::socket_t& commandSocket) const;
+    void AddStateMessage(State const* message) const;
+    std::pair<enum Tetromino::Move, int> GetNextMove() const;
 private:
-    mutable std::queue<State const*>& m_messages;
+    mutable std::queue<State const*> m_messages;
+    mutable std::queue< std::pair<enum Tetromino::Move, int> > m_moves;
+    mutable pthread_mutex_t m_messageMutex;
+    mutable pthread_cond_t m_messagesAvailable;
+    mutable pthread_mutex_t m_moveMutex;
+    mutable pthread_cond_t m_movesAvailable;
     mutable bool m_commandConnected;
     mutable bool m_stateConnected;
 };
