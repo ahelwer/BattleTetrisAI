@@ -126,6 +126,14 @@ bool SynchronizeMessage::ShouldTerminate() const {
     return false;
 }
 
+bool TerminateExecution::ExecuteUpdates(GameState&) const {
+    return true;
+}
+
+bool TerminateExecution::ShouldTerminate() const {
+    return true;
+}
+
 void* ControlExecute(void* varg) {
     Control* c = static_cast<Control*>(varg);
     c->Execute();
@@ -192,7 +200,7 @@ void ControlIntegrationTests::TestPlacePiece() {
     std::cout << std::endl << moves << std::endl;
     
     // cleanup
-    State const* term = new MatchEnd();
+    State const* term = new TerminateExecution();
     si.AddStateMessage(term);
     pthread_join(execute, NULL);
     pthread_mutex_destroy(&pointerMutex);

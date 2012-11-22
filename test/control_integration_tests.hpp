@@ -75,6 +75,18 @@ private:
     mutable pthread_cond_t& m_signal;
 };
 
+/* *
+ * class TerminateExecution
+ *
+ * Used to terminate execution in the main loop. MatchEnd could
+ * be used, but it prints to std out.
+ * */
+class TerminateExecution : public State {
+public:
+    virtual bool ExecuteUpdates(GameState& game) const;
+    virtual bool ShouldTerminate() const;
+};
+
 class ControlIntegrationTests : public CppUnit::TestFixture {
     CPPUNIT_TEST_SUITE(ControlIntegrationTests);
     CPPUNIT_TEST(TestPlacePiece);

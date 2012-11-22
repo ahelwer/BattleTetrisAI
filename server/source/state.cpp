@@ -145,6 +145,7 @@ bool GameEnd::ExecuteUpdates(GameState& game) const {
     board.ClearBoard();
     game.SetPieceInPlay(NULL);
     game.SetCurrentPieceNumber(-1);
+    std::cout << (*this) << std::endl;
     return false;
 }
 
