@@ -28,5 +28,6 @@ private:
     ServerInterface const& m_si;
     std::queue<State const*> m_messageQueue;
     pthread_mutex_t m_queueMutex;
+    pthread_cond_t m_queueNonempty;
 };
 

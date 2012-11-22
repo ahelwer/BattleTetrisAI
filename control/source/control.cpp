@@ -16,10 +16,12 @@ Control::Control(zmq::context_t& context, ServerInterface const& si)
     : m_context(context), m_si(si)
 { 
     pthread_mutex_init(&m_queueMutex, NULL);
+    pthread_cond_init(&m_queueNonempty, NULL);
 }
 
 Control::~Control() {
     pthread_mutex_destroy(&m_queueMutex);
+    pthread_cond_destroy(&m_queueNonempty);
     while (!m_messageQueue.empty()) {
         State const* s = m_messageQueue.front();
         m_messageQueue.pop();
@@ -41,6 +43,7 @@ void Control::PollStateMessages() {
             terminate = state->ShouldTerminate();
             pthread_mutex_lock(&m_queueMutex);
             m_messageQueue.push(state);
+            pthread_cond_signal(&m_queueNonempty);
             pthread_mutex_unlock(&m_queueMutex);
         }
     }
@@ -83,6 +86,18 @@ void Control::Execute() {
 
     // Main loop
     while (!gameOver) {
+        // Finds best move in current state
+        if (game.GetPieceInPlay() != NULL && !inMoveSequence) {
+            if (best != NULL) {
+                delete best;
+                best = NULL;
+            }
+            best = FindBestMove(game, h);
+            if (best != NULL && (*best) != *(game.GetPieceInPlay())) {
+                inMoveSequence = true;
+            }
+        }
+
         // Finds path to current best move then executes it
         if (best != NULL && game.GetPieceInPlay() != NULL && inMoveSequence) {
             if (sequence != NULL) {
@@ -97,6 +112,9 @@ void Control::Execute() {
 
         // Updates state by batch-processing messages in queue
         pthread_mutex_lock(&m_queueMutex);
+        if (m_messageQueue.empty()) {
+            pthread_cond_wait(&m_queueNonempty, &m_queueMutex);
+        }
         while (!m_messageQueue.empty()) {
             State const* s = m_messageQueue.front();
             m_messageQueue.pop();
@@ -110,26 +128,6 @@ void Control::Execute() {
         // Determines if a re-search for best move is required
         if (game.WasRowClearEvent() || game.PieceHasChanged()) {
             inMoveSequence = false;
-        }
-
-        // Finds best move in current state
-        if (game.GetPieceInPlay() != NULL && !inMoveSequence) {
-            if (best != NULL) {
-                delete best;
-                best = NULL;
-            }
-            best = FindBestMove(game, h);
-			/**
-            if (best != NULL) {
-                GameState next = game;
-                next.ApplyMove(*best);
-                std::cout << next << std::endl;
-            }
-			*/
-            if (best != NULL && game.GetPieceInPlay() != NULL && 
-                    (*best) != *(game.GetPieceInPlay())) {
-                inMoveSequence = true;
-            }
         }
     }
 
