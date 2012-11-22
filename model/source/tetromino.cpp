@@ -177,7 +177,8 @@ void Tetromino::RotateRight() {
 }
 
 bool Tetromino::operator== (Tetromino const& o) const {
-    return (m_orient == o.m_orient &&
+    return (m_type == o.m_type &&
+            m_orient == o.m_orient &&
             m_row == o.m_row &&
             m_col == o.m_col);
 }
