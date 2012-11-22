@@ -35,14 +35,22 @@ GameBoardState::GameBoardState(int sequence, double timestamp,
 { }
 
 GameBoardState::~GameBoardState() {
-    if (m_pMyBoard != NULL)
+    if (m_pMyBoard != NULL) {
         delete[] m_pMyBoard;
-    if (m_pTheirBoard != NULL)
+        m_pMyBoard = NULL;
+    }
+    if (m_pTheirBoard != NULL) {
         delete[] m_pTheirBoard;
-    if (m_pMyCleared != NULL) 
+        m_pTheirBoard = NULL;
+    }
+    if (m_pMyCleared != NULL) {
         delete m_pMyCleared;
-    if (m_pTheirCleared != NULL)
+        m_pMyCleared = NULL;
+    }
+    if (m_pTheirCleared != NULL) {
         delete m_pTheirCleared;
+        m_pTheirCleared = NULL;
+    }
 }
 
 bool GameBoardState::ExecuteUpdates(GameState& game) const {
@@ -81,12 +89,18 @@ GamePieceState::GamePieceState(int sequence, double timestamp,
 { }
 
 GamePieceState::~GamePieceState() {
-    if (m_pMyTet != NULL)
+    if (m_pMyTet != NULL) {
         delete m_pMyTet;
-    if (m_pTheirTet != NULL)
+        m_pMyTet = NULL;
+    }
+    if (m_pTheirTet != NULL) {
         delete m_pTheirTet;
-    if (m_pQueue != NULL)
+        m_pTheirTet = NULL;
+    }
+    if (m_pQueue != NULL) {
         delete m_pQueue;
+        m_pQueue = NULL;
+    }
 }
 
 bool GamePieceState::ExecuteUpdates(GameState& game) const {
