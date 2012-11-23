@@ -140,12 +140,43 @@ void* ControlExecute(void* varg) {
     return varg;
 }
 
+Tetromino ControlIntegrationTests::TestApplyPath(GameState& game, PathSequence const& path) const {
+    GameBoard const& board = game.GetBoard();
+    Tetromino const* inPlay = game.GetPieceInPlay();
+    CPPUNIT_ASSERT(inPlay != NULL);
+    Tetromino t = *inPlay;
+    CPPUNIT_ASSERT(board.IsValidMove(t));
+    for (unsigned i = 0; i < path.size(); ++i) {
+        enum Tetromino::Move move = path.at(i); 
+        if (move == Tetromino::left)
+            t.ShiftLeft();
+        else if (move == Tetromino::right)
+            t.ShiftRight();
+        else if (move == Tetromino::down)
+            t.ShiftDown();
+        else if (move == Tetromino::rrotate)
+            t.RotateRight();
+        else if (move == Tetromino::lrotate)
+            t.RotateLeft();
+        else if (move == Tetromino::drop) {
+            while (!board.IsAtRest(t) && board.IsValidMove(t))
+               t.ShiftDown(); 
+        }
+        CPPUNIT_ASSERT(board.IsValidMove(t));
+    }
+    CPPUNIT_ASSERT(board.IsAtRest(t));
+    game.ApplyMove(t);
+    return t;
+}
+
 void ControlIntegrationTests::TestPlacePiece() {
     TestServerInterface si;
-    GameState* game = NULL;
+    GameState* internalGame = NULL;
+    GameState serverGame;
     pthread_mutex_t pointerMutex = PTHREAD_MUTEX_INITIALIZER;
     pthread_cond_t pointerSet = PTHREAD_COND_INITIALIZER;
-    State const* intercept = new InterceptInternalState(game, pointerMutex,
+    State const* intercept = new InterceptInternalState(internalGame, 
+                                                        pointerMutex,
                                                         pointerSet);
     char* myBoardDesc = new char[BOARD_DESC_SIZE];
     char* theirBoardDesc = new char[BOARD_DESC_SIZE];
@@ -190,6 +221,7 @@ void ControlIntegrationTests::TestPlacePiece() {
     pthread_cond_wait(&syncWithControl, &syncMutex);
     pthread_mutex_unlock(&syncMutex);
 
+    // Grab move messages
     while (si.HasMoveMessages()) {
         move = si.GetNextMove();
         CPPUNIT_ASSERT_EQUAL(0, move.second);
@@ -197,8 +229,8 @@ void ControlIntegrationTests::TestPlacePiece() {
     }
 
     // Test move path
-    std::cout << std::endl << moves << std::endl;
-    
+    Tetromino final = TestApplyPath(serverGame, moves);
+
     // cleanup
     State const* term = new TerminateExecution();
     si.AddStateMessage(term);
