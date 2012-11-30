@@ -3,6 +3,7 @@
 #include <util/constants.hpp>
 
 #include <util/vector.hpp>
+#include <string.h>
 #include <iostream>
 
 CPPUNIT_TEST_SUITE_REGISTRATION(GameBoardUnitTests);
@@ -42,6 +43,10 @@ void GameBoardUnitTests::TestTranslateEmpty() {
         }
     }
     CPPUNIT_ASSERT(!m_pBoard->HasChanged(shortDesc));
+    char const* actualDesc = m_pBoard->GenerateDesc();
+    CPPUNIT_ASSERT(actualDesc != NULL);
+    CPPUNIT_ASSERT_EQUAL(0, memcmp(shortDesc, actualDesc, BOARD_DESC_SIZE));
+    delete[] actualDesc;
     delete[] shortDesc;
 }
 
@@ -59,6 +64,10 @@ void GameBoardUnitTests::TestTranslateFull() {
         }
     }
     CPPUNIT_ASSERT(!m_pBoard->HasChanged(shortDesc));
+    char const* actualDesc = m_pBoard->GenerateDesc();
+    CPPUNIT_ASSERT(actualDesc != NULL);
+    CPPUNIT_ASSERT_EQUAL(0, memcmp(shortDesc, actualDesc, BOARD_DESC_SIZE));
+    delete[] actualDesc;
     delete[] shortDesc;
 }
 
@@ -77,6 +86,10 @@ void GameBoardUnitTests::TestTranslateComplex() {
         }
     }
     CPPUNIT_ASSERT(!m_pBoard->HasChanged(shortDesc));
+    char const* actualDesc = m_pBoard->GenerateDesc();
+    CPPUNIT_ASSERT(actualDesc != NULL);
+    CPPUNIT_ASSERT_EQUAL(0, memcmp(shortDesc, actualDesc, BOARD_DESC_SIZE));
+    delete[] actualDesc;
     delete[] shortDesc;
 }
 

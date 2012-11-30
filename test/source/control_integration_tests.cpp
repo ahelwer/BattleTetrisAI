@@ -139,7 +139,8 @@ void* ControlExecute(void* varg) {
     return varg;
 }
 
-Tetromino const* ControlIntegrationTests::TestApplyPath(GameState& game, PathSequence const& path) const {
+Tetromino const* ControlIntegrationTests::TestApplyPath(GameState& game, 
+                        std::vector< std::pair<enum Tetromino::Move, int> > const& path) const {
     GameBoard const& board = game.GetBoard();
     Tetromino const* inPlay = game.GetPieceInPlay();
     if (inPlay == NULL) {
@@ -148,7 +149,7 @@ Tetromino const* ControlIntegrationTests::TestApplyPath(GameState& game, PathSeq
     Tetromino t = *inPlay;
     CPPUNIT_ASSERT(board.IsValidMove(t));
     for (unsigned i = 0; i < path.size(); ++i) {
-        enum Tetromino::Move move = path.at(i); 
+        enum Tetromino::Move move = path.at(i).first; 
         if (move == Tetromino::left)
             t.ShiftLeft();
         else if (move == Tetromino::right)
@@ -191,7 +192,6 @@ void ControlIntegrationTests::TestPlacePiece() {
                                                     new std::vector<int>(),
                                                     new std::vector<int>());
     Tetromino* myTet = new Tetromino('S', 0, 5, 1);
-    serverGame.SetPieceInPlay(myTet);
     Tetromino* theirTet = new Tetromino('S', 0, 5, 1);
     State const* pieceMessage = new GamePieceState(1, 2.0, myTet, theirTet, 0, 1,
                                                     new std::vector<Tetromino>());
@@ -212,9 +212,9 @@ void ControlIntegrationTests::TestPlacePiece() {
     pthread_mutex_unlock(&pointerMutex);
 
     // Waits for/gets first move
-    PathSequence firstMove;
+    std::vector< std::pair<enum Tetromino::Move, int> > firstMove;
     std::pair<enum Tetromino::Move, int> move = si.GetNextMove();
-    firstMove.push_back(move.first);
+    firstMove.push_back(move);
 
     // Synchronizes with execute loop
     pthread_mutex_t syncMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -228,17 +228,56 @@ void ControlIntegrationTests::TestPlacePiece() {
     // Grab move messages
     while (si.HasMoveMessages()) {
         move = si.GetNextMove();
-        firstMove.push_back(move.first);
+        firstMove.push_back(move);
     }
 
     // Record first move results
     Tetromino const* firstExpected = FindBestMove(serverGame, *weights);
     Tetromino const* firstActual = TestApplyPath(serverGame, firstMove);
+    std::cout << firstExpected << " " << firstActual << std::endl;
 
-    // Waits for/gets second move 
+    // Second move
+    std::vector< std::pair<enum Tetromino::Move, int> > secondMove;
+    Tetromino const* secondExpected = NULL;
+    Tetromino const* secondActual = NULL;
     if (firstExpected != NULL && firstActual != NULL) {
+        serverGame.ApplyMove(*firstActual);
+        GameBoard const& serverBoard = serverGame.GetBoard();
+        myBoardDesc = serverBoard.GenerateDesc();
+        theirBoardDesc = new char[BOARD_DESC_SIZE];
+        for (int i = 0; i < BOARD_DESC_SIZE; ++i) {
+            theirBoardDesc[i] = '0';
+        }
+        boardMessage = new GameBoardState(3, 3.0, myBoardDesc,
+                                            theirBoardDesc, 2, 3,
+                                            new std::vector<int>(),
+                                            new std::vector<int>());
         myTet = new Tetromino('I', 0, 5, 1);
-        //boardMessage = new GameBoardState(3, 3.0, 
+        theirTet = new Tetromino('I', 0, 5, 1);
+        pieceMessage = new GamePieceState(4, 4.0, myTet, theirTet, 2, 3,
+                                            new std::vector<Tetromino>());
+        si.AddStateMessage(boardMessage);
+        si.AddStateMessage(pieceMessage);
+
+        move = si.GetNextMove();
+        secondMove.push_back(move);
+
+        // Synchronizes
+        sync = new SynchronizeMessage(syncMutex, syncWithControl);
+        pthread_mutex_lock(&syncMutex);
+        si.AddStateMessage(sync);
+        pthread_cond_wait(&syncWithControl, &syncMutex);
+        pthread_mutex_unlock(&syncMutex);
+        
+        // Grab move messages
+        while (si.HasMoveMessages()) {
+            move = si.GetNextMove();
+            secondMove.push_back(move);
+        }
+
+        // Record second move results
+        secondExpected = FindBestMove(serverGame, *weights);
+        secondActual = TestApplyPath(serverGame, secondMove);
     }
 
     // cleanup
@@ -250,5 +289,12 @@ void ControlIntegrationTests::TestPlacePiece() {
     pthread_mutex_destroy(&syncMutex);
     pthread_cond_destroy(&syncWithControl);
     delete weights;
+
+    CPPUNIT_ASSERT(firstExpected != NULL);
+    CPPUNIT_ASSERT(firstActual != NULL);
+    CPPUNIT_ASSERT(*firstExpected == *firstActual);
+    CPPUNIT_ASSERT(secondExpected != NULL);
+    CPPUNIT_ASSERT(secondActual != NULL);
+    CPPUNIT_ASSERT(*secondExpected == *secondActual);
 }
 
