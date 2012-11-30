@@ -63,34 +63,23 @@ void Control::Execute() {
 
     bool gameOver = false;
     GameState game;
-    Tetromino const* best = NULL;
-    bool inMoveSequence = false;
-    PathSequence const* sequence = NULL;
+    int executedNumber = -1;
 
     // Main loop
     while (!gameOver) {
-        // Finds best move in current state
-        if (game.GetPieceInPlay() != NULL && !inMoveSequence) {
-            if (best != NULL) {
-                delete best;
-                best = NULL;
-            }
-            best = FindBestMove(game, m_weights);
+        // Finds and executes best move
+        if (game.GetPieceInPlay() != NULL && game.GetCurrentPieceNumber() != executedNumber) {
+            Tetromino const* best = FindBestMove(game, m_weights);
             if (best != NULL && (*best) != *(game.GetPieceInPlay())) {
-                inMoveSequence = true;
+                PathSequence const* sequence = FindPath(game, *(game.GetPieceInPlay()), *best);
+                int pieceNumber = game.GetCurrentPieceNumber();
+                if (sequence != NULL && sequence->size() > 0) {
+                    ExecuteSequence(*sequence, pieceNumber, commandSocket); 
+                    executedNumber = pieceNumber;
+                    delete sequence;
+                }
+                delete best;
             }
-        }
-
-        // Finds path to current best move then executes it
-        if (best != NULL && game.GetPieceInPlay() != NULL && inMoveSequence) {
-            if (sequence != NULL) {
-                delete sequence;
-                sequence = NULL;
-            }
-            sequence = FindPath(game, *(game.GetPieceInPlay()), *best);
-			if (sequence != NULL && sequence->size() > 0)
-				ExecuteSequence(*sequence, game.GetCurrentPieceNumber(), 
-                                    commandSocket);
         }
 
         // Updates state by batch-processing messages in queue
@@ -107,22 +96,9 @@ void Control::Execute() {
             }
         }
         pthread_mutex_unlock(&m_queueMutex);
-
-        // Determines if a re-search for best move is required
-        if (game.WasRowClearEvent() || game.PieceHasChanged()) {
-            inMoveSequence = false;
-        }
     }
 
     // Cleanup
-    if (best != NULL) {
-        delete best;
-        best = NULL;
-    }
-    if (sequence != NULL) {
-        delete sequence;
-        sequence = NULL;
-    }
     pthread_join(worker, NULL);
     commandSocket.close();
 }

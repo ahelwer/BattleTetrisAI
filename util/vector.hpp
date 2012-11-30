@@ -47,11 +47,9 @@ std::ostream& operator<< (std::ostream& out,
 	return out;
 }
 
-/*
 template <typename T, typename P>
 std::ostream& operator<< (std::ostream& out, std::pair<T, P> const& pair) {
     out << "(" << pair.first << ", " << pair.second << ")";
     return out;
 }
-*/
 
