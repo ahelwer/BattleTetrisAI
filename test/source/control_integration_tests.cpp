@@ -147,7 +147,9 @@ Tetromino const* ControlIntegrationTests::TestApplyPath(GameState& game,
         return NULL;
     }
     Tetromino t = *inPlay;
-    CPPUNIT_ASSERT(board.IsValidMove(t));
+    if (!board.IsValidMove(t)) {
+        return NULL;
+    }
     for (unsigned i = 0; i < path.size(); ++i) {
         enum Tetromino::Move move = path.at(i).first; 
         if (move == Tetromino::left)
@@ -165,9 +167,13 @@ Tetromino const* ControlIntegrationTests::TestApplyPath(GameState& game,
                 t.ShiftDown(); 
             }
         }
-        CPPUNIT_ASSERT(board.IsValidMove(t));
+        if (!board.IsValidMove(t)) {
+            return NULL;
+        }
     }
-    CPPUNIT_ASSERT(board.IsAtRest(t));
+    if (!board.IsAtRest(t)) {
+        return NULL;
+    }
     game.ApplyMove(t);
     return new Tetromino(t);
 }
@@ -231,7 +237,6 @@ void ControlIntegrationTests::TestPlacePiece() {
         firstMove.push_back(move);
     }
 
-    std::cout << std::endl << firstMove << std::endl;
     // Record first move results
     Tetromino const* firstExpected = FindBestMove(serverGame, *weights);
     Tetromino const* firstActual = TestApplyPath(serverGame, firstMove);
@@ -241,7 +246,6 @@ void ControlIntegrationTests::TestPlacePiece() {
     Tetromino const* secondExpected = NULL;
     Tetromino const* secondActual = NULL;
     if (firstExpected != NULL && firstActual != NULL) {
-        serverGame.ApplyMove(*firstActual);
         GameBoard const& serverBoard = serverGame.GetBoard();
         char const* newBoardDesc = serverBoard.GenerateDesc();
         theirBoardDesc = new char[BOARD_DESC_SIZE];
@@ -253,6 +257,7 @@ void ControlIntegrationTests::TestPlacePiece() {
                                             new std::vector<int>(),
                                             new std::vector<int>());
         myTet = new Tetromino('I', 0, 5, 1);
+        serverGame.SetPieceInPlay(myTet);
         theirTet = new Tetromino('I', 0, 5, 1);
         pieceMessage = new GamePieceState(4, 4.0, myTet, theirTet, 2, 3,
                                             new std::vector<Tetromino>());
@@ -274,7 +279,6 @@ void ControlIntegrationTests::TestPlacePiece() {
             move = si.GetNextMove();
             secondMove.push_back(move);
         }
-        std::cout << secondMove << std::endl;
 
         // Record second move results
         secondExpected = FindBestMove(serverGame, *weights);
@@ -291,12 +295,20 @@ void ControlIntegrationTests::TestPlacePiece() {
     pthread_cond_destroy(&syncWithControl);
     delete weights;
 
+    CPPUNIT_ASSERT(firstMove.size() > 0);
+    CPPUNIT_ASSERT(secondMove.size() > 0);
     CPPUNIT_ASSERT(firstExpected != NULL);
     CPPUNIT_ASSERT(firstActual != NULL);
     CPPUNIT_ASSERT(*firstExpected == *firstActual);
     CPPUNIT_ASSERT(secondExpected != NULL);
     CPPUNIT_ASSERT(secondActual != NULL);
     CPPUNIT_ASSERT(*secondExpected == *secondActual);
+    for (unsigned i = 0; i < firstMove.size(); ++i) {
+        CPPUNIT_ASSERT_EQUAL(0, firstMove.at(i).second);
+    }
+    for (unsigned i = 0; i < secondMove.size(); ++i) {
+        CPPUNIT_ASSERT_EQUAL(2, secondMove.at(i).second);
+    }
 
     delete firstExpected;
     delete firstActual;
