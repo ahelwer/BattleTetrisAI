@@ -121,12 +121,11 @@ bool MessageFactory::ParseMoveReply(std::string const& reply) const {
     // Extract comm type (expect "GameMoveResp")
     std::string commType = root.get("comm_type", "not found").asString();
     success = (commType.compare("GameMoveResp") == 0);
-    //if (commType.compare("ErrorResp") == 0)
-        //PrintErrorMessage(reply);
-    if (!success)
+    if (!success) {
         return success;
+    }
     
-    // Extract resp (expect "ok")
+    // Extract resp (expect "OK")
     std::string resp = root.get("resp", "not ok").asString();
     success = (resp.compare("OK") == 0);
 
