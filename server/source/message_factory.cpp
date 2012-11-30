@@ -161,26 +161,30 @@ State const* MessageFactory::ParseGameBoardStateMessage(Json::Value const& root)
     Json::Value mine = states.get(USERNAME, "not found");
     int myPiece = mine.get("piece_number", -1).asInt();
     Json::Value myBoardV = mine.get("board_state", "0");
-    if (myBoardV.asString().size() != BOARD_DESC_SIZE)
+    if (myBoardV.asString().size() != BOARD_DESC_SIZE) {
         return new ErrorState("Invalid board description.");
+    }
     char* myBoard = new char[BOARD_DESC_SIZE];
     memcpy((void*)myBoard, (void*)myBoardV.asCString(), BOARD_DESC_SIZE);
     Json::Value myClearedV = mine.get("cleared_rows", "not found");
     std::vector<int>* myCleared = new std::vector<int>();
-    for (unsigned i = 0; i < myClearedV.size(); ++i)
+    for (unsigned i = 0; i < myClearedV.size(); ++i) {
         myCleared->push_back(myClearedV[i].asInt());
+    }
 
     Json::Value theirs = states.get(m_opponent.c_str(), "not found");
     int theirPiece = theirs.get("piece_number", -1).asInt();
     Json::Value theirBoardV = theirs.get("board_state", "0");
-    if (theirBoardV.asString().size() != BOARD_DESC_SIZE)
+    if (theirBoardV.asString().size() != BOARD_DESC_SIZE) {
         return new ErrorState("Invalid board description.");
+    }
     char* theirBoard = new char[BOARD_DESC_SIZE];
     memcpy((void*)theirBoard, (void*)theirBoardV.asCString(), BOARD_DESC_SIZE);
     Json::Value theirClearedV = theirs.get("cleared_rows", "not found");
     std::vector<int>* theirCleared = new std::vector<int>();
-    for (unsigned i = 0; i < theirClearedV.size(); ++i)
+    for (unsigned i = 0; i < theirClearedV.size(); ++i) {
         theirCleared->push_back(theirClearedV[i].asInt());
+    }
 
     return new GameBoardState(sequence, timestamp, myBoard, 
                                 theirBoard, myPiece, theirPiece, 

@@ -183,7 +183,7 @@ void ControlIntegrationTests::TestPlacePiece() {
                                                         pointerSet);
     char* myBoardDesc = new char[BOARD_DESC_SIZE];
     char* theirBoardDesc = new char[BOARD_DESC_SIZE];
-    for (int i = 0; i < BOARD_DESC_SIZE; ++i) {
+    for (unsigned i = 0; i < BOARD_DESC_SIZE; ++i) {
         myBoardDesc[i] = '0';
         theirBoardDesc[i] = '0';
     }
@@ -243,12 +243,12 @@ void ControlIntegrationTests::TestPlacePiece() {
     if (firstExpected != NULL && firstActual != NULL) {
         serverGame.ApplyMove(*firstActual);
         GameBoard const& serverBoard = serverGame.GetBoard();
-        myBoardDesc = serverBoard.GenerateDesc();
+        char const* newBoardDesc = serverBoard.GenerateDesc();
         theirBoardDesc = new char[BOARD_DESC_SIZE];
-        for (int i = 0; i < BOARD_DESC_SIZE; ++i) {
+        for (unsigned i = 0; i < BOARD_DESC_SIZE; ++i) {
             theirBoardDesc[i] = '0';
         }
-        boardMessage = new GameBoardState(3, 3.0, myBoardDesc,
+        boardMessage = new GameBoardState(3, 3.0, newBoardDesc,
                                             theirBoardDesc, 2, 3,
                                             new std::vector<int>(),
                                             new std::vector<int>());
@@ -296,5 +296,10 @@ void ControlIntegrationTests::TestPlacePiece() {
     CPPUNIT_ASSERT(secondExpected != NULL);
     CPPUNIT_ASSERT(secondActual != NULL);
     CPPUNIT_ASSERT(*secondExpected == *secondActual);
+
+    delete firstExpected;
+    delete firstActual;
+    delete secondExpected;
+    delete secondActual;
 }
 

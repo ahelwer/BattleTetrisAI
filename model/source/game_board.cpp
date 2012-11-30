@@ -8,8 +8,9 @@ GameBoard::GameBoard()
                     (COLS, std::vector<bool>(ROWS, false))), 
         m_pDesc(new char[BOARD_DESC_SIZE])
 { 
-    for (int i = 0; i < BOARD_DESC_SIZE; ++i)
+    for (unsigned i = 0; i < BOARD_DESC_SIZE; ++i) {
         m_pDesc[i] = '0';
+    }
 }
 
 GameBoard::GameBoard(char const* desc)
@@ -17,8 +18,9 @@ GameBoard::GameBoard(char const* desc)
                     (COLS, std::vector<bool>(ROWS, false))), 
         m_pDesc(new char[BOARD_DESC_SIZE])
 {
-    for (int i = 0; i < BOARD_DESC_SIZE; ++i)
+    for (unsigned i = 0; i < BOARD_DESC_SIZE; ++i) {
         m_pDesc[i] = '0';
+    }
     Translate(desc);
 }
 
@@ -89,7 +91,7 @@ std::vector<int> const* GameBoard::ClearRows() {
         if (isCleared)
             cleared->push_back(j);
     }
-    for (int r = 0; r < cleared->size(); ++r) {
+    for (unsigned r = 0; r < cleared->size(); ++r) {
         int rowCleared = cleared->at(r);
         for (int j = rowCleared; j > 0; --j) {
             for (int i = 0; i < COLS; ++i) {
@@ -108,7 +110,7 @@ void GameBoard::ClearBoard() {
         }
     }
     if (m_pDesc != NULL) {
-        for (int i = 0; i < BOARD_DESC_SIZE; ++i) {
+        for (unsigned i = 0; i < BOARD_DESC_SIZE; ++i) {
             m_pDesc[i] = '0';
         }
     }
@@ -217,7 +219,7 @@ void GameBoard::ApplyMoveToBoard(Tetromino const& t) {
 char const* GameBoard::GenerateDesc() const {
     BoardDesc const& board = GetBoardDesc();
     char* desc = new char[BOARD_DESC_SIZE];
-    for (int i = 0; i < BOARD_DESC_SIZE; ++i) {
+    for (unsigned i = 0; i < BOARD_DESC_SIZE; ++i) {
         char byte = 0;
         int x = i*4 % COLS;
         int y = i*4 / COLS;
@@ -243,7 +245,7 @@ char const* GameBoard::GenerateDesc() const {
 
 void GameBoard::Translate(char const* desc) {
     BoardDesc& board = GetBoardDesc();
-    for (int i = 0; i < BOARD_DESC_SIZE; ++i) {
+    for (unsigned i = 0; i < BOARD_DESC_SIZE; ++i) {
         char hex = desc[i];
         char byte = 0;
         if (hex > 64) // hex > 64, so is letter
@@ -275,7 +277,7 @@ bool GameBoard::operator== (GameBoard const& o) const {
 
     bool boardEqual = true;
     if (m_boardStack.size() == o.m_boardStack.size()) {
-        for (int k = 0; k < m_boardStack.size(); ++k) {
+        for (unsigned k = 0; k < m_boardStack.size(); ++k) {
             BoardDesc const& mine = m_boardStack.at(k);
             BoardDesc const& theirs = o.m_boardStack.at(k);
             for (int i = 0; i < COLS; ++i) {

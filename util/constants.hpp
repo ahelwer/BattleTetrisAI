@@ -7,5 +7,5 @@ char const* const USERNAME = "Team 148";
 char const* const PASSWORD = "agrajabber";
 int const COLS = 10;
 int const ROWS = 20;
-int const BOARD_DESC_SIZE = 50;
+unsigned const BOARD_DESC_SIZE = 50;
 

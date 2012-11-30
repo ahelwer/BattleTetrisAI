@@ -1,14 +1,15 @@
 #include <core/game_state_eval.hpp>
 #include <util/constants.hpp>
 
-int GetVarCount() {
+unsigned GetVarCount() {
     return 19;
 }
 
 HarmonyRanges const* GetRanges() {
     HarmonyRanges* ranges = new HarmonyRanges();
-    for (int i = 0; i < GetVarCount(); ++i)
+    for (unsigned i = 0; i < GetVarCount(); ++i) {
         ranges->push_back(std::pair<float, float>(-1.0, 1.0));
+    }
     return ranges;
 }
 
@@ -431,7 +432,7 @@ int ErodedPieces(GameState const& state) {
     Tetromino const& last = state.LastPiecePlayed();
     bool const* desc = last.GetDesc();
     int erodedCount = 0;
-    for (int r = 0; r < cleared.size(); ++r) {
+    for (unsigned r = 0; r < cleared.size(); ++r) {
         int tetRow = cleared.at(r) - last.GetY() + 1;
         if (tetRow >= 0 && tetRow < 4) {
             int blockCount = 0;

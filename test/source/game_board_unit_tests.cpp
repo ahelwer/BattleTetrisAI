@@ -33,8 +33,9 @@ void GameBoardUnitTests::TestInit() {
 void GameBoardUnitTests::TestTranslateEmpty() {
     BoardDesc const& desc = m_pBoard->GetBoardDesc();
     char* shortDesc = new char[BOARD_DESC_SIZE];
-    for (int i = 0; i < BOARD_DESC_SIZE; ++i)
+    for (unsigned i = 0; i < BOARD_DESC_SIZE; ++i) {
         shortDesc[i] = '0';
+    }
     CPPUNIT_ASSERT(!m_pBoard->HasChanged(shortDesc));
     m_pBoard->Update(shortDesc);
     for (int j = 0; j < ROWS; ++j) {
@@ -53,8 +54,9 @@ void GameBoardUnitTests::TestTranslateEmpty() {
 void GameBoardUnitTests::TestTranslateFull() {
     BoardDesc const& desc = m_pBoard->GetBoardDesc();
     char* shortDesc = new char[BOARD_DESC_SIZE];
-    for (int i = 0; i < BOARD_DESC_SIZE; ++i)
+    for (unsigned i = 0; i < BOARD_DESC_SIZE; ++i) {
         shortDesc[i] = 'F';
+    }
     CPPUNIT_ASSERT(m_pBoard->HasChanged(shortDesc));
     m_pBoard->Update(shortDesc);
     for (int j = 0; j < ROWS; ++j) {
@@ -74,8 +76,9 @@ void GameBoardUnitTests::TestTranslateFull() {
 void GameBoardUnitTests::TestTranslateComplex() {
     BoardDesc const& desc = m_pBoard->GetBoardDesc();
     char* shortDesc = new char[BOARD_DESC_SIZE];
-    for (int i = 0; i < BOARD_DESC_SIZE; ++i)
+    for (unsigned i = 0; i < BOARD_DESC_SIZE; ++i) {
         shortDesc[i] = 'A';
+    }
     CPPUNIT_ASSERT(m_pBoard->HasChanged(shortDesc));
     m_pBoard->Update(shortDesc);
     for (int j = 0; j < ROWS; ++j) {

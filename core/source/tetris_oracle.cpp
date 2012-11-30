@@ -12,7 +12,7 @@
 float BestScore(GameState& state, Harmony const& h) {
     std::vector<Tetromino> const* possible = FindPossibleMoves(state);
     float maxScore = -1.0*FLT_MAX;
-    for (int i = 0; i < possible->size(); ++i) {
+    for (unsigned i = 0; i < possible->size(); ++i) {
         GameState next = state;
         int cleared = next.ApplyMove(possible->at(i));
         if (cleared == -1) {
@@ -40,7 +40,7 @@ Tetromino const* FindBestMove(GameState& state, Harmony const& h) {
     #pragma omp parallel for
     #endif
     {
-    for (int i = 0; i < possible->size(); ++i) {
+    for (unsigned i = 0; i < possible->size(); ++i) {
         GameState next = state;
         int cleared = next.ApplyMove(possible->at(i));
         if (cleared == -1) {
@@ -49,7 +49,7 @@ Tetromino const* FindBestMove(GameState& state, Harmony const& h) {
         float result = EvaluateMove(next, h);
         /*
         int feedSize = std::min(next.QueuedPieceCount(), 2);
-        for (int i = 0; i < feedSize; ++i) {
+        for (unsigned i = 0; i < feedSize; ++i) {
             bool success = next.FeedFromQueue(i);
             if (success) {
                 result += ((BestScore(next, h) / (float)feedSize));
@@ -119,8 +119,9 @@ std::vector<Tetromino> const* FindPossibleMoves(GameState& state) {
     // visited [Column][Row][Rotation]
     bool v[10][20][4];
     bool* vRaw = &(v[0][0][0]);
-    for (int i = 0; i < 10*20*4; ++i)
+    for (unsigned i = 0; i < 10*20*4; ++i) {
         vRaw[i] = false;
+    }
     std::deque<Tetromino> Q;
     Tetromino s (*(state.GetPieceInPlay()));
     Q.push_back(s);
@@ -133,7 +134,7 @@ std::vector<Tetromino> const* FindPossibleMoves(GameState& state) {
 
         // Check adjacent
         std::vector<Tetromino> const* adj = Neighbours(c);
-        for (int i = 0; i < adj->size(); ++i) {
+        for (unsigned i = 0; i < adj->size(); ++i) {
             Tetromino n = adj->at(i);
             if (board.IsValidMove(n) && !v[n.GetX()][n.GetY()][n.GetOrient()]) {
                 v[n.GetX()][n.GetY()][n.GetOrient()] = true;
@@ -250,7 +251,7 @@ Tetromino const* BFS(GameState const& state, Tetromino const& s,
 
         // Check adjacent
         std::vector<Tetromino> const* adj = Neighbours(c);
-        for (int i = 0; i < adj->size(); ++i) {
+        for (unsigned i = 0; i < adj->size(); ++i) {
             Tetromino n = adj->at(i);
             if (board.IsValidMove(n) && !v[n.GetX()][n.GetY()][n.GetOrient()]) {
                 v[n.GetX()][n.GetY()][n.GetOrient()] = true;

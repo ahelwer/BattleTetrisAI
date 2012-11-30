@@ -15,9 +15,10 @@ void TetrisOracleUnitTests::TestSquareBlockOnEmptyGrid() {
     size_t expectedSize = COLS-1;
     CPPUNIT_ASSERT_EQUAL(expectedSize, found->size());
     int colPos[COLS];
-    for (int i = 0; i < COLS; ++i)
+    for (int i = 0; i < COLS; ++i) {
         colPos[i] = 0;
-    for (int i = 0; i < found->size(); ++i) {
+    }
+    for (unsigned i = 0; i < found->size(); ++i) {
         Tetromino const& t = found->at(i);
         colPos[t.GetX()] += 1;
         CPPUNIT_ASSERT_EQUAL(ROWS-2, t.GetY());
@@ -35,7 +36,7 @@ void TetrisOracleUnitTests::TestLineBlockOnEmptyGrid() {
     std::vector<Tetromino> const* found = FindPossibleMoves(state);
     size_t expectedSize = COLS + COLS-3; 
     CPPUNIT_ASSERT_EQUAL(expectedSize, found->size());
-    for (int i = 0; i < found->size(); ++i) {
+    for (unsigned i = 0; i < found->size(); ++i) {
         Tetromino const& t = found->at(i);
         CPPUNIT_ASSERT((t.GetY() == ROWS-1) || (t.GetY() == ROWS-3));
     }
@@ -47,9 +48,10 @@ void TetrisOracleUnitTests::TestFindBestMove() {
     Tetromino t ('Z', 0, 5, 1);
     GameState state (queue, t);
     Harmony h;
-    int varCount = GetVarCount();
-    for (int i = 0; i < varCount; ++i)
+    unsigned varCount = GetVarCount();
+    for (unsigned i = 0; i < varCount; ++i) {
         h.push_back(-1.0);
+    }
     Tetromino const* best = FindBestMove(state, h);
     CPPUNIT_ASSERT(best != NULL);
     CPPUNIT_ASSERT(state.ApplyMove(*best) != -1);
@@ -88,7 +90,8 @@ int TetrisOracleUnitTests::SimulatePath(GameState const& state,
         return path->size();
     }
     Tetromino c = source;
-    for (int i = 0; i < path->size(); ++i) {
+    int pathSize = path->size();
+    for (int i = 0; i < pathSize; ++i) {
         enum Tetromino::Move move = path->at(i);
         if (move == Tetromino::left)
             c.ShiftLeft();

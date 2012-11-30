@@ -7,7 +7,7 @@ TetrisPointsEarned::TetrisPointsEarned(GeneratedGame const& generator)
 { }
 
 float TetrisPointsEarned::operator() (Harmony const& h) const {
-    float pointsEarned = 0.0;
+    //float pointsEarned = 0.0;
     int rowsCleared = 0;
     int start = 0;
     Tetromino const& tetInPlay = m_generator.GetPiece(start);

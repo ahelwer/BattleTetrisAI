@@ -21,7 +21,7 @@ HarmonySearch::~HarmonySearch() {
 }
 
 void HarmonySearch::InitializeHarmonies(std::vector<Harmony> const& init) {
-    for (int i = 0; i < m_memory.size(); ++i) {
+    for (unsigned i = 0; i < m_memory.size(); ++i) {
         if (m_memory.at(i) != NULL) {
             delete m_memory.at(i);
             m_memory.at(i) = NULL;
@@ -63,7 +63,7 @@ void HarmonySearch::Iterate() {
 }
 
 void HarmonySearch::EraseHarmonyCaches() const {
-    for (int i = 0; i < m_memory.size(); ++i) {
+    for (unsigned i = 0; i < m_memory.size(); ++i) {
         Harmony const* h = m_memory.at(i);
         h->EraseCache();
     }

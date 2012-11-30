@@ -8,7 +8,7 @@
  *
  * Returns the number of weights in the Tetris feature harmony.
  * */
-int GetVarCount();
+unsigned GetVarCount();
 
 /* *
  * Function GetRanges

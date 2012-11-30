@@ -128,7 +128,7 @@ std::ostream& operator<< (std::ostream& out, GamePieceState const& s) {
         out << "NULL";
     out << ", ";
     out << "Queue: [";
-    for (int i = 0; i < s.m_pQueue->size(); ++i)
+    for (unsigned i = 0; i < s.m_pQueue->size(); ++i)
         out << s.m_pQueue->at(i).GetType() << ", ";
     out << "]";
     return out;
@@ -163,7 +163,7 @@ std::ostream& operator<< (std::ostream& out, GameEnd const& s) {
     return out;
 }
 
-bool MatchEnd::ExecuteUpdates(GameState& game) const {
+bool MatchEnd::ExecuteUpdates(GameState&) const {
     std::cout << (*this) << std::endl;
     return true;
 }
@@ -181,7 +181,7 @@ ErrorState::ErrorState(char const* errorMessage)
     : State(0, 0.0), m_errorMessage(errorMessage)
 { }
 
-bool ErrorState::ExecuteUpdates(GameState& game) const {
+bool ErrorState::ExecuteUpdates(GameState&) const {
     std::cout << (*this) << std::endl;
     return false;
 }

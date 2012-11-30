@@ -85,7 +85,8 @@ int GameState::ApplyMove(Tetromino const& t) {
 }
 
 bool GameState::FeedFromQueue(int feedCount) {
-    if (feedCount < 0 || feedCount >= m_pieceQueue.size())
+    int pieceQueueSize = m_pieceQueue.size();
+    if (feedCount < 0 || feedCount >= pieceQueueSize)
         return false;
     if (m_pPieceInPlay != NULL) {
         delete m_pPieceInPlay;
@@ -179,7 +180,7 @@ bool GameState::operator== (GameState const& o) const {
 
     bool lastRowsClearedEqual = (m_lastRowsCleared.size() == 
                                     o.m_lastRowsCleared.size());
-    for (int i = 0; i < m_lastRowsCleared.size(); ++i) {
+    for (unsigned i = 0; i < m_lastRowsCleared.size(); ++i) {
         if (m_lastRowsCleared.at(i) != o.m_lastRowsCleared.at(i)) {
             lastRowsClearedEqual = false;
             break;
@@ -188,7 +189,7 @@ bool GameState::operator== (GameState const& o) const {
 
     bool pieceQueueEqual = (m_pieceQueue.size() ==
                                 o.m_pieceQueue.size());
-    for (int i = 0; i < m_pieceQueue.size(); ++i) {
+    for (unsigned i = 0; i < m_pieceQueue.size(); ++i) {
         if (m_pieceQueue.at(i) != o.m_pieceQueue.at(i)) {
             pieceQueueEqual = false;
             break;
