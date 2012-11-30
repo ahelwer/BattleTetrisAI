@@ -1,5 +1,6 @@
 #include <test/control_integration_tests.hpp>
 #include <core/game_state_eval.hpp>
+#include <core/tetris_oracle.hpp>
 #include <util/constants.hpp>
 
 CPPUNIT_TEST_SUITE_REGISTRATION(ControlIntegrationTests);
@@ -138,10 +139,12 @@ void* ControlExecute(void* varg) {
     return varg;
 }
 
-Tetromino ControlIntegrationTests::TestApplyPath(GameState& game, PathSequence const& path) const {
+Tetromino const* ControlIntegrationTests::TestApplyPath(GameState& game, PathSequence const& path) const {
     GameBoard const& board = game.GetBoard();
     Tetromino const* inPlay = game.GetPieceInPlay();
-    CPPUNIT_ASSERT(inPlay != NULL);
+    if (inPlay == NULL) {
+        return NULL;
+    }
     Tetromino t = *inPlay;
     CPPUNIT_ASSERT(board.IsValidMove(t));
     for (unsigned i = 0; i < path.size(); ++i) {
@@ -165,7 +168,7 @@ Tetromino ControlIntegrationTests::TestApplyPath(GameState& game, PathSequence c
     }
     CPPUNIT_ASSERT(board.IsAtRest(t));
     game.ApplyMove(t);
-    return t;
+    return new Tetromino(t);
 }
 
 void ControlIntegrationTests::TestPlacePiece() {
@@ -183,17 +186,18 @@ void ControlIntegrationTests::TestPlacePiece() {
         myBoardDesc[i] = '0';
         theirBoardDesc[i] = '0';
     }
-    State const* initBoard = new GameBoardState(0, 1.0, myBoardDesc,
-                                                theirBoardDesc, 0, 1,
-                                                new std::vector<int>(),
-                                                new std::vector<int>());
+    State const* boardMessage = new GameBoardState(0, 1.0, myBoardDesc,
+                                                    theirBoardDesc, 0, 1,
+                                                    new std::vector<int>(),
+                                                    new std::vector<int>());
     Tetromino* myTet = new Tetromino('S', 0, 5, 1);
+    serverGame.SetPieceInPlay(myTet);
     Tetromino* theirTet = new Tetromino('S', 0, 5, 1);
-    State const* initPiece = new GamePieceState(1, 2.0, myTet, theirTet, 0, 1,
-                                                new std::vector<Tetromino>());
+    State const* pieceMessage = new GamePieceState(1, 2.0, myTet, theirTet, 0, 1,
+                                                    new std::vector<Tetromino>());
     si.AddStateMessage(intercept);
-    si.AddStateMessage(initBoard);
-    si.AddStateMessage(initPiece);
+    si.AddStateMessage(boardMessage);
+    si.AddStateMessage(pieceMessage);
     Harmony const* weights = GetBestHarmony();
     zmq::context_t context (1);
     Control command (context, si, *weights);
@@ -208,10 +212,9 @@ void ControlIntegrationTests::TestPlacePiece() {
     pthread_mutex_unlock(&pointerMutex);
 
     // Waits for/gets first move
-    PathSequence moves;
+    PathSequence firstMove;
     std::pair<enum Tetromino::Move, int> move = si.GetNextMove();
-    CPPUNIT_ASSERT_EQUAL(0, move.second);
-    moves.push_back(move.first);
+    firstMove.push_back(move.first);
 
     // Synchronizes with execute loop
     pthread_mutex_t syncMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -225,12 +228,18 @@ void ControlIntegrationTests::TestPlacePiece() {
     // Grab move messages
     while (si.HasMoveMessages()) {
         move = si.GetNextMove();
-        CPPUNIT_ASSERT_EQUAL(0, move.second);
-        moves.push_back(move.first);
+        firstMove.push_back(move.first);
     }
 
-    // Test move path
-    Tetromino final = TestApplyPath(serverGame, moves);
+    // Record first move results
+    Tetromino const* firstExpected = FindBestMove(serverGame, *weights);
+    Tetromino const* firstActual = TestApplyPath(serverGame, firstMove);
+
+    // Waits for/gets second move 
+    if (firstExpected != NULL && firstActual != NULL) {
+        myTet = new Tetromino('I', 0, 5, 1);
+        //boardMessage = new GameBoardState(3, 3.0, 
+    }
 
     // cleanup
     State const* term = new TerminateExecution();

@@ -94,6 +94,6 @@ class ControlIntegrationTests : public CppUnit::TestFixture {
 public:
     void TestPlacePiece();
 private:
-    Tetromino TestApplyPath(GameState& game, PathSequence const& path) const;
+    Tetromino const* TestApplyPath(GameState& game, PathSequence const& path) const;
 };
 
