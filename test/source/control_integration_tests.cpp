@@ -39,7 +39,6 @@ void TestServerInterface::ConnectToStateServer(zmq::socket_t&) const {
 }
 
 State const* TestServerInterface::GetState(zmq::socket_t&) const {
-    CPPUNIT_ASSERT(m_stateConnected);
     if (!m_stateConnected)
         return NULL;
     pthread_mutex_lock(&m_messageMutex);
@@ -55,7 +54,6 @@ State const* TestServerInterface::GetState(zmq::socket_t&) const {
 
 bool TestServerInterface::SendMove(enum Tetromino::Move move, int pieceId, 
                                     zmq::socket_t&) const {
-    CPPUNIT_ASSERT(m_commandConnected);
     if (!m_commandConnected)
         return false;
     pthread_mutex_lock(&m_moveMutex);
@@ -159,8 +157,9 @@ Tetromino ControlIntegrationTests::TestApplyPath(GameState& game, PathSequence c
         else if (move == Tetromino::lrotate)
             t.RotateLeft();
         else if (move == Tetromino::drop) {
-            while (!board.IsAtRest(t) && board.IsValidMove(t))
-               t.ShiftDown(); 
+            while (board.IsValidMove(t) && !board.IsAtRest(t)) {
+                t.ShiftDown(); 
+            }
         }
         CPPUNIT_ASSERT(board.IsValidMove(t));
     }
@@ -199,6 +198,8 @@ void ControlIntegrationTests::TestPlacePiece() {
     zmq::context_t context (1);
     Control command (context, si, *weights);
 
+    serverGame.SetPieceInPlay(myTet);
+    
     // Launches main execute loop, waits to intercept state
     pthread_mutex_lock(&pointerMutex);
     pthread_t execute = 0;

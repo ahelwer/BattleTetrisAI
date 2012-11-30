@@ -214,6 +214,33 @@ void GameBoard::ApplyMoveToBoard(Tetromino const& t) {
     }
 }
 
+char const* GameBoard::GenerateDesc() const {
+    BoardDesc const& board = GetBoardDesc();
+    char* desc = new char[BOARD_DESC_SIZE];
+    for (int i = 0; i < BOARD_DESC_SIZE; ++i) {
+        char byte = 0;
+        int x = i*4 % COLS;
+        int y = i*4 / COLS;
+        byte |= (board[x][y] << 3);
+        x = (i*4+1) % COLS;
+        y = (i*4+1) / COLS;
+        byte |= (board[x][y] << 2);
+        x = (i*4+2) % COLS;
+        y = (i*4+2) / COLS;
+        byte |= (board[x][y] << 1);
+        x = (i*4+3) % COLS;
+        y = (i*4+3) / COLS;
+        byte |= (board[x][y] << 0);
+        char hex = '0';
+        if (byte >= 10)
+            hex = (byte + 55);
+        else 
+            hex = (byte + 48);
+        desc[i] = hex;
+    }
+    return desc;
+}
+
 void GameBoard::Translate(char const* desc) {
     BoardDesc& board = GetBoardDesc();
     for (int i = 0; i < BOARD_DESC_SIZE; ++i) {

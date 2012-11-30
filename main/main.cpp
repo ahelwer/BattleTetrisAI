@@ -31,6 +31,7 @@ int main(int argc, char* argv[]) {
     ServerInterface si (commandServer, stateServer, matchToken, opponent);
     Harmony const* weights = GetBestHarmony();
     Control top (context, si, *weights);
+    std::cout << "Entering main loop." << std::endl;
     top.Execute();
     delete weights;
 

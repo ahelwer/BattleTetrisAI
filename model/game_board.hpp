@@ -46,6 +46,7 @@ public:
     void Update(char const* desc);
     // Determines if update is required based on compressed hex string
     bool HasChanged(char const* desc) const;
+    char const* GenerateDesc() const;
     bool operator== (GameBoard const& o) const;
     bool operator!= (GameBoard const& o) const;
     friend std::ostream& operator<< (std::ostream& out, GameBoard const& gb);

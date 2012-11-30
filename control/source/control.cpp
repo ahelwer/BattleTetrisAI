@@ -52,7 +52,6 @@ void Control::PollStateMessages() {
 }
 
 void Control::Execute() {
-    std::cout << "Entering main loop." << std::endl;
     // Launches state messaging thread
     pthread_t worker = 0;
     pthread_create(&worker, NULL, DispatchThread, static_cast<void*>(this));
