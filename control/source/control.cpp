@@ -70,8 +70,9 @@ void Control::Execute() {
         // Finds and executes best move
         if (game.GetPieceInPlay() != NULL && game.GetCurrentPieceNumber() != executedNumber) {
             Tetromino const* best = FindBestMove(game, m_weights);
-            if (best != NULL && (*best) != *(game.GetPieceInPlay())) {
-                PathSequence const* sequence = FindPath(game, *(game.GetPieceInPlay()), *best);
+            Tetromino const* inPlay = game.GetPieceInPlay();
+            if (best != NULL && *best != *inPlay) {
+                PathSequence const* sequence = FindPath(game, *inPlay, *best);
                 int pieceNumber = game.GetCurrentPieceNumber();
                 if (sequence != NULL && sequence->size() > 0) {
                     ExecuteSequence(*sequence, pieceNumber, commandSocket); 
@@ -105,10 +106,7 @@ void Control::Execute() {
 
 void Control::ExecuteSequence(std::vector<enum Tetromino::Move> const& sequence,
                                int pieceId, zmq::socket_t& commandSocket) {
-    int sequenceSize = sequence.size();
-    //int executeCount = std::min(sequenceSize, 10);
-    int executeCount = sequenceSize;
-    for (int i = 0; i < executeCount; ++i) {
+    for (unsigned i = 0; i < sequence.size(); ++i) {
         enum Tetromino::Move move = sequence.at(i);
         bool success = m_si.SendMove(move, pieceId, commandSocket);
         if (!success)

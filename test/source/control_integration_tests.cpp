@@ -243,9 +243,7 @@ void ControlIntegrationTests::TestPlacePiece() {
     if (firstExpected != NULL && firstActual != NULL) {
         serverGame.ApplyMove(*firstActual);
         GameBoard const& serverBoard = serverGame.GetBoard();
-        std::cout << serverBoard.GetBoardDesc() << std::endl;
         char const* newBoardDesc = serverBoard.GenerateDesc();
-        std::cout << newBoardDesc << std::endl;
         theirBoardDesc = new char[BOARD_DESC_SIZE];
         for (unsigned i = 0; i < BOARD_DESC_SIZE; ++i) {
             theirBoardDesc[i] = '0';

@@ -128,7 +128,7 @@ bool MessageFactory::ParseMoveReply(std::string const& reply) const {
     
     // Extract resp (expect "ok")
     std::string resp = root.get("resp", "not ok").asString();
-    success = (resp.compare("ok") == 0);
+    success = (resp.compare("OK") == 0);
 
     return success;
 }
