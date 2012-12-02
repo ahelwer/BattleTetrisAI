@@ -11,7 +11,8 @@
  *
  * Returns sequence of moves to get from source position to target.
  * */
-PathSequence const* FindPath(GameState const& state, Tetromino const& source, Tetromino const& target);
+PathSequence const* FindPath(GameState const& state, Tetromino const& source, 
+                                Tetromino const& target);
 
 /* *
  * Function FindBestMove
