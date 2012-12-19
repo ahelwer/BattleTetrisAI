@@ -8,14 +8,10 @@
 #include <core/game_state_eval.hpp>
 
 int main(int argc, char* argv[]) {
-	std::string opponent;
-    if (argc == 3) {
-		opponent = std::string("Test Client");
+    if (argc != 3) {
+        std::cout << "Usage: <server ip> <match token>" << std::endl;
+        return -1;
     }
-	else if (argc == 4) {
-		opponent = "Team " + std::string(argv[3]);
-	}
-
     // Parses command line arguments
     std::string protocol (PROTOCOL);
     std::string commandPort (COMMAND_PORT);
@@ -24,11 +20,10 @@ int main(int argc, char* argv[]) {
     std::string matchToken (argv[2]);
     std::string commandServer = protocol + ip + commandPort;
     std::string stateServer = protocol + ip + statePort;
-    std::cout << opponent << std::endl;
 
     // Initializes and launches main loop
     zmq::context_t context (1);
-    ServerInterface si (commandServer, stateServer, matchToken, opponent);
+    ServerInterface si (commandServer, stateServer, matchToken);
     Harmony const* weights = GetBestHarmony();
     Control top (context, si, *weights);
     std::cout << "Entering main loop." << std::endl;

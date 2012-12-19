@@ -187,20 +187,15 @@ void ControlIntegrationTests::TestPlacePiece() {
     State const* intercept = new InterceptInternalState(internalGame, 
                                                         pointerMutex,
                                                         pointerSet);
-    char* myBoardDesc = new char[BOARD_DESC_SIZE];
-    char* theirBoardDesc = new char[BOARD_DESC_SIZE];
+    char* boardDesc = new char[BOARD_DESC_SIZE];
     for (unsigned i = 0; i < BOARD_DESC_SIZE; ++i) {
-        myBoardDesc[i] = '0';
-        theirBoardDesc[i] = '0';
+        boardDesc[i] = '0';
     }
-    State const* boardMessage = new GameBoardState(0, 1.0, myBoardDesc,
-                                                    theirBoardDesc, 0, 1,
-                                                    new std::vector<int>(),
+    State const* boardMessage = new GameBoardState(0, 1.0, boardDesc, 0,
                                                     new std::vector<int>());
-    Tetromino* myTet = new Tetromino('S', 0, 5, 1);
-    Tetromino* theirTet = new Tetromino('S', 0, 5, 1);
-    State const* pieceMessage = new GamePieceState(1, 2.0, myTet, theirTet, 0, 1,
-                                                    new std::vector<Tetromino>());
+    Tetromino* tet = new Tetromino('S', 0, 5, 1);
+    State const* pieceMessage = new GamePieceState(1, 2.0, tet, 0,
+                                                new std::vector<Tetromino>());
     si.AddStateMessage(intercept);
     si.AddStateMessage(boardMessage);
     si.AddStateMessage(pieceMessage);
@@ -208,7 +203,7 @@ void ControlIntegrationTests::TestPlacePiece() {
     zmq::context_t context (1);
     Control command (context, si, *weights);
 
-    serverGame.SetPieceInPlay(myTet);
+    serverGame.SetPieceInPlay(tet);
     
     // Launches main execute loop, waits to intercept state
     pthread_mutex_lock(&pointerMutex);
@@ -248,19 +243,12 @@ void ControlIntegrationTests::TestPlacePiece() {
     if (firstExpected != NULL && firstActual != NULL) {
         GameBoard const& serverBoard = serverGame.GetBoard();
         char const* newBoardDesc = serverBoard.GenerateDesc();
-        theirBoardDesc = new char[BOARD_DESC_SIZE];
-        for (unsigned i = 0; i < BOARD_DESC_SIZE; ++i) {
-            theirBoardDesc[i] = '0';
-        }
-        boardMessage = new GameBoardState(3, 3.0, newBoardDesc,
-                                            theirBoardDesc, 2, 3,
-                                            new std::vector<int>(),
+        boardMessage = new GameBoardState(3, 3.0, newBoardDesc, 2,
                                             new std::vector<int>());
-        myTet = new Tetromino('I', 0, 5, 1);
-        serverGame.SetPieceInPlay(myTet);
-        theirTet = new Tetromino('I', 0, 5, 1);
-        pieceMessage = new GamePieceState(4, 4.0, myTet, theirTet, 2, 3,
-                                            new std::vector<Tetromino>());
+        tet = new Tetromino('I', 0, 5, 1);
+        serverGame.SetPieceInPlay(tet);
+        pieceMessage = new GamePieceState(4, 4.0, tet, 2,
+                                        new std::vector<Tetromino>());
         si.AddStateMessage(boardMessage);
         si.AddStateMessage(pieceMessage);
 

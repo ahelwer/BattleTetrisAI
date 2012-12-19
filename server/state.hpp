@@ -24,52 +24,42 @@ protected:
 class GameBoardState : public State {
 public:
     GameBoardState(int sequence, double timestamp,
-                    char const* myBoard, char const* theirBoard,
-                    int myPiece, int theirPiece,
-                    std::vector<int>* myCleared,
-                    std::vector<int>* theirCleared);
+                    char const* board, int piece,
+                    std::vector<int>* cleared);
     ~GameBoardState();
     virtual bool ExecuteUpdates(GameState& game) const;
     virtual bool ShouldTerminate() const;
     friend std::ostream& operator<< (std::ostream& out, GameBoardState const& s);
 private:
-    char const* m_pMyBoard;
-    char const* m_pTheirBoard;
-    int m_myPiece;
-    int m_theirPiece;
-    std::vector<int>* m_pMyCleared;
-    std::vector<int>* m_pTheirCleared;
+    char const* m_pBoard;
+    int m_piece;
+    std::vector<int>* m_pCleared;
 };
 
 class GamePieceState : public State {
 public:
     GamePieceState(int sequence, double timestamp,
-                    Tetromino* myTet, Tetromino* theirTet,
-                    int myNumber, int theirNumber,
+                    Tetromino* tet, int number,
                     std::vector<Tetromino>* queue);    
     ~GamePieceState();
     virtual bool ExecuteUpdates(GameState& game) const;
     virtual bool ShouldTerminate() const;
     friend std::ostream& operator<< (std::ostream& out, GamePieceState const& s);
 private:
-    Tetromino* m_pMyTet;
-    Tetromino* m_pTheirTet;
-    int m_myNumber;
-    int m_theirNumber;
+    Tetromino* m_pTet;
+    int m_number;
     std::vector<Tetromino>* m_pQueue;
 };
 
 class GameEnd : public State {
 public:
-    GameEnd(int sequence, double timestamp, bool won,
-            int myScore, int theirScore);
+    GameEnd(int sequence, double timestamp, bool won, int myScore);
     virtual bool ExecuteUpdates(GameState& game) const;
     virtual bool ShouldTerminate() const;
     friend std::ostream& operator<< (std::ostream& out, GameEnd const& s);
 private:
     bool m_won;
     int m_myScore;
-    int m_theirScore;
 };
 
 class MatchEnd : public State {

@@ -13,8 +13,7 @@
  * */
 class MessageFactory {
 public:
-    MessageFactory(std::string const& opponent);
-    ~MessageFactory();
+    MessageFactory();
     // Creates initial JSON handshake message with given match token
     std::string const* CreateInitMessage(std::string const& matchToken) const;
     // Parses initial handshake message reply
@@ -31,6 +30,5 @@ private:
     State const* ParseMatchEndStateMessage() const;
     State const* ParseGameEndStateMessage(Json::Value const& root) const;
     mutable std::string m_clientToken;
-    std::string m_opponent;
 };
 

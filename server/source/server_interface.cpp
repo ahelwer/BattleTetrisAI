@@ -3,15 +3,14 @@
 
 ServerInterface::ServerInterface()
     : m_commandServer("test"), m_stateServer("test"), 
-        m_matchToken("test"), m_factory("test")
+        m_matchToken("test"), m_factory()
 { }
 
 ServerInterface::ServerInterface(std::string const& commandServer,
                                     std::string const& stateServer,
-                                    std::string const& matchToken,
-                                    std::string const& opponent)
+                                    std::string const& matchToken)
     : m_commandServer(commandServer), m_stateServer(stateServer), 
-        m_matchToken(matchToken), m_factory(opponent)
+        m_matchToken(matchToken), m_factory()
 { }
 
 ServerInterface::~ServerInterface()

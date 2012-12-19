@@ -23,46 +23,30 @@ std::ostream& operator<< (std::ostream& out, State const& s) {
 }
 
 GameBoardState::GameBoardState(int sequence, double timestamp,
-                                const char* myBoard, 
-                                const char* theirBoard,
-                                int myPiece, int theirPiece,
-                                std::vector<int>* myCleared,
-                                std::vector<int>* theirCleared)
-    : State(sequence, timestamp), m_pMyBoard(myBoard), 
-        m_pTheirBoard(theirBoard), m_myPiece(myPiece),
-        m_theirPiece(theirPiece), m_pMyCleared(myCleared),
-        m_pTheirCleared(theirCleared)
+                                const char* board, int piece,
+                                std::vector<int>* cleared)
+    : State(sequence, timestamp), m_pBoard(board), 
+        m_piece(piece), m_pCleared(cleared)
 { }
 
 GameBoardState::~GameBoardState() {
-    if (m_pMyBoard != NULL) {
-        delete[] m_pMyBoard;
-        m_pMyBoard = NULL;
+    if (m_pBoard != NULL) {
+        delete[] m_pBoard;
+        m_pBoard = NULL;
     }
-    if (m_pTheirBoard != NULL) {
-        delete[] m_pTheirBoard;
-        m_pTheirBoard = NULL;
-    }
-    if (m_pMyCleared != NULL) {
-        delete m_pMyCleared;
-        m_pMyCleared = NULL;
-    }
-    if (m_pTheirCleared != NULL) {
-        delete m_pTheirCleared;
-        m_pTheirCleared = NULL;
+    if (m_pCleared != NULL) {
+        delete[] m_pCleared;
+        m_pCleared = NULL;
     }
 }
 
 bool GameBoardState::ExecuteUpdates(GameState& game) const {
     GameBoard& board = game.GetBoard();
-    if (board.HasChanged(m_pMyBoard)) {
-        board.Update(m_pMyBoard);
+    if (m_pBoard != NULL && board.HasChanged(m_pBoard)) {
+        board.Update(m_pBoard);
     }
-    if (m_pMyCleared->size() > 0) {
-        game.SetLastClearedRows(*m_pMyCleared);
-    }
-    if (m_pTheirCleared->size() > 0) {
-        game.SetRowClearEvent();
+    if (m_pCleared != NULL && m_pCleared->size() > 0) {
+        game.SetLastClearedRows(*m_pCleared);
     }
     //std::cout << (*this) << std::endl;
     return false;
@@ -73,29 +57,21 @@ bool GameBoardState::ShouldTerminate() const {
 }
 
 std::ostream& operator<< (std::ostream& out, GameBoardState const& s) {
-    out << "My cleared: " << *(s.m_pMyCleared) << ", ";
-    out << "Their cleared: " << *(s.m_pTheirCleared);
+    out << "My cleared: " << *(s.m_pCleared);
     return out;
 }
 
 GamePieceState::GamePieceState(int sequence, double timestamp,
-                                Tetromino* myTet, 
-                                Tetromino* theirTet, 
-                                int myNumber, int theirNumber,
+                                Tetromino* tet, int number,
                                 std::vector<Tetromino>* queue)
-    : State(sequence, timestamp), m_pMyTet(myTet), 
-        m_pTheirTet(theirTet), m_myNumber(myNumber),
-        m_theirNumber(theirNumber), m_pQueue(queue)
+    : State(sequence, timestamp), m_pTet(tet), 
+        m_number(number), m_pQueue(queue)
 { }
 
 GamePieceState::~GamePieceState() {
-    if (m_pMyTet != NULL) {
-        delete m_pMyTet;
-        m_pMyTet = NULL;
-    }
-    if (m_pTheirTet != NULL) {
-        delete m_pTheirTet;
-        m_pTheirTet = NULL;
+    if (m_pTet != NULL) {
+        delete m_pTet;
+        m_pTet = NULL;
     }
     if (m_pQueue != NULL) {
         delete m_pQueue;
@@ -104,8 +80,8 @@ GamePieceState::~GamePieceState() {
 }
 
 bool GamePieceState::ExecuteUpdates(GameState& game) const {
-    game.SetPieceInPlay(m_pMyTet);
-    game.SetCurrentPieceNumber(m_myNumber);
+    game.SetPieceInPlay(m_pTet);
+    game.SetCurrentPieceNumber(m_number);
     //std::cout << (*this) << std::endl;
     return false;
 }
@@ -116,28 +92,20 @@ bool GamePieceState::ShouldTerminate() const {
 
 std::ostream& operator<< (std::ostream& out, GamePieceState const& s) {
     out << "My tetronimo: ";
-    if (s.m_pMyTet != NULL)
-        out << s.m_pMyTet->GetType();
+    if (s.m_pTet != NULL)
+        out << s.m_pTet->GetType();
     else
         out << "NULL";
     out << ", ";
-    out << "Their tetronimo: ";
-    if (s.m_pTheirTet != NULL)
-        out << s.m_pTheirTet->GetType();
-    else
-        out << "NULL";
-    out << ", ";
-    out << "Queue: [";
-    for (unsigned i = 0; i < s.m_pQueue->size(); ++i)
-        out << s.m_pQueue->at(i).GetType() << ", ";
-    out << "]";
+    out << "Queue: ";
+    if (s.m_pQueue != NULL) {
+        out << *(s.m_pQueue);
+    }
     return out;
 }
 
-GameEnd::GameEnd(int sequence, double timestamp, bool won,
-                    int myScore, int theirScore) 
-    : State(sequence, timestamp), m_won(won), m_myScore(myScore),
-        m_theirScore(theirScore)
+GameEnd::GameEnd(int sequence, double timestamp, bool won, int myScore) 
+    : State(sequence, timestamp), m_won(won), m_myScore(myScore)
 { }
 
 bool GameEnd::ExecuteUpdates(GameState& game) const {
@@ -155,11 +123,10 @@ bool GameEnd::ShouldTerminate() const {
 
 std::ostream& operator<< (std::ostream& out, GameEnd const& s) {
     if (s.m_won)
-        out << "We won!";
+        out << "We won! ";
     else
-        out << "Opponent won.";
-    out << " ";
-    out << "Score: " << s.m_myScore << "-" << s.m_theirScore;
+        out << "Opponent won. ";
+    out << "Score: " << s.m_myScore;
     return out;
 }
 
