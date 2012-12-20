@@ -30,8 +30,9 @@ HarmonyFactory::~HarmonyFactory()
 
 Harmony* HarmonyFactory::GenerateRandomHarmony() const {
     Harmony* randomHarmony = new Harmony();
-    for (unsigned i = 0; i < m_vCount; ++i)
+    for (unsigned i = 0; i < m_vCount; ++i) {
         randomHarmony->push_back(GenerateRandomVariable(i));
+    }
     return randomHarmony;
 }
 
@@ -60,6 +61,10 @@ HarmonyCompare::HarmonyCompare(ObjectiveFunction const& f)
 HarmonyCompare::~HarmonyCompare()
 { }
 
+ObjectiveFunction const& HarmonyCompare::GetObjectiveFunction() const {
+    return m_f;
+}
+
 HarmonyCompareMin::HarmonyCompareMin(ObjectiveFunction const& f)
     : HarmonyCompare(f)
 { }
@@ -86,5 +91,9 @@ HarmonyCompareWrapper::HarmonyCompareWrapper(HarmonyCompare const& comp)
 
 bool HarmonyCompareWrapper::operator() (Harmony const* a, Harmony const* b) const {
     return m_comp(a, b);
+}
+
+ObjectiveFunction const& HarmonyCompareWrapper::GetObjectiveFunction() const {
+    return m_comp.GetObjectiveFunction();
 }
 

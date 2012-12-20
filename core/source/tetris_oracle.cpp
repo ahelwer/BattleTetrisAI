@@ -5,10 +5,6 @@
 #include <string>
 #include <algorithm>
 
-#ifdef PARALLEL
-#include <omp.h>
-#endif
-
 float BestScore(GameState& state, Harmony const& h) {
     std::vector<Tetromino> const* possible = FindPossibleMoves(state);
     float maxScore = -1.0*FLT_MAX;
@@ -35,11 +31,6 @@ Tetromino const* FindBestMove(GameState& state, Harmony const& h) {
     }
     int maxIdx = -1;
     float maxScore = -1.0*FLT_MAX;
-    #ifdef PARALLEL
-    omp_set_num_threads(8);
-    #pragma omp parallel for
-    #endif
-    {
     for (unsigned i = 0; i < possible->size(); ++i) {
         GameState next = state;
         int cleared = next.ApplyMove(possible->at(i));
@@ -56,16 +47,10 @@ Tetromino const* FindBestMove(GameState& state, Harmony const& h) {
             }
         }
         */
-        #ifdef PARALLEL
-        #pragma omp critical
-        #endif
-        {
-            if (result > maxScore) {
-                maxIdx = i;
-                maxScore = result;
-            }
+        if (result > maxScore) {
+            maxIdx = i;
+            maxScore = result;
         }
-    }
     }
     Tetromino* ret = NULL;
     if (maxIdx != -1)

@@ -1,5 +1,5 @@
 env = Environment()
-env.MergeFlags('-pthread')
+env.MergeFlags(['-pthread', '-fopenmp'])
 
 env.Append(CPPPATH = ['#'])
 env.MergeFlags(['-g', '-O0', '-Wall', '-Wextra', '-fpermissive'])
@@ -36,7 +36,5 @@ test_env.Append(LIBS = ['zmq', 'json', 'cppunit'])
 test_env.Program(target = 'runTests', source = control_obj+model_obj+server_obj+test_obj+core_obj+trainer_obj+test_main)
 
 trainer_env = env.Clone()
-trainer_env.MergeFlags(['-fopenmp'])
-trainer_env.Append(CPPDEFINES = ['PARALLEL'])
 trainer_env.Program(target = 'runTrainer', source = core_obj+trainer_obj+model_obj+trainer_main, LIBS = ['gomp'])
 

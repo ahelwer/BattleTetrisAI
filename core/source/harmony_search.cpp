@@ -1,6 +1,7 @@
 #include <core/harmony_search.hpp>
 #include <cstdlib>
 #include <algorithm>
+#include <omp.h>
 
 HarmonySearch::HarmonySearch(HarmonyCompareWrapper const& compare, HarmonyFactory const& factory,
                                 unsigned varCount, unsigned memorySize, 
@@ -15,13 +16,16 @@ HarmonySearch::HarmonySearch(HarmonyCompareWrapper const& compare, HarmonyFactor
 
 HarmonySearch::~HarmonySearch() {
     for (unsigned i = 0; i < m_memory.size(); ++i) {
-        if (m_memory.at(i) != NULL)
+        if (m_memory.at(i) != NULL) {
             delete m_memory.at(i);
+            m_memory.at(i) = NULL;
+        }
     }
 }
 
 void HarmonySearch::InitializeHarmonies(std::vector<Harmony> const& init) {
-    for (unsigned i = 0; i < m_memory.size(); ++i) {
+    unsigned harmonyCount = std::min(m_memory.size(), init.size());
+    for (unsigned i = 0; i < harmonyCount; ++i) {
         if (m_memory.at(i) != NULL) {
             delete m_memory.at(i);
             m_memory.at(i) = NULL;
@@ -31,6 +35,15 @@ void HarmonySearch::InitializeHarmonies(std::vector<Harmony> const& init) {
 }
 
 void HarmonySearch::Iterate() {
+    // Pre-calculates/caches objective function value in parallel
+    ObjectiveFunction const& f = m_compare.GetObjectiveFunction();
+    int harmonyCount = m_memory.size();
+    #pragma omp parallel for
+    for (int i = 0; i < harmonyCount; ++i) {
+        f(*(m_memory.at(i))); 
+    }
+
+    // Sorts harmonies under objective function
     std::sort(m_memory.begin(), m_memory.end(), m_compare);
 
     Harmony* newHarmony = new Harmony();
@@ -70,7 +83,9 @@ void HarmonySearch::EraseHarmonyCaches() const {
 }
 
 Harmony const* HarmonySearch::GetRanked(unsigned rank) const {
-    Harmony const* ranked = new Harmony(*(m_memory.at(rank)));
-    return ranked;
+    if (rank >= m_memory.size())
+        return NULL;
+    else 
+        return new Harmony(*(m_memory.at(rank)));
 }
 

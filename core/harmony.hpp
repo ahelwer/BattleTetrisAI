@@ -78,6 +78,7 @@ public:
     HarmonyCompare(ObjectiveFunction const& f);
     virtual ~HarmonyCompare();
     virtual bool operator() (Harmony const* a, Harmony const* b) const = 0;
+    virtual ObjectiveFunction const& GetObjectiveFunction() const;
 protected:
     ObjectiveFunction const& m_f;
 };
@@ -105,6 +106,7 @@ class HarmonyCompareWrapper : public Comparator {
 public:
     HarmonyCompareWrapper(HarmonyCompare const& comp);
     bool operator() (Harmony const* a, Harmony const* b) const;
+    virtual ObjectiveFunction const& GetObjectiveFunction() const;
 private:
     HarmonyCompare const& m_comp;
 };
