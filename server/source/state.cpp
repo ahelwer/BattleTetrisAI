@@ -35,7 +35,7 @@ GameBoardState::~GameBoardState() {
         m_pBoard = NULL;
     }
     if (m_pCleared != NULL) {
-        delete[] m_pCleared;
+        delete m_pCleared;
         m_pCleared = NULL;
     }
 }
