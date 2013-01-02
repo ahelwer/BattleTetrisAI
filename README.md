@@ -8,12 +8,11 @@ Contest website: http://codingcontest.pason.com/
 
 The project was to create a simple AI which plays Battle Tetris against other AIs over a network. 
 In competition this AI did quite well, losing in the single-elimination quarter-finals to the eventual overall winner.
-A replay of an earlier victorious match is viewable here:
+A replay of a test match is viewable here:
 
-http://codingcontest.pason.com/tetris/index.html?mode=log&match_token=86c2006d-eb30-4a68-ac07-6221014f6f09
+http://codingcontest.pason.com/tetris/index.html?mode=log&match_token=be13f8f7-fa4a-454f-89ab-365815c127bc
 
-I am Raven, and my opponent is Notepad.
-Team Notepad was overwhelmed with the number of rows being sent over, rendering their client nearly non-functional.
+I am team Raven. The test client makes random moves.
 
 ## Program Overview
 
