@@ -10,7 +10,7 @@ The project was to create a simple AI which plays Battle Tetris against other AI
 In competition this AI did quite well, losing in the single-elimination quarter-finals to the eventual overall winner.
 A replay of a test match is viewable here:
 
-http://codingcontest.pason.com/tetris/index.html?mode=log&match_token=be13f8f7-fa4a-454f-89ab-365815c127bc
+http://www.youtube.com/watch?v=uUUQHUZAePU
 
 I am team Raven. The test client makes random moves.
 
