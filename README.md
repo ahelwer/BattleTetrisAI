@@ -1,4 +1,4 @@
-# pason2012
+# Battle Tetris AI
 
 ## Introduction
 
